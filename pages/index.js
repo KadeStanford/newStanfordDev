@@ -90,13 +90,10 @@ function Portfolio() {
 }
 
 function ContactPageContent() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const message = formData.get("message");
-    const name = formData.get("name");
-    const email = formData.get("email");
-
     try {
       await axios.post("/api/contact", { name, email, message });
       alert("Message sent successfully");
@@ -127,18 +124,21 @@ function ContactPageContent() {
             type="text"
             placeholder="Name"
             required={true}
+            onChange={(e) => setName(e.target.value)}
           />
           <input
             className={styles.contactInput}
             type="text"
             placeholder="Email"
             required={true}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <textarea
             className={styles.contactTextArea}
             type="text"
             placeholder="Message"
             required={true}
+            onChange={(e) => setMessage(e.target.value)}
           />
           <button className={styles.contactButton} type="submit">
             Send
