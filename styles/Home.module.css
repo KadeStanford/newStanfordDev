@@ -1,229 +1,716 @@
+@font-face {
+  font-family: "GeBody";
+  src: url("/GeBody.ttf") format("truetype");
+}
+
 .main {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
-  padding: 6rem;
-  min-height: 100vh;
-}
-
-.description {
-  display: inherit;
-  justify-content: inherit;
-  align-items: inherit;
-  font-size: 0.85rem;
-  max-width: var(--max-width);
-  width: 100%;
-  z-index: 2;
-  font-family: var(--font-mono);
-}
-
-.description a {
-  display: flex;
   justify-content: center;
+  height: auto;
+  width: 100%;
+  background-color: rgb(5, 44, 117);
+}
+
+.topContainer {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: flex-start;
+  height: 50%;
+  width: 100%;
+  background-color: #0c2ab1;
+  border-radius: 10px;
 }
 
-.description p {
-  position: relative;
-  margin: 0;
-  padding: 1rem;
-  background-color: rgba(var(--callout-rgb), 0.5);
-  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
-  border-radius: var(--border-radius);
+.heroImageBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80%;
+  width: 100%;
+  background-image: url("/images/keyboard.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
-.code {
-  font-weight: 700;
-  font-family: var(--font-mono);
+.logoImage {
+  height: 50%;
+  width: 10%;
+  object-fit: contain;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(25%, auto));
-  max-width: var(--max-width);
+.heroText {
+  color: #f5f5f5;
+  font-size: 2.5rem;
+  font-family: "GeBody", sans-serif;
+}
+
+.buttonBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 20%;
   width: 100%;
 }
 
-.card {
-  padding: 1rem 1.2rem;
-  border-radius: var(--border-radius);
-  background: rgba(var(--card-rgb), 0);
-  border: 1px solid rgba(var(--card-border-rgb), 0);
-  transition: background 200ms, border 200ms;
-}
-
-.card span {
-  display: inline-block;
-  transition: transform 200ms;
-}
-
-.card h2 {
-  font-weight: 600;
-  margin-bottom: 0.7rem;
-}
-
-.card p {
-  margin: 0;
-  opacity: 0.6;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  max-width: 30ch;
-}
-
-.center {
+.button {
   display: flex;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
-  position: relative;
-  padding: 4rem 0;
+  justify-content: center;
+  height: 50%;
+  width: 30%;
+  margin: 0 1rem;
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-family: "GeBody", sans-serif;
+  transition: all 0.2s ease-in-out;
+  background-color: #0c2ab1;
+  color: #64a7ff;
 }
 
-.center::before {
-  background: var(--secondary-glow);
-  border-radius: 50%;
-  width: 480px;
-  height: 360px;
-  margin-left: -400px;
+.button:hover {
+  background-color: #64a7ff;
+  color: #0c2ab1;
+  scale: 1.01;
 }
 
-.center::after {
-  background: var(--primary-glow);
-  width: 240px;
-  height: 180px;
-  z-index: -1;
+.heroSubText {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: "GeBody", sans-serif;
+  margin-top: -1.5%;
 }
 
-.center::before,
-.center::after {
-  content: '';
-  left: 50%;
-  position: absolute;
-  filter: blur(45px);
-  transform: translateZ(0);
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80%;
+  width: 100%;
 }
 
-.logo {
-  position: relative;
-}
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  .card:hover {
-    background: rgba(var(--card-rgb), 0.1);
-    border: 1px solid rgba(var(--card-border-rgb), 0.15);
-  }
-
-  .card:hover span {
-    transform: translateX(4px);
-  }
+.homeContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
-@media (prefers-reduced-motion) {
-  .card:hover span {
-    transform: none;
-  }
+.homeContentBox {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: flex-start;
+  height: auto;
+  width: 30%;
+  margin: 1rem 1rem;
+  border-radius: 10px;
+  background-color: #0c2ab1;
 }
 
-/* Mobile */
-@media (max-width: 700px) {
-  .content {
-    padding: 4rem;
-  }
+.homeContentTitle {
+  color: #ffffff;
+  font-size: 3rem;
+  font-family: "GeBody", sans-serif;
+  margin: 0 1rem;
+  margin-top: 1rem;
+}
 
-  .grid {
-    grid-template-columns: 1fr;
-    margin-bottom: 120px;
-    max-width: 320px;
+.homeContentSubTitle {
+  color: #1daae2;
+  font-size: 2.5rem;
+  font-family: "GeBody", sans-serif;
+  margin: 0 1rem;
+  text-decoration: underline #ffffff;
+  text-underline-position: below;
+  text-underline-offset: 0.3rem;
+}
+
+.homeContentText {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: "GeBody", sans-serif;
+  margin: 1rem 1rem;
+  text-align: center;
+  text-justify: newspaper;
+}
+
+.homeContentTextKade {
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-family: "GeBody", sans-serif;
+  margin: 1rem 1rem;
+  text-align: center;
+  text-justify: newspaper;
+}
+
+.underline {
+  text-decoration: underline #ffffff;
+  text-underline-position: below;
+  text-underline-offset: 0.2rem;
+}
+
+.profileImage {
+  height: 40%;
+  width: 30%;
+  object-fit: contain;
+  margin: 1rem 1rem;
+  align-self: center;
+  border-radius: 70%;
+}
+
+.contactContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  width: 100%;
+}
+
+.contactContentBox {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: flex-start;
+  height: 80%;
+  width: 30%;
+  margin: 1rem 1rem;
+  border-radius: 10px;
+  background-color: #0c2ab1;
+}
+
+.contactContentTitle {
+  color: #ffffff;
+  font-size: 3rem;
+  font-family: "GeBody", sans-serif;
+  margin: 0 1rem;
+  margin-top: 1rem;
+}
+
+.contactContentSubTitle {
+  color: #1daae2;
+  font-size: 2.5rem;
+  font-family: "GeBody", sans-serif;
+  margin: 0 1rem;
+  text-decoration: underline #ffffff;
+  text-underline-position: below;
+  text-underline-offset: 0.3rem;
+}
+
+.contactContentText {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: "GeBody", sans-serif;
+  margin: 1rem 1rem;
+  text-align: center;
+  align-self: center;
+  text-justify: newspaper;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 20vh;
+  width: 100%;
+  margin-top: -7%;
+  outline: none;
+}
+
+.contactInput {
+  height: 10%;
+  width: 40%;
+  margin: 0.2rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #1daae2;
+  font-family: "GeBody", sans-serif;
+}
+
+.contactTextArea {
+  border: none;
+  min-height: 20%;
+  width: 80%;
+  max-width: 80%;
+  margin: 1rem 1rem;
+  max-height: 40%;
+  border-radius: 0.5rem;
+  background-color: #1daae2;
+  font-family: "GeBody", sans-serif;
+}
+
+.contactButton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 20%;
+  width: 40%;
+  margin: 0.2rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: "GeBody", sans-serif;
+  transition: all 0.2s ease-in-out;
+  background-color: #64a7ff;
+  color: #0c2ab1;
+  scale: 1.01;
+}
+
+.contactButton:hover {
+  scale: 1.1;
+}
+
+.portfolioContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  align-self: center;
+}
+
+.portfolioContentBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 85%;
+  width: 80%;
+  margin: 1rem 1rem;
+  border-radius: 10px;
+  background-color: #08208f;
+}
+
+.portfolioContentBox1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 85%;
+  width: 80%;
+  margin: 1rem 1rem;
+  border-radius: 10px;
+  background-color: #08208f;
+}
+
+.portfolioImage {
+  height: 70%;
+  width: 75%;
+  margin-left: 12%;
+  margin-top: 3%;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+.portfolioContentText {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: "GeBody", sans-serif;
+  margin: 1rem 1rem;
+  text-align: center;
+  align-self: center;
+  text-justify: newspaper;
+  text-decoration: underline;
+}
+
+.servicesContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  width: 100%;
+}
+
+.servicesContentBox {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: flex-start;
+  height: 85%;
+  width: 30%;
+  margin: 1rem 1rem;
+  border-radius: 10px;
+  background-color: #0c2ab1;
+}
+
+.servicesContentTitle {
+  color: #ffffff;
+  font-size: 3rem;
+  font-family: "GeBody", sans-serif;
+  margin: 0 1rem;
+  margin-top: 1rem;
+}
+
+.servicesContentSubTitle {
+  color: #1daae2;
+  font-size: 2.5rem;
+  font-family: "GeBody", sans-serif;
+  margin: 0 1rem;
+  text-decoration: underline #ffffff;
+  text-underline-position: below;
+  text-underline-offset: 0.3rem;
+}
+
+.servicesContentText {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: "GeBody", sans-serif;
+  margin: 1rem 1rem;
+  text-align: center;
+  text-justify: newspaper;
+}
+
+.servicesContentTextVary {
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: "GeBody", sans-serif;
+  margin: 1.8rem 1rem;
+  text-align: center;
+  text-justify: newspaper;
+}
+.servicesContentTextOptional {
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: "GeBody", sans-serif;
+  margin: -3% 1rem;
+  text-align: center;
+  text-justify: newspaper;
+}
+
+.servicesContentList {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: "GeBody", sans-serif;
+  margin: 1rem 1rem;
+  text-align: center;
+  text-justify: newspaper;
+  list-style: none;
+}
+.servicesContentListSocial {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: "GeBody", sans-serif;
+  margin-top: -4%;
+  text-align: center;
+  text-justify: newspaper;
+  list-style: none;
+  align-self: center;
+}
+.servicesContentList {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: "GeBody", sans-serif;
+  margin: 1rem 1rem;
+  text-align: center;
+  text-justify: newspaper;
+  list-style: none;
+}
+
+.servicesContentListItem {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-family: "GeBody", sans-serif;
+  margin: 0.5rem 1rem;
+  text-align: center;
+  text-justify: newspaper;
+  text-decoration: underline #1daae2;
+}
+
+@media screen and (min-width: 100px) and (max-width: 1561px) {
+  .heroText {
+    font-size: calc(1.3rem + 1vw);
     text-align: center;
   }
 
-  .card {
-    padding: 1rem 2.5rem;
+  .heroSubText {
+    font-size: calc(0.7rem + 1vw);
+    margin-top: -2%;
+    text-align: center;
   }
 
-  .card h2 {
-    margin-bottom: 0.5rem;
-  }
-
-  .center {
-    padding: 8rem 0 6rem;
-  }
-
-  .center::before {
-    transform: none;
-    height: 300px;
-  }
-
-  .description {
-    font-size: 0.8rem;
-  }
-
-  .description a {
-    padding: 1rem;
-  }
-
-  .description p,
-  .description div {
+  .homeContent {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    position: fixed;
+    height: 100%;
     width: 100%;
   }
 
-  .description p {
+  .logoImage {
+    height: 20%;
+    width: 16%;
+    margin-top: 2%;
+    margin-left: 1%;
+  }
+
+  .button {
+    font-size: calc(0.5rem + 1vw);
+  }
+
+  .buttonBox {
+    height: 5vh;
+  }
+
+  .homeContentBox {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    justify-content: flex-start;
+    height: 85%;
+    width: 90%;
+    margin: 1rem 1rem;
+    border-radius: 10px;
+    background-color: #0c2ab1;
+  }
+
+  .homeContentTitle {
+    color: #ffffff;
+    font-size: calc(1.5rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    margin: 0 1rem;
+    margin-top: 1rem;
+  }
+
+  .homeContentSubTitle {
+    color: #1daae2;
+    font-size: calc(1.3rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    margin: 0 1rem;
+    text-decoration: underline #ffffff;
+    text-underline-position: below;
+    text-underline-offset: 0.3rem;
+  }
+
+  .profileImage {
+    height: 30%;
+    width: 40%;
+    margin-top: 3%;
+    border-radius: 50%;
+    object-fit: contain;
+  }
+
+  .contactContent {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    inset: 0 0 auto;
-    padding: 2rem 1rem 1.4rem;
-    border-radius: 0;
-    border: none;
-    border-bottom: 1px solid rgba(var(--callout-border-rgb), 0.25);
-    background: linear-gradient(
-      to bottom,
-      rgba(var(--background-start-rgb), 1),
-      rgba(var(--callout-rgb), 0.5)
-    );
-    background-clip: padding-box;
-    backdrop-filter: blur(24px);
+    justify-content: center;
+    height: 85%;
+    width: 100%;
+    margin: 1rem 1rem;
+    border-radius: 10px;
   }
 
-  .description div {
-    align-items: flex-end;
-    pointer-events: none;
-    inset: auto 0 0;
-    padding: 2rem;
-    height: 200px;
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      rgb(var(--background-end-rgb)) 40%
-    );
-    z-index: 1;
-  }
-}
-
-/* Tablet and Smaller Desktop */
-@media (min-width: 701px) and (max-width: 1120px) {
-  .grid {
-    grid-template-columns: repeat(2, 50%);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .vercelLogo {
-    filter: invert(1);
+  .contactContentBox {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    justify-content: flex-start;
+    height: auto;
+    width: 90%;
+    max-height: 500px;
+    margin: 1rem 1rem;
+    border-radius: 10px;
+    background-color: #0c2ab1;
   }
 
-  .logo {
-    filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);
+  .contactForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    width: 90%;
+    margin: 0rem 1rem;
+    border-radius: 10px;
+    align-self: center;
+    background-color: #0c2ab1;
   }
-}
 
-@keyframes rotate {
-  from {
-    transform: rotate(360deg);
+  .contactContentTitle {
+    color: #ffffff;
+    font-size: calc(1.5rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    margin: 0 1rem;
+    margin-top: 1rem;
   }
-  to {
-    transform: rotate(0deg);
+
+  .contactContentSubTitle {
+    color: #1daae2;
+    font-size: calc(1.3rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    margin: 0 1rem;
+    text-decoration: underline #ffffff;
+    text-underline-position: below;
+    text-underline-offset: 0.3rem;
+  }
+
+  .contactContentText {
+    color: #ffffff;
+    font-size: calc(0.7rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    margin: 1rem 1rem;
+    text-align: center;
+    text-justify: newspaper;
+  }
+
+  .portfolioContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+    margin: 1rem 1rem;
+    border-radius: 10px;
+    overflow-y: scroll;
+  }
+
+  .portfolioContentBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 85%;
+    width: 80%;
+    margin: 1rem 1rem;
+    border-radius: 10px;
+    background-color: #08208f;
+  }
+
+  .portfolioContentBox1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 85%;
+    width: 80%;
+    margin: 1rem 1rem;
+    border-radius: 10px;
+    background-color: #08208f;
+  }
+
+  .portfolioImage {
+    height: 30%;
+    width: 40%;
+    margin-top: 3%;
+    object-fit: contain;
+    margin-left: 28%;
+  }
+
+  .servicesContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+  }
+
+  .servicesContentBox {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    justify-content: flex-start;
+    height: auto;
+    width: 90%;
+    margin: 1rem 1rem;
+    border-radius: 10px;
+    background-color: #0c2ab1;
+  }
+
+  .servicesContentTitle {
+    color: #ffffff;
+    font-size: calc(1rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    margin: 0 1rem;
+    margin-top: 1rem;
+  }
+
+  .servicesContentSubTitle {
+    color: #1daae2;
+    font-size: calc(1rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    margin: 0 1rem;
+    text-decoration: underline #ffffff;
+    text-underline-position: below;
+    text-underline-offset: 0.3rem;
+  }
+
+  .servicesContentText {
+    color: #ffffff;
+    font-size: calc(0.9rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    margin: 1rem 1rem;
+    text-align: center;
+    text-justify: newspaper;
+  }
+
+  .servicesContentTextVary {
+    color: #ffffff;
+    font-size: calc(0.5rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    margin: 1.9rem 1rem;
+    padding-bottom: 50px;
+    text-align: center;
+    text-justify: newspaper;
+  }
+  .servicesContentTextOptional {
+    color: #ffffff;
+    font-size: calc(0.5rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    margin: -1% 1rem;
+    text-align: center;
+    text-justify: newspaper;
+  }
+
+  .servicesContentList {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-family: "GeBody", sans-serif;
+    margin-left: -5%;
+    text-align: center;
+    text-justify: newspaper;
+    list-style: none;
+    align-self: center;
+  }
+  .servicesContentListSocial {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-family: "GeBody", sans-serif;
+    margin-top: -4%;
+    text-align: center;
+    text-justify: newspaper;
+    list-style: none;
+    align-self: center;
+  }
+
+  .servicesContentListItem {
+    color: #ffffff;
+    font-size: calc(0.9rem + 1vw);
+    font-family: "GeBody", sans-serif;
+    text-align: center;
+    text-justify: newspaper;
+    text-decoration: underline #1daae2;
   }
 }
