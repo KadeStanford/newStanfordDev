@@ -54,7 +54,7 @@ function HomePageContent() {
           <span className={styles.underline}>YOUR</span> website.<br></br>
           <br></br>
           SDS offers fully custom coded websites that are tailored to your
-          specific needs and style preferences. Whatever you needs are, I can
+          specific needs and style preferences. Whatever your needs are, I can
           meet them.
         </p>
       </div>
