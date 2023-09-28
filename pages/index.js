@@ -274,12 +274,6 @@ export default function Home() {
             >
               Contact
             </button>
-            <button
-              className={styles.button}
-              onClick={() => handlePageChange("services")}
-            >
-              Services
-            </button>
           </div>
         </div>
         <div className={styles.contentContainer}>
