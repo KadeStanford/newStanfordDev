@@ -203,6 +203,7 @@ export default async function handler(req, res) {
   // If Mailgun API key is present, prefer Mailgun (user requested Mailgun)
   if (MAILGUN_API_KEY && MAILGUN_DOMAIN) {
     try {
+      console.log("Using Mailgun with domain:", MAILGUN_DOMAIN, "-> sending to", CONTACT_RECEIVER);
       const FormData = require("form-data");
       const Mailgun = require("mailgun.js");
       const mailgun = new Mailgun(FormData);
@@ -248,9 +249,12 @@ export default async function handler(req, res) {
   // Otherwise fall back to SMTP via Nodemailer
   if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
     console.error(
-      "Missing SMTP configuration in environment variables and no SendGrid API key present"
+      "Missing Mailgun (MAILGUN_API_KEY & MAILGUN_DOMAIN) and SMTP configuration in environment variables."
     );
-    return res.status(500).json({ message: "Email server is not configured" });
+    return res.status(500).json({
+      message:
+        "Email server is not configured. Set MAILGUN_API_KEY and MAILGUN_DOMAIN (recommended), or SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASS.",
+    });
   }
 
   try {
