@@ -219,12 +219,17 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ message: "Message sent successfully" });
   } catch (err) {
-    console.error("Error sending email:", err && err.message ? err.message : err);
+    console.error(
+      "Error sending email:",
+      err && err.message ? err.message : err
+    );
     // If DEBUG_EMAIL=true in environment, return the error message in the response for debugging
     const debug = process.env.DEBUG_EMAIL === "true";
     return res.status(500).json({
       message: "Failed to send message",
-      ...(debug ? { error: err && err.message ? String(err.message) : String(err) } : {}),
+      ...(debug
+        ? { error: err && err.message ? String(err.message) : String(err) }
+        : {}),
     });
   }
 }
