@@ -28,7 +28,9 @@ export default async function handler(req, res) {
     const budget = escape(payload.formattedBudget || payload.budget || "—");
     const timeline = escape(payload.timeline || "—");
     const preferred = escape(payload.preferredContact || "—");
-    const message = escape(payload.message || payload.description || payload.notes || "");
+    const message = escape(
+      payload.message || payload.description || payload.notes || ""
+    );
 
     const inspiration = escape(payload.inspirationLinks || "");
     const competitors = escape(payload.competitorLinks || "");
@@ -63,14 +65,18 @@ export default async function handler(req, res) {
     // Attachments list (names only)
     let attachmentsHtml = "None";
     if (Array.isArray(payload.attachments) && payload.attachments.length) {
-      attachmentsHtml = payload.attachments.map((a) => escape(a.name || a)).join(", ");
+      attachmentsHtml = payload.attachments
+        .map((a) => escape(a.name || a))
+        .join(", ");
     }
 
     return `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color:#0f172a; background:#f8fafc; padding:20px;">
         <div style="max-width:700px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden;border:1px solid #e6edf3">
           <div style="background:linear-gradient(90deg,#7c3aed,#06b6d4);padding:18px 20px;color:#fff">
-            <h1 style="margin:0;font-size:18px;font-weight:700">New ${type === 'general' ? 'General Message' : 'Project Request'}</h1>
+            <h1 style="margin:0;font-size:18px;font-weight:700">New ${
+              type === "general" ? "General Message" : "Project Request"
+            }</h1>
             <div style="margin-top:6px;font-size:13px;opacity:0.95">Received: ${now}</div>
           </div>
 
@@ -110,13 +116,18 @@ export default async function handler(req, res) {
 
             <div style="margin-top:14px;padding-top:14px;border-top:1px solid #eef2f7">
               <h3 style="margin:0 0 8px 0;font-size:13px;color:#0f172a">Message</h3>
-              <div style="font-size:14px;color:#334155;line-height:1.5;white-space:pre-wrap">${message || '<span style="color:#94a3b8">(No message provided)</span>'}</div>
+              <div style="font-size:14px;color:#334155;line-height:1.5;white-space:pre-wrap">${
+                message ||
+                '<span style="color:#94a3b8">(No message provided)</span>'
+              }</div>
             </div>
 
             <div style="margin-top:14px;display:flex;gap:24px;flex-wrap:wrap">
               <div style="flex:1;min-width:220px">
                 <h4 style="margin:6px 0;font-size:13px;color:#0f172a">Assets / Readiness</h4>
-                <div style="color:#334155">${assets || '<span style="color:#94a3b8">None listed</span>'}</div>
+                <div style="color:#334155">${
+                  assets || '<span style="color:#94a3b8">None listed</span>'
+                }</div>
               </div>
 
               <div style="flex:1;min-width:220px">
@@ -125,14 +136,24 @@ export default async function handler(req, res) {
               </div>
             </div>
 
-            ${(inspiration || competitors)
-      ? `
+            ${
+              inspiration || competitors
+                ? `
               <div style="margin-top:14px;padding-top:14px;border-top:1px solid #eef2f7">
-                ${inspiration ? `<div style="margin-bottom:8px"><strong style="color:#475569">Inspiration:</strong> <span style="color:#334155">${inspiration}</span></div>` : ''}
-                ${competitors ? `<div><strong style="color:#475569">Competitors:</strong> <span style="color:#334155">${competitors}</span></div>` : ''}
+                ${
+                  inspiration
+                    ? `<div style="margin-bottom:8px"><strong style="color:#475569">Inspiration:</strong> <span style="color:#334155">${inspiration}</span></div>`
+                    : ""
+                }
+                ${
+                  competitors
+                    ? `<div><strong style="color:#475569">Competitors:</strong> <span style="color:#334155">${competitors}</span></div>`
+                    : ""
+                }
               </div>
             `
-      : ''}
+                : ""
+            }
 
             <div style="margin-top:18px;padding-top:12px;border-top:1px dashed #e6edf3;font-size:12px;color:#64748b">
               <div><strong>Attachments:</strong> ${attachmentsHtml}</div>
@@ -152,11 +173,14 @@ export default async function handler(req, res) {
 
   // Read SMTP configuration from environment variables for security
   const SMTP_HOST = process.env.SMTP_HOST;
-  const SMTP_PORT = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : undefined;
+  const SMTP_PORT = process.env.SMTP_PORT
+    ? parseInt(process.env.SMTP_PORT, 10)
+    : undefined;
   const SMTP_SECURE = process.env.SMTP_SECURE === "true"; // true or false
   const SMTP_USER = process.env.SMTP_USER;
   const SMTP_PASS = process.env.SMTP_PASS;
-  const CONTACT_RECEIVER = process.env.CONTACT_RECEIVER || "stanforddevcontact@gmail.com";
+  const CONTACT_RECEIVER =
+    process.env.CONTACT_RECEIVER || "stanforddevcontact@gmail.com";
 
   if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
     console.error("Missing SMTP configuration in environment variables");

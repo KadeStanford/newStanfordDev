@@ -328,7 +328,10 @@ export default function Contact() {
                     onChange={(e) => setGeneralMessage(e.target.value)}
                   ></textarea>
                 </div>
-                <button disabled={submitting} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:-translate-y-1 cursor-pointer disabled:opacity-60">
+                <button
+                  disabled={submitting}
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:-translate-y-1 cursor-pointer disabled:opacity-60"
+                >
                   Send Message
                 </button>
               </form>
