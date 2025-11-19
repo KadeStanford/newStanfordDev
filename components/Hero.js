@@ -145,7 +145,7 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.4 }}
             className="text-lg text-slate-400 max-w-xl leading-relaxed"
           >
-            We take **your unique vision** and translate it directly into a
+            We take your unique vision and translate it directly into a
             high-performance, conversion-focused digital reality. Forget
             templates—we build custom experiences designed exclusively to
             achieve your goals and scale with your business.
