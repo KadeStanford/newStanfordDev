@@ -188,6 +188,14 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Safe debug: log presence of SMTP config (do NOT log actual secret values)
+    console.log("SMTP config presence:", {
+      host: !!SMTP_HOST,
+      port: !!SMTP_PORT,
+      secure: !!process.env.SMTP_SECURE,
+      user: !!SMTP_USER,
+    });
+
     const transporter = nodemailer.createTransport({
       host: SMTP_HOST,
       port: SMTP_PORT,
@@ -211,7 +219,12 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ message: "Message sent successfully" });
   } catch (err) {
-    console.error("Error sending email:", err);
-    return res.status(500).json({ message: "Failed to send message" });
+    console.error("Error sending email:", err && err.message ? err.message : err);
+    // If DEBUG_EMAIL=true in environment, return the error message in the response for debugging
+    const debug = process.env.DEBUG_EMAIL === "true";
+    return res.status(500).json({
+      message: "Failed to send message",
+      ...(debug ? { error: err && err.message ? String(err.message) : String(err) } : {}),
+    });
   }
 }
