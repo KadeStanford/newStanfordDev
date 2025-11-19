@@ -169,9 +169,12 @@ export default async function handler(req, res) {
     `;
   };
 
-  const nodemailer = require("nodemailer");
+  // Read configuration for Mailgun and SMTP
+  const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
+  const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
+  const MAILGUN_BASE_URL = process.env.MAILGUN_BASE_URL || "https://api.mailgun.net";
+  const MAILGUN_FROM = process.env.MAILGUN_FROM; // optional
 
-  // Read SMTP configuration from environment variables for security
   const SMTP_HOST = process.env.SMTP_HOST;
   const SMTP_PORT = process.env.SMTP_PORT
     ? parseInt(process.env.SMTP_PORT, 10)
@@ -182,8 +185,46 @@ export default async function handler(req, res) {
   const CONTACT_RECEIVER =
     process.env.CONTACT_RECEIVER || "stanforddevcontact@gmail.com";
 
+  const html = buildHtml(data);
+
+  // Plaintext fallback for email clients and SendGrid text field
+  const text = `New message (${data.type || 'contact'})\n\nName: ${data.fullName || data.name || ''}\nEmail: ${data.email || ''}\nCompany: ${data.company || ''}\nProject Type: ${data.projectType || ''}\nBudget: ${data.formattedBudget || data.budget || ''}\nTimeline: ${data.timeline || ''}\n\nMessage:\n${data.message || data.description || data.notes || ''}`;
+
+  // If SendGrid API key is provided, prefer API sending (simpler for managed hosts)
+  // If Mailgun API key is present, prefer Mailgun (user requested Mailgun)
+  if (MAILGUN_API_KEY && MAILGUN_DOMAIN) {
+    try {
+      const FormData = require("form-data");
+      const Mailgun = require("mailgun.js");
+      const mailgun = new Mailgun(FormData);
+      const mg = mailgun.client({ username: "api", key: MAILGUN_API_KEY, url: MAILGUN_BASE_URL });
+
+      const fromAddress = MAILGUN_FROM || data.email || SMTP_USER || `no-reply@${MAILGUN_DOMAIN}`;
+
+      const message = {
+        from: fromAddress,
+        to: CONTACT_RECEIVER,
+        subject: data.subject || `Website contact — ${data.type || "submission"}`,
+        text,
+        html,
+      };
+
+      const resp = await mg.messages.create(MAILGUN_DOMAIN, message);
+      console.log("Email sent via Mailgun to", CONTACT_RECEIVER, resp && resp.id ? resp.id : "(no id)");
+      return res.status(200).json({ message: "Message sent successfully (Mailgun)" });
+    } catch (err) {
+      console.error("Mailgun error:", err && err.message ? err.message : err);
+      const debug = process.env.DEBUG_EMAIL === "true";
+      return res.status(500).json({
+        message: "Failed to send message (Mailgun)",
+        ...(debug ? { error: err && err.message ? String(err.message) : String(err) } : {}),
+      });
+    }
+  }
+
+  // Otherwise fall back to SMTP via Nodemailer
   if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
-    console.error("Missing SMTP configuration in environment variables");
+    console.error("Missing SMTP configuration in environment variables and no SendGrid API key present");
     return res.status(500).json({ message: "Email server is not configured" });
   }
 
@@ -196,6 +237,7 @@ export default async function handler(req, res) {
       user: !!SMTP_USER,
     });
 
+    const nodemailer = require("nodemailer");
     const transporter = nodemailer.createTransport({
       host: SMTP_HOST,
       port: SMTP_PORT,
@@ -206,8 +248,6 @@ export default async function handler(req, res) {
       },
     });
 
-    const html = buildHtml(data);
-
     const fromAddress = data.email ? `${data.email}` : SMTP_USER;
 
     await transporter.sendMail({
@@ -215,21 +255,19 @@ export default async function handler(req, res) {
       to: CONTACT_RECEIVER,
       subject: data.subject || `Website contact — ${data.type || "submission"}`,
       html,
+      text,
     });
 
-    return res.status(200).json({ message: "Message sent successfully" });
+    return res.status(200).json({ message: "Message sent successfully (SMTP)" });
   } catch (err) {
     console.error(
-      "Error sending email:",
+      "Error sending email (SMTP):",
       err && err.message ? err.message : err
     );
-    // If DEBUG_EMAIL=true in environment, return the error message in the response for debugging
     const debug = process.env.DEBUG_EMAIL === "true";
     return res.status(500).json({
-      message: "Failed to send message",
-      ...(debug
-        ? { error: err && err.message ? String(err.message) : String(err) }
-        : {}),
+      message: "Failed to send message (SMTP)",
+      ...(debug ? { error: err && err.message ? String(err.message) : String(err) } : {}),
     });
   }
 }
