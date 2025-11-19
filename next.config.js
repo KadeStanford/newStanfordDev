@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const path = require('path')
+const path = require("path");
 
 const nextConfig = {
   reactStrictMode: true,
@@ -7,6 +7,6 @@ const nextConfig = {
     // ensure Turbopack resolves the project root correctly
     root: path.resolve(__dirname),
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
