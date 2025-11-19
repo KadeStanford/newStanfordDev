@@ -32,12 +32,6 @@ export default function Services() {
         "Hardware diagnostics, component upgrades (RAM/SSD), and software troubleshooting.",
     },
     {
-      title: "Cybersecurity Basics",
-      icon: <Shield size={24} className="text-cyan-400" />,
-      description:
-        "Vulnerability assessments, firewall configuration, VPN setup, and malware removal.",
-    },
-    {
       title: "Automation Scripting",
       icon: <Code size={24} className="text-pink-400" />,
       description:
