@@ -57,6 +57,7 @@ export default function Contact() {
   const [errors, setErrors] = useState({});
   const [showSummary, setShowSummary] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [generalMessage, setGeneralMessage] = useState("");
 
   const MIN_BUDGET = 500;
   const MAX_BUDGET = 10000;
@@ -93,6 +94,40 @@ export default function Contact() {
       return;
     }
     setErrors({});
+    // If this is the general contact form, send immediately
+    if (contactMode === "general") {
+      const payload = {
+        type: "general",
+        fullName: project.fullName,
+        email: project.email,
+        message: generalMessage,
+      };
+      // send and reset on success
+      setSubmitting(true);
+      toast.loading("Sending message...");
+      fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+        .then((r) => {
+          if (!r.ok) throw new Error("Network response was not ok");
+          return r.json();
+        })
+        .then(() => {
+          confetti({ particleCount: 120, spread: 60, origin: { y: 0.6 } });
+          toast.success("Message sent! We'll be in touch soon.");
+          setProject((p) => ({ ...p, fullName: "", email: "" }));
+          setGeneralMessage("");
+        })
+        .catch((err) => {
+          console.error(err);
+          toast.error("Failed to send message. Try again later.");
+        })
+        .finally(() => setSubmitting(false));
+      return;
+    }
+
     setShowSummary(true);
   };
 
@@ -108,14 +143,22 @@ export default function Contact() {
       }`;
 
       const data = {
+        type: "project",
         ...project,
         formattedBudget,
         colorPalette,
       };
-      console.log("Final project submission:", data, attachments);
 
-      // Simulate network delay
-      await new Promise((r) => setTimeout(r, 1500));
+      // Send to API
+      const resp = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!resp.ok) {
+        throw new Error("Failed to send");
+      }
 
       setShowSummary(false);
 
@@ -253,6 +296,7 @@ export default function Contact() {
                       type="text"
                       className="w-full bg-slate-950/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
                       placeholder="Your name"
+                      value={project.fullName}
                       onChange={(e) =>
                         setProject((p) => ({ ...p, fullName: e.target.value }))
                       } // Capture name for general form too
@@ -266,6 +310,7 @@ export default function Contact() {
                       type="email"
                       className="w-full bg-slate-950/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
                       placeholder="email@example.com"
+                      value={project.email}
                       onChange={(e) =>
                         setProject((p) => ({ ...p, email: e.target.value }))
                       }
@@ -279,9 +324,11 @@ export default function Contact() {
                   <textarea
                     className="w-full bg-slate-950/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors h-32 resize-none"
                     placeholder="How can we help you today?"
+                    value={generalMessage}
+                    onChange={(e) => setGeneralMessage(e.target.value)}
                   ></textarea>
                 </div>
-                <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:-translate-y-1 cursor-pointer">
+                <button disabled={submitting} className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:-translate-y-1 cursor-pointer disabled:opacity-60">
                   Send Message
                 </button>
               </form>
