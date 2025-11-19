@@ -164,8 +164,8 @@ function Contact() {
                 <option value=">20000">&gt;$20,000</option>
               </select>
               <p className="text-sm text-slate-400 mt-2">
-                If you are unsure, choose &apos;Not sure&apos; — we will suggest options that
-                fit your goals and budget.
+                If you are unsure, choose &apos;Not sure&apos; — we will suggest
+                options that fit your goals and budget.
               </p>
             </div>
           </div>
