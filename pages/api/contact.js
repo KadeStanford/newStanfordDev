@@ -203,7 +203,12 @@ export default async function handler(req, res) {
   // If Mailgun API key is present, prefer Mailgun (user requested Mailgun)
   if (MAILGUN_API_KEY && MAILGUN_DOMAIN) {
     try {
-      console.log("Using Mailgun with domain:", MAILGUN_DOMAIN, "-> sending to", CONTACT_RECEIVER);
+      console.log(
+        "Using Mailgun with domain:",
+        MAILGUN_DOMAIN,
+        "-> sending to",
+        CONTACT_RECEIVER
+      );
       const FormData = require("form-data");
       const Mailgun = require("mailgun.js");
       const mailgun = new Mailgun(FormData);
