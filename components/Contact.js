@@ -104,7 +104,7 @@ export default function Contact() {
       };
       // send and reset on success
       setSubmitting(true);
-      toast.loading("Sending message...");
+      const toastId = toast.loading("Sending message...");
       fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -116,13 +116,17 @@ export default function Contact() {
         })
         .then(() => {
           confetti({ particleCount: 120, spread: 60, origin: { y: 0.6 } });
-          toast.success("Message sent! We'll be in touch soon.");
+          toast.success("Message sent! We'll be in touch soon.", {
+            id: toastId,
+          });
           setProject((p) => ({ ...p, fullName: "", email: "" }));
           setGeneralMessage("");
         })
         .catch((err) => {
           console.error(err);
-          toast.error("Failed to send message. Try again later.");
+          toast.error("Failed to send message. Try again later.", {
+            id: toastId,
+          });
         })
         .finally(() => setSubmitting(false));
       return;
