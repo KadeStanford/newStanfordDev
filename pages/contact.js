@@ -45,7 +45,7 @@ function Contact() {
       <main className="container mx-auto py-12">
         <h1 className="text-4xl font-bold text-white mb-2">Free Estimate</h1>
         <p className="text-slate-400 mb-6">
-          No obligation. Tell us about your goals and we'll send a clear,
+          No obligation. Tell us about your goals and we will send a clear,
           friendly estimate.
         </p>
         <form
@@ -164,7 +164,7 @@ function Contact() {
                 <option value=">20000">&gt;$20,000</option>
               </select>
               <p className="text-sm text-slate-400 mt-2">
-                If you're unsure, choose 'Not sure' — we'll suggest options that
+                If you are unsure, choose &apos;Not sure&apos; — we will suggest options that
                 fit your goals and budget.
               </p>
             </div>

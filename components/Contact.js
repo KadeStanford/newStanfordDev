@@ -747,7 +747,7 @@ export default function Contact() {
                       Review your request
                     </h3>
                     <p className="text-slate-400 text-sm mb-4">
-                      We'll review this and reach out — you can edit before
+                      We will review this and reach out — you can edit before
                       sending.
                     </p>
                     <div className="grid grid-cols-1 gap-3 text-sm text-slate-200 border-t border-slate-800 pt-4">

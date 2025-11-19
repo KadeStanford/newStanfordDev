@@ -21,16 +21,14 @@ const StaticCode = () => (
     className="space-y-0 text-white font-mono text-sm"
     style={{ lineHeight: "1.5em" }}
   >
-    <span style={{ color: styleMap.comment }}>
-      // 1. Define Client Goals and Branding
-    </span>
+    <span style={{ color: styleMap.comment }}>{'// 1. Define Client Goals and Branding'}</span>
     <br />
     <span style={{ color: styleMap.keyword }}>const</span>{" "}
     <span style={{ color: styleMap.variable }}>BUSINESS_GOALS</span>{" "}
     <span style={{ color: styleMap.variable }}>=</span> [
-    <span style={{ color: styleMap.string }}>'Conversion'</span>,
-    <span style={{ color: styleMap.string }}>'Scalability'</span>,
-    <span style={{ color: styleMap.string }}>'Performance'</span>
+    <span style={{ color: styleMap.string }}>{"'Conversion'"}</span>,
+    <span style={{ color: styleMap.string }}>{"'Scalability'"}</span>,
+    <span style={{ color: styleMap.string }}>{"'Performance'"}</span>
     ];
     <br />
     <span style={{ color: styleMap.keyword }}>const</span>{" "}
@@ -39,16 +37,14 @@ const StaticCode = () => (
     <span style={{ color: styleMap.literal }}>102</span>;
     <br />
     <br />
-    <span style={{ color: styleMap.comment }}>
-      // 2. Execute Development Pipeline
-    </span>
+    <span style={{ color: styleMap.comment }}>{'// 2. Execute Development Pipeline'}</span>
     <br />
     <span style={{ color: styleMap.keyword }}>async function</span>{" "}
     <span style={{ color: styleMap.variable }}>buildSite</span>(
     <span style={{ color: styleMap.variable }}>goals</span>) {"{"}
     <br />
     <span className="pl-4">
-      <span style={{ color: styleMap.variable }}>design_system</span> ={" "}
+      <span style={{ color: styleMap.variable }}>design_system</span> ={' '}
       <span style={{ color: styleMap.variable }}>createDesignSystem</span>(
       <span style={{ color: styleMap.variable }}>brand_id</span>);
     </span>
@@ -56,13 +52,13 @@ const StaticCode = () => (
     <span className="pl-4">
       <span style={{ color: styleMap.keyword }}>if</span> (
       <span style={{ color: styleMap.variable }}>design_system</span>.
-      <span style={{ color: styleMap.variable }}>ready</span>) {"{"}
+      <span style={{ color: styleMap.variable }}>ready</span>) {'{'}
     </span>
     <br />
     <span className="pl-8">
-      <span style={{ color: styleMap.keyword }}>await</span>{" "}
+      <span style={{ color: styleMap.keyword }}>await</span>{' '}
       <span style={{ color: styleMap.variable }}>deploy</span>(
-      <span style={{ color: styleMap.string }}>'Next.js'</span>);
+      <span style={{ color: styleMap.string }}>{"'Next.js'"}</span>);
     </span>
     <br />
     <span className="pl-4">{"}"}</span>
@@ -74,9 +70,7 @@ const StaticCode = () => (
     {"}"}
     <br />
     <br />
-    <span style={{ color: styleMap.comment }}>
-      // Launch Sequence Initialized
-    </span>
+    <span style={{ color: styleMap.comment }}>{'// Launch Sequence Initialized'}</span>
   </div>
 );
 
