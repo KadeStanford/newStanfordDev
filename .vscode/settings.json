@@ -1,0 +1,16 @@
+{
+  // Treat plain .css files as PostCSS so Tailwind directives are recognized
+  "files.associations": {
+    "*.css": "postcss"
+  },
+
+  // Ignore unknown at-rules coming from Tailwind directives
+  "css.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+
+  // Optional: you can enable this if you have Tailwind IntelliSense installed
+  "editor.quickSuggestions": {
+    "strings": true
+  }
+}

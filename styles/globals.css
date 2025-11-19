@@ -1,21 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  /* Define Custom Animations */
+  --animate-gradient: gradient 8s linear infinite;
+  --animate-fadeIn: fadeIn 0.5s ease-out forwards;
+  --animate-meteor: meteor 5s linear infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+
+  /* Define Keyframes */
+  @keyframes gradient {
+    0%,
+    100% {
+      background-size: 200% 200%;
+      background-position: left center;
+    }
+    50% {
+      background-size: 200% 200%;
+      background-position: right center;
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes meteor {
+    0% {
+      transform: rotate(215deg) translateX(0);
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+    }
+    100% {
+      transform: rotate(215deg) translateX(-500px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes shimmer {
+    from {
+      backgroundposition: 0 0;
+    }
+    to {
+      backgroundposition: -200% 0;
+    }
+  }
+
+  /* Define Font Family */
+  --font-sans: "Inter", sans-serif;
+}
+
+/* Base Layer Overrides */
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 2, 6, 23;
+  --background-end-rgb: 2, 6, 23;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+  overflow-x: hidden;
+}
+
 html {
   scroll-behavior: smooth;
-  background-color: rgb(5, 44, 117);
-}
-
-::placeholder {
-  /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: rgb(255, 255, 255);
-  opacity: 1; /* Firefox */
-  text-align: center;
-}
-
-:-ms-input-placeholder {
-  /* Internet Explorer 10-11 */
-  color: rgb(255, 255, 255);
-}
-
-::-ms-input-placeholder {
-  /* Microsoft Edge */
-  color: rgb(255, 255, 255);
 }

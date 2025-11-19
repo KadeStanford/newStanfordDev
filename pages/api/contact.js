@@ -1,6 +1,7 @@
 export default function handler(req, res) {
   if (req.method === "POST") {
-    const { name, email, message } = req.body;
+    const { name, email, company, projectType, description, budget } =
+      req.body;
 
     // Replace the code below with your email sending logic using your preferred email service or library
     // Example using Nodemailer:
@@ -19,12 +20,22 @@ export default function handler(req, res) {
           },
         });
 
+        const html = `
+          <h1>New Website Estimate Request</h1>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Company:</strong> ${company}</p>
+          <p><strong>Project Type:</strong> ${projectType}</p>
+          <p><strong>Description:</strong> ${description}</p>
+          <p><strong>Budget:</strong> ${budget}</p>
+        `;
+
         // Send the email
         await transporter.sendMail({
           from: email,
           to: "stanforddevcontact@gmail.com", // Replace with your desired recipient email address
-          subject: "New Message from Contact Form",
-          text: `${name} (${email}) sent a message:\n\n${message}`,
+          subject: "New Website Estimate Request",
+          html: html,
         });
 
         console.log("Message sent successfully");
