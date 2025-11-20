@@ -124,7 +124,7 @@ export default function Work() {
   const projects = [
     {
       title: "Liberty House Specialties",
-      desc: "A fully responsive commercial website featuring a modern catalog and custom contact forms.",
+      desc: "A fully responsive website featuring a menu display and more.",
       tags: ["Next.js", "Tailwind", "Commercial"],
       color: "blue",
       image: "libertyHouse.png",
@@ -133,11 +133,11 @@ export default function Work() {
     },
     {
       title: "Atlas IT",
-      desc: "A comprehensive IT solutions dashboard designed for efficient network monitoring and asset management.",
+      desc: "A single page website for a small IT repair business.",
       tags: ["React", "Dashboard", "Analytics"],
       color: "purple",
       image: "AtlasIT.png",
-      demoLink: null,
+      demoLink: "https://atlas-it.vercel.app/",
       repoLink: "https://github.com/KadeStanford/atlas_it",
     },
     {

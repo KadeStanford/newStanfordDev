@@ -133,7 +133,10 @@ export default function Hero() {
                   wrapper="span"
                   speed={50}
                   repeat={Infinity}
+                  cursor={false} // use custom cursor for better visibility and style control
                 />
+                {/* Custom thin blinking cursor — follows typed text */}
+                <span className="hero-cursor" aria-hidden="true" />
               </span>
             </h1>
           </motion.div>

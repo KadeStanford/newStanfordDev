@@ -18,3 +18,34 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+/* Custom hero cursor for TypeAnimation (thin, blinking, responsive) */
+@keyframes hero-cursor-blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+#hero .hero-cursor {
+  display: inline-block;
+  width: 3px; /* slightly wider on desktop for visibility */
+  height: 1em;
+  /* Use site foreground color instead of currentColor (text is often transparent due to bg-clip:text) */
+  background: rgb(var(--foreground-rgb));
+  margin-left: 0.12rem; /* small gap so it sits close to text */
+  vertical-align: middle;
+  animation: hero-cursor-blink 1s steps(2, start) infinite;
+}
+
+/* Make cursor thinner on small screens for better proportionality */
+@media (max-width: 640px) {
+  #hero .hero-cursor {
+    width: 1px;
+  }
+}
