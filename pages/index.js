@@ -4,12 +4,13 @@ import Lenis from "lenis";
 import { Toaster } from "sonner";
 
 import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
+import Hero from "../components/HeroAB";
 import About from "../components/About";
 import Services from "../components/Services";
 import Work from "../components/Work";
 import WhyUs from "../components/WhyUs";
 import Contact from "../components/Contact";
+import LiveAnalytics from "../components/LiveAnalytics";
 import Footer from "../components/Footer";
 import StarBackground from "../components/StarBackground";
 import ScrollReveal from "../components/ScrollReveal";
@@ -84,6 +85,10 @@ export default function Home() {
         {/* Added Globe Section here */}
         <ScrollReveal>
           <GlobeSection />
+        </ScrollReveal>
+
+        <ScrollReveal>
+          <LiveAnalytics />
         </ScrollReveal>
 
         <ScrollReveal>

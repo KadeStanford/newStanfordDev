@@ -1,7 +1,6 @@
 // Enhanced contact API: validation (zod), simple IP rate limiter, reCAPTCHA verification,
 // and Handlebars email templating.
 const { z } = require("zod");
-const fetch = require("node-fetch");
 const { renderContactEmail } = require("../../lib/emailTemplates");
 
 // Simple in-memory rate limiter (per-IP). For production use Redis or other durable store.
@@ -156,14 +155,12 @@ export default async function handler(req, res) {
     } catch (err) {
       console.error("Mailgun error:", err && err.message ? err.message : err);
       const debug = process.env.DEBUG_EMAIL === "true";
-      return res
-        .status(500)
-        .json({
-          message: "Failed to send message (Mailgun)",
-          ...(debug
-            ? { error: err && err.message ? String(err.message) : String(err) }
-            : {}),
-        });
+      return res.status(500).json({
+        message: "Failed to send message (Mailgun)",
+        ...(debug
+          ? { error: err && err.message ? String(err.message) : String(err) }
+          : {}),
+      });
     }
   }
 
@@ -172,12 +169,10 @@ export default async function handler(req, res) {
     console.error(
       "Missing Mailgun and SMTP configuration in environment variables."
     );
-    return res
-      .status(500)
-      .json({
-        message:
-          "Email server is not configured. Configure MAILGUN_API_KEY & MAILGUN_DOMAIN or SMTP_* vars.",
-      });
+    return res.status(500).json({
+      message:
+        "Email server is not configured. Configure MAILGUN_API_KEY & MAILGUN_DOMAIN or SMTP_* vars.",
+    });
   }
 
   try {
@@ -206,13 +201,11 @@ export default async function handler(req, res) {
       err && err.message ? err.message : err
     );
     const debug = process.env.DEBUG_EMAIL === "true";
-    return res
-      .status(500)
-      .json({
-        message: "Failed to send message (SMTP)",
-        ...(debug
-          ? { error: err && err.message ? String(err.message) : String(err) }
-          : {}),
-      });
+    return res.status(500).json({
+      message: "Failed to send message (SMTP)",
+      ...(debug
+        ? { error: err && err.message ? String(err.message) : String(err) }
+        : {}),
+    });
   }
 }
