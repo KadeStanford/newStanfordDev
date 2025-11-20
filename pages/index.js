@@ -13,6 +13,7 @@ import Contact from "../components/Contact";
 import Footer from "../components/Footer";
 import StarBackground from "../components/StarBackground";
 import ScrollReveal from "../components/ScrollReveal";
+import GlobeSection from "../components/GlobeSection"; // Import GlobeSection
 
 export default function Home() {
   // Initialize Lenis Smooth Scroll
@@ -59,7 +60,6 @@ export default function Home() {
 
       <Navbar />
 
-      {/* UPDATED: Removed 'px-6' so Hero can be full width */}
       <main className="relative z-10">
         {/* Hero handles its own internal animations */}
         <Hero />
@@ -79,6 +79,11 @@ export default function Home() {
 
         <ScrollReveal>
           <WhyUs />
+        </ScrollReveal>
+
+        {/* Added Globe Section here */}
+        <ScrollReveal>
+          <GlobeSection />
         </ScrollReveal>
 
         <ScrollReveal>

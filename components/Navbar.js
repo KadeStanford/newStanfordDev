@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, Terminal, ChevronRight } from "lucide-react";
+import { Menu, X, Terminal, ChevronRight, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import Magnetic from "./Magnetic"; // Import Magnetic
+import Magnetic from "./Magnetic";
 
-// ... (keep imports and state logic same as before) ...
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -16,6 +15,7 @@ export default function Navbar() {
     restDelta: 0.001,
   });
 
+  // Handle Scroll for background blurring
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -24,6 +24,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Handle Active Section Detection
   useEffect(() => {
     const sections = document.querySelectorAll("section");
     const observer = new IntersectionObserver(
@@ -40,11 +41,40 @@ export default function Navbar() {
     };
   }, []);
 
+  // Lock Body Scroll when Mobile Menu is Open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMenuOpen]);
+
   const scrollToSection = (id) => {
     setIsMenuOpen(false);
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      // Small timeout to allow menu to close smoothly before scrolling
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: "smooth" });
+
+        // Auto-select "Free Estimate" logic
+        if (id === "contact") {
+          // Dispatch custom event to notify Contact component
+          window.dispatchEvent(new Event("openEstimateForm"));
+
+          // Auto-focus logic
+          setTimeout(() => {
+            const input = element.querySelector("input, textarea, select");
+            if (input) {
+              input.focus({ preventScroll: true });
+            }
+          }, 800);
+        }
+      }, 300);
     }
   };
 
@@ -54,6 +84,46 @@ export default function Navbar() {
     { name: "Work", id: "work" },
     { name: "Why SDS", id: "why-us" },
   ];
+
+  // --- OPTIMIZED FLUID ANIMATIONS ---
+  const fluidEase = [0.22, 1, 0.36, 1];
+
+  const menuVariants = {
+    closed: {
+      opacity: 0,
+      y: -20,
+      transition: {
+        duration: 0.4,
+        ease: "easeInOut",
+        when: "afterChildren",
+        staggerChildren: 0.05,
+        staggerDirection: -1,
+      },
+    },
+    open: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: fluidEase,
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
+
+  const linkVariants = {
+    closed: {
+      opacity: 0,
+      x: -20,
+      transition: { duration: 0.2, ease: "easeIn" },
+    },
+    open: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.5, ease: fluidEase },
+    },
+  };
 
   return (
     <>
@@ -66,8 +136,9 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-16">
+            {/* Logo */}
             <div
-              className="flex items-center gap-3 cursor-pointer group"
+              className="flex items-center gap-3 cursor-pointer group z-50 relative"
               onClick={() => scrollToSection("hero")}
             >
               <div className="relative w-10 h-10 flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl text-white shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300">
@@ -79,6 +150,7 @@ export default function Navbar() {
               </span>
             </div>
 
+            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-1 bg-slate-900/50 p-1.5 rounded-full border border-slate-800/50 backdrop-blur-md shadow-xl relative">
               {navLinks.map((link) => {
                 const isActive = activeSection === link.id;
@@ -131,65 +203,107 @@ export default function Navbar() {
                       : "bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/20"
                   }`}
                 >
-                  Start Project
+                  Get Estimate
                 </button>
               </Magnetic>
             </div>
 
+            {/* Mobile Menu Button (Visible on top of overlay) */}
             <button
-              className="md:hidden p-2 text-slate-300 hover:text-white bg-slate-800/50 rounded-lg border border-slate-700 transition-colors hover:bg-slate-700"
+              className="md:hidden relative z-50 p-2 text-slate-300 hover:text-white bg-slate-800/50 rounded-lg border border-slate-700 transition-colors hover:bg-slate-700 active:scale-95"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <AnimatePresence mode="wait">
+                {isMenuOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <X size={24} />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Menu size={24} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </button>
           </div>
         </div>
+
+        {/* Scroll Progress Bar */}
         <motion.div
           className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500 origin-left"
           style={{ scaleX }}
         />
       </nav>
 
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-x-0 top-[80px] z-40 p-4 md:hidden"
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={menuVariants}
+            className="fixed inset-0 z-40 bg-slate-950/95 backdrop-blur-xl md:hidden flex flex-col justify-center px-6"
           >
-            <div className="bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-2xl shadow-2xl p-4 flex flex-col gap-2">
+            {/* Background decorative blobs */}
+            <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-blue-600/20 rounded-full blur-[60px] pointer-events-none" />
+            <div className="absolute bottom-[-10%] left-[-10%] w-64 h-64 bg-purple-600/20 rounded-full blur-[60px] pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col gap-6">
               {navLinks.map((link) => {
                 const isActive = activeSection === link.id;
                 return (
-                  <button
+                  <motion.button
                     key={link.name}
+                    variants={linkVariants}
                     onClick={() => scrollToSection(link.id)}
-                    className={`w-full p-4 text-left rounded-xl transition-all flex justify-between items-center group ${
-                      isActive
-                        ? "bg-slate-800/80 text-white border border-slate-700"
-                        : "text-slate-300 hover:text-white hover:bg-slate-800"
+                    className={`text-4xl font-bold text-left flex items-center gap-4 group ${
+                      isActive ? "text-white" : "text-slate-500"
                     }`}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    {link.name}
-                    <ChevronRight
-                      size={16}
-                      className={`transition-opacity ${
-                        isActive
-                          ? "opacity-100 text-blue-400"
-                          : "opacity-0 group-hover:opacity-100 text-slate-500"
+                    <span
+                      className={`transition-colors duration-300 ${
+                        isActive ? "text-white" : "group-hover:text-slate-300"
                       }`}
-                    />
-                  </button>
+                    >
+                      {link.name}
+                    </span>
+                    {isActive && (
+                      <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse" />
+                    )}
+                  </motion.button>
                 );
               })}
-              <div className="h-px bg-slate-800 my-2" />
-              <button
+
+              <motion.div
+                variants={linkVariants}
+                className="h-px bg-slate-800 w-full my-4"
+              />
+
+              <motion.button
+                variants={linkVariants}
                 onClick={() => scrollToSection("contact")}
-                className="w-full p-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-blue-500/20 flex justify-center items-center gap-2"
+                className="w-full p-6 bg-blue-600 text-white rounded-2xl font-bold text-xl shadow-xl shadow-blue-600/20 flex justify-between items-center group"
+                whileTap={{ scale: 0.95 }}
               >
-                Start a Project
-              </button>
+                Get Estimate
+                <div className="bg-white/20 p-2 rounded-full group-hover:bg-white/30 transition-colors">
+                  <ArrowRight size={24} />
+                </div>
+              </motion.button>
             </div>
           </motion.div>
         )}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MessageSquare,
   Briefcase,
@@ -25,6 +25,17 @@ export default function Contact() {
   const [contactMode, setContactMode] = useState("general");
   const [colorPalette, setColorPalette] = useState(["#3b82f6", "#1e293b"]);
   const [activeColor, setActiveColor] = useState("#8b5cf6");
+
+  // Listen for the custom event from Navbar to switch modes
+  useEffect(() => {
+    const handleEstimateRequest = () => {
+      setContactMode("project");
+    };
+
+    window.addEventListener("openEstimateForm", handleEstimateRequest);
+    return () =>
+      window.removeEventListener("openEstimateForm", handleEstimateRequest);
+  }, []);
 
   // Project form state
   const [project, setProject] = useState({
