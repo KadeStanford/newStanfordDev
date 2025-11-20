@@ -6,13 +6,13 @@ export default function HackerText({ text, className = "" }) {
   const [displayText, setDisplayText] = useState(text);
   const intervalRef = useRef(null);
 
-  const scramble = () => {
+  // Scramble logic is defined inline in the effect to avoid stale closure / lint warnings
+  useEffect(() => {
     let iteration = 0;
-
     clearInterval(intervalRef.current);
 
     intervalRef.current = setInterval(() => {
-      setDisplayText((prev) =>
+      setDisplayText(() =>
         text
           .split("")
           .map((letter, index) => {
@@ -30,11 +30,7 @@ export default function HackerText({ text, className = "" }) {
 
       iteration += 1 / 3;
     }, 30);
-  };
 
-  // Trigger on mount
-  useEffect(() => {
-    scramble();
     return () => clearInterval(intervalRef.current);
   }, [text]);
 
