@@ -263,127 +263,136 @@ export default function AdminDashboard() {
     }
   };
 
-    // Generate and download a nicely formatted invoice PDF.
-    // If a lightweight invoice summary is passed (from project.invoices),
-    // attempt to fetch the full invoice doc from `invoices` collection to include description and createdAt.
-    const downloadInvoicePdfAdmin = async (invSummary) => {
-      try {
-        let invoiceData = invSummary || {};
-        if (invSummary?.id) {
-          try {
-            const snap = await getDoc(firestoreDoc(db, "invoices", invSummary.id));
-            if (snap.exists()) invoiceData = { id: snap.id, ...snap.data() };
-          } catch (e) {
-            console.warn("Could not fetch full invoice doc, using summary", e);
-          }
-        }
-
-        const { blob, filename } = await generateInvoicePdf(invoiceData, COMPANY_INFO);
-        const url = URL.createObjectURL(blob);
+  // Generate and download a nicely formatted invoice PDF.
+  // If a lightweight invoice summary is passed (from project.invoices),
+  // attempt to fetch the full invoice doc from `invoices` collection to include description and createdAt.
+  const downloadInvoicePdfAdmin = async (invSummary) => {
+    try {
+      let invoiceData = invSummary || {};
+      if (invSummary?.id) {
         try {
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        } catch (e) {
-          window.open(url, "_blank");
-        } finally {
-          setTimeout(() => URL.revokeObjectURL(url), 1000 * 60);
-        }
-      } catch (err) {
-        console.error("Failed to generate invoice PDF:", err);
-        toast.error("Failed to generate PDF. Install 'jspdf' or allow popups to use print fallback.");
-      }
-    };
-
-    // Edit an existing invoice: load full invoice data into form
-    const editInvoice = async (invSummary) => {
-      try {
-        let inv = invSummary;
-        if (invSummary?.id) {
-          const snap = await getDoc(firestoreDoc(db, "invoices", invSummary.id));
-          if (snap.exists()) inv = { id: snap.id, ...snap.data() };
-        }
-        setEditingInvoice({ id: inv.id, status: inv.status });
-        setInvoiceNumber(inv.number || "");
-        setInvoiceDescription(inv.description || "");
-        setInvoiceDueDate(inv.dueDate || "");
-        setInvoiceItems(inv.items || [{ description: "", qty: 1, unitPrice: 0 }]);
-        // scroll to form or keep UI focused
-      } catch (err) {
-        console.error("Failed to load invoice for edit:", err);
-        toast.error("Failed to load invoice for editing.");
-      }
-    };
-
-    const deleteInvoice = async (invSummary) => {
-      if (!invSummary?.id) return;
-      if (!confirm("Delete this invoice? This cannot be undone.")) return;
-      try {
-        // delete invoice doc
-        const invRef = firestoreDoc(db, "invoices", invSummary.id);
-        await deleteDoc(invRef);
-
-        // remove from project summaries
-        const projRef = firestoreDoc(db, "projects", selectedProject.id);
-        const projSnap = await getDoc(projRef);
-        if (projSnap.exists()) {
-          const projData = projSnap.data();
-          const updated = (projData.invoices || []).filter((s) => s.id !== invSummary.id);
-          await updateDoc(projRef, { invoices: updated });
-        }
-
-        toast.success("Invoice deleted");
-        const updatedList = await fetchProjects();
-        const refreshed = updatedList.find((p) => p.id === selectedProject.id);
-        if (refreshed) {
-          setSelectedProject(refreshed);
-          setEditProject({ ...refreshed });
-        }
-      } catch (err) {
-        console.error("Failed to delete invoice:", err);
-        toast.error("Failed to delete invoice.");
-      }
-    };
-
-    const markInvoicePaid = async (invSummary) => {
-      if (!invSummary?.id) return;
-      try {
-        // Fetch current invoice status so we can toggle
-        const invRef = firestoreDoc(db, "invoices", invSummary.id);
-        const invSnap = await getDoc(invRef);
-        if (!invSnap.exists()) return;
-        const currentStatus = invSnap.data()?.status || "Unpaid";
-        const newStatus = currentStatus === "Paid" ? "Unpaid" : "Paid";
-
-        // Update invoice doc with toggled status
-        await updateDoc(invRef, { status: newStatus });
-
-        // update project summary entry to reflect new status
-        const projRef = firestoreDoc(db, "projects", selectedProject.id);
-        const projSnap = await getDoc(projRef);
-        if (projSnap.exists()) {
-          const projData = projSnap.data();
-          const updatedSummaries = (projData.invoices || []).map((s) =>
-            s.id === invSummary.id ? { ...s, status: newStatus } : s
+          const snap = await getDoc(
+            firestoreDoc(db, "invoices", invSummary.id)
           );
-          await updateDoc(projRef, { invoices: updatedSummaries });
+          if (snap.exists()) invoiceData = { id: snap.id, ...snap.data() };
+        } catch (e) {
+          console.warn("Could not fetch full invoice doc, using summary", e);
         }
-
-        toast.success(`Invoice marked ${newStatus.toLowerCase()}`);
-        const updatedList = await fetchProjects();
-        const refreshed = updatedList.find((p) => p.id === selectedProject.id);
-        if (refreshed) {
-          setSelectedProject(refreshed);
-          setEditProject({ ...refreshed });
-        }
-      } catch (err) {
-        console.error("Failed to toggle invoice status:", err);
-        toast.error("Failed to update invoice status.");
       }
-    };
+
+      const { blob, filename } = await generateInvoicePdf(
+        invoiceData,
+        COMPANY_INFO
+      );
+      const url = URL.createObjectURL(blob);
+      try {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (e) {
+        window.open(url, "_blank");
+      } finally {
+        setTimeout(() => URL.revokeObjectURL(url), 1000 * 60);
+      }
+    } catch (err) {
+      console.error("Failed to generate invoice PDF:", err);
+      toast.error(
+        "Failed to generate PDF. Install 'jspdf' or allow popups to use print fallback."
+      );
+    }
+  };
+
+  // Edit an existing invoice: load full invoice data into form
+  const editInvoice = async (invSummary) => {
+    try {
+      let inv = invSummary;
+      if (invSummary?.id) {
+        const snap = await getDoc(firestoreDoc(db, "invoices", invSummary.id));
+        if (snap.exists()) inv = { id: snap.id, ...snap.data() };
+      }
+      setEditingInvoice({ id: inv.id, status: inv.status });
+      setInvoiceNumber(inv.number || "");
+      setInvoiceDescription(inv.description || "");
+      setInvoiceDueDate(inv.dueDate || "");
+      setInvoiceItems(inv.items || [{ description: "", qty: 1, unitPrice: 0 }]);
+      // scroll to form or keep UI focused
+    } catch (err) {
+      console.error("Failed to load invoice for edit:", err);
+      toast.error("Failed to load invoice for editing.");
+    }
+  };
+
+  const deleteInvoice = async (invSummary) => {
+    if (!invSummary?.id) return;
+    if (!confirm("Delete this invoice? This cannot be undone.")) return;
+    try {
+      // delete invoice doc
+      const invRef = firestoreDoc(db, "invoices", invSummary.id);
+      await deleteDoc(invRef);
+
+      // remove from project summaries
+      const projRef = firestoreDoc(db, "projects", selectedProject.id);
+      const projSnap = await getDoc(projRef);
+      if (projSnap.exists()) {
+        const projData = projSnap.data();
+        const updated = (projData.invoices || []).filter(
+          (s) => s.id !== invSummary.id
+        );
+        await updateDoc(projRef, { invoices: updated });
+      }
+
+      toast.success("Invoice deleted");
+      const updatedList = await fetchProjects();
+      const refreshed = updatedList.find((p) => p.id === selectedProject.id);
+      if (refreshed) {
+        setSelectedProject(refreshed);
+        setEditProject({ ...refreshed });
+      }
+    } catch (err) {
+      console.error("Failed to delete invoice:", err);
+      toast.error("Failed to delete invoice.");
+    }
+  };
+
+  const markInvoicePaid = async (invSummary) => {
+    if (!invSummary?.id) return;
+    try {
+      // Fetch current invoice status so we can toggle
+      const invRef = firestoreDoc(db, "invoices", invSummary.id);
+      const invSnap = await getDoc(invRef);
+      if (!invSnap.exists()) return;
+      const currentStatus = invSnap.data()?.status || "Unpaid";
+      const newStatus = currentStatus === "Paid" ? "Unpaid" : "Paid";
+
+      // Update invoice doc with toggled status
+      await updateDoc(invRef, { status: newStatus });
+
+      // update project summary entry to reflect new status
+      const projRef = firestoreDoc(db, "projects", selectedProject.id);
+      const projSnap = await getDoc(projRef);
+      if (projSnap.exists()) {
+        const projData = projSnap.data();
+        const updatedSummaries = (projData.invoices || []).map((s) =>
+          s.id === invSummary.id ? { ...s, status: newStatus } : s
+        );
+        await updateDoc(projRef, { invoices: updatedSummaries });
+      }
+
+      toast.success(`Invoice marked ${newStatus.toLowerCase()}`);
+      const updatedList = await fetchProjects();
+      const refreshed = updatedList.find((p) => p.id === selectedProject.id);
+      if (refreshed) {
+        setSelectedProject(refreshed);
+        setEditProject({ ...refreshed });
+      }
+    } catch (err) {
+      console.error("Failed to toggle invoice status:", err);
+      toast.error("Failed to update invoice status.");
+    }
+  };
 
   const handleAddUpdate = async () => {
     if (!selectedProject || !newUpdateText.trim()) return;
@@ -434,7 +443,11 @@ export default function AdminDashboard() {
       const updates = projData.updates || [];
       const updated = updates.map((item, idx) =>
         idx === editingUpdateIndex
-          ? { ...item, title: editingUpdateText.trim(), date: new Date().toLocaleString() }
+          ? {
+              ...item,
+              title: editingUpdateText.trim(),
+              date: new Date().toLocaleString(),
+            }
           : item
       );
       await updateDoc(ref, { updates: updated });
@@ -585,20 +598,28 @@ export default function AdminDashboard() {
       {/* Mail Console Slide-over */}
       {showMailConsole && (
         <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowMailConsole(false)} />
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowMailConsole(false)}
+          />
           <div className="absolute right-0 top-0 h-full w-full md:w-1/2 lg:w-1/3 p-6">
             <div className="h-full bg-slate-900 border border-slate-800 rounded-l-2xl p-6 overflow-auto">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-semibold">Mail Console</h3>
-                <button onClick={() => setShowMailConsole(false)} className="px-3 py-2 bg-slate-800 rounded">Close</button>
+                <button
+                  onClick={() => setShowMailConsole(false)}
+                  className="px-3 py-2 bg-slate-800 rounded"
+                >
+                  Close
+                </button>
               </div>
               <AdminMailConsole />
             </div>
           </div>
         </div>
       )}
-        {/* LEFT: User List */}
-        <main className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* LEFT: User List */}
+      <main className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 bg-slate-900/50 border border-slate-800 rounded-2xl p-6 h-fit">
           <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
             <Users size={20} className="text-blue-500" /> Client Database
@@ -627,7 +648,9 @@ export default function AdminDashboard() {
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-500 truncate mt-1">UID: {u.id}</p>
+                <p className="text-xs text-slate-500 truncate mt-1">
+                  UID: {u.id}
+                </p>
               </div>
             ))}
             {/* Projects List */}
@@ -811,7 +834,11 @@ export default function AdminDashboard() {
                     </label>
                     <input
                       type="date"
-                      value={editProject?.dueDate ? isoToDateInput(editProject.dueDate) : ""}
+                      value={
+                        editProject?.dueDate
+                          ? isoToDateInput(editProject.dueDate)
+                          : ""
+                      }
                       onChange={(e) =>
                         setEditProject({
                           ...editProject,
@@ -869,30 +896,63 @@ export default function AdminDashboard() {
                       const originalIndex = updates.length - 1 - i;
                       const isEditing = editingUpdateIndex === originalIndex;
                       return (
-                        <div key={originalIndex} className="p-3 bg-slate-950/30 rounded-lg border border-slate-800">
+                        <div
+                          key={originalIndex}
+                          className="p-3 bg-slate-950/30 rounded-lg border border-slate-800"
+                        >
                           {isEditing ? (
                             <div className="flex flex-col gap-2">
                               <textarea
                                 value={editingUpdateText}
-                                onChange={(e) => setEditingUpdateText(e.target.value)}
+                                onChange={(e) =>
+                                  setEditingUpdateText(e.target.value)
+                                }
                                 className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
                                 rows={3}
                               />
                               <div className="flex gap-2 justify-end">
-                                <button onClick={cancelEditUpdate} className="px-3 py-1 bg-slate-800 rounded text-sm text-slate-300">Cancel</button>
-                                <button onClick={saveEditedUpdate} className="px-3 py-1 bg-blue-600 rounded text-sm text-white">Save</button>
+                                <button
+                                  onClick={cancelEditUpdate}
+                                  className="px-3 py-1 bg-slate-800 rounded text-sm text-slate-300"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  onClick={saveEditedUpdate}
+                                  className="px-3 py-1 bg-blue-600 rounded text-sm text-white"
+                                >
+                                  Save
+                                </button>
                               </div>
                             </div>
                           ) : (
                             <div className="flex justify-between items-center">
                               <div>
-                                <p className="text-sm text-white font-medium">{u.title}</p>
-                                <p className="text-xs text-slate-400">{u.date}</p>
+                                <p className="text-sm text-white font-medium">
+                                  {u.title}
+                                </p>
+                                <p className="text-xs text-slate-400">
+                                  {u.date}
+                                </p>
                               </div>
                               <div className="flex items-center gap-2">
-                                <span className="text-xs text-slate-400 mr-3">{u.type}</span>
-                                <button onClick={() => startEditUpdate(originalIndex)} className="px-3 py-1 bg-slate-800 rounded text-sm text-yellow-400 hover:text-white">Edit</button>
-                                <button onClick={() => deleteUpdateAtIndex(originalIndex)} className="px-3 py-1 bg-red-800 rounded text-sm text-red-300 hover:text-white">Delete</button>
+                                <span className="text-xs text-slate-400 mr-3">
+                                  {u.type}
+                                </span>
+                                <button
+                                  onClick={() => startEditUpdate(originalIndex)}
+                                  className="px-3 py-1 bg-slate-800 rounded text-sm text-yellow-400 hover:text-white"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    deleteUpdateAtIndex(originalIndex)
+                                  }
+                                  className="px-3 py-1 bg-red-800 rounded text-sm text-red-300 hover:text-white"
+                                >
+                                  Delete
+                                </button>
                               </div>
                             </div>
                           )}
@@ -920,8 +980,14 @@ export default function AdminDashboard() {
 
                     <input
                       type="date"
-                      value={invoiceDueDate ? isoToDateInput(invoiceDueDate) : ""}
-                      onChange={(e) => setInvoiceDueDate(dateInputToISOStringLocal(e.target.value))}
+                      value={
+                        invoiceDueDate ? isoToDateInput(invoiceDueDate) : ""
+                      }
+                      onChange={(e) =>
+                        setInvoiceDueDate(
+                          dateInputToISOStringLocal(e.target.value)
+                        )
+                      }
                       className="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
                     />
 
@@ -929,7 +995,9 @@ export default function AdminDashboard() {
                       <div className="flex-1">
                         <input
                           value={invoiceDescription}
-                          onChange={(e) => setInvoiceDescription(e.target.value)}
+                          onChange={(e) =>
+                            setInvoiceDescription(e.target.value)
+                          }
                           placeholder="Description (optional)"
                           className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
                         />
@@ -940,7 +1008,10 @@ export default function AdminDashboard() {
                   {/* Items editor */}
                   <div className="mt-3 space-y-2">
                     {invoiceItems.map((it, i) => (
-                      <div key={i} className="grid grid-cols-12 gap-2 items-center">
+                      <div
+                        key={i}
+                        className="grid grid-cols-12 gap-2 items-center"
+                      >
                         <input
                           className="col-span-7 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
                           placeholder="Item description"
@@ -977,8 +1048,14 @@ export default function AdminDashboard() {
                           <button
                             type="button"
                             onClick={() => {
-                              const next = invoiceItems.filter((_, idx) => idx !== i);
-                              setInvoiceItems(next.length ? next : [{ description: "", qty: 1, unitPrice: 0 }]);
+                              const next = invoiceItems.filter(
+                                (_, idx) => idx !== i
+                              );
+                              setInvoiceItems(
+                                next.length
+                                  ? next
+                                  : [{ description: "", qty: 1, unitPrice: 0 }]
+                              );
                             }}
                             className="px-2 py-1 bg-red-700/20 rounded text-sm text-red-300"
                           >
@@ -991,7 +1068,12 @@ export default function AdminDashboard() {
                     <div>
                       <button
                         type="button"
-                        onClick={() => setInvoiceItems([...invoiceItems, { description: "", qty: 1, unitPrice: 0 }])}
+                        onClick={() =>
+                          setInvoiceItems([
+                            ...invoiceItems,
+                            { description: "", qty: 1, unitPrice: 0 },
+                          ])
+                        }
                         className="px-3 py-2 bg-slate-800 rounded text-sm text-slate-200"
                       >
                         + Add Item
@@ -1004,12 +1086,25 @@ export default function AdminDashboard() {
                     <div>
                       <p className="text-sm text-slate-400">Total</p>
                       <p className="text-xl font-bold text-white">
-                        ${invoiceItems.reduce((s, it) => s + Number(it.qty || 0) * Number(it.unitPrice || 0), 0).toLocaleString()}
+                        $
+                        {invoiceItems
+                          .reduce(
+                            (s, it) =>
+                              s +
+                              Number(it.qty || 0) * Number(it.unitPrice || 0),
+                            0
+                          )
+                          .toLocaleString()}
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <button type="submit" className="px-4 py-3 bg-green-600 text-white rounded-lg">
-                        {editingInvoice ? "Save Invoice" : "Create & Link Invoice"}
+                      <button
+                        type="submit"
+                        className="px-4 py-3 bg-green-600 text-white rounded-lg"
+                      >
+                        {editingInvoice
+                          ? "Save Invoice"
+                          : "Create & Link Invoice"}
                       </button>
                       {editingInvoice && (
                         <button
@@ -1019,7 +1114,9 @@ export default function AdminDashboard() {
                             setInvoiceNumber("");
                             setInvoiceDescription("");
                             setInvoiceDueDate("");
-                            setInvoiceItems([{ description: "", qty: 1, unitPrice: 0 }]);
+                            setInvoiceItems([
+                              { description: "", qty: 1, unitPrice: 0 },
+                            ]);
                           }}
                           className="px-4 py-3 bg-slate-800 text-white rounded-lg"
                         >
@@ -1035,13 +1132,23 @@ export default function AdminDashboard() {
                     .slice()
                     .reverse()
                     .map((inv, idx) => (
-                      <div key={inv.id || idx} className="p-3 bg-slate-950/20 rounded-lg border border-slate-800 flex justify-between items-center">
+                      <div
+                        key={inv.id || idx}
+                        className="p-3 bg-slate-950/20 rounded-lg border border-slate-800 flex justify-between items-center"
+                      >
                         <div>
-                          <p className="text-sm text-white font-medium">#{inv.number} — ${inv.amount?.toLocaleString?.() ?? inv.amount}</p>
-                          <p className="text-xs text-slate-400">Due: {inv.dueDate || "—"}</p>
+                          <p className="text-sm text-white font-medium">
+                            #{inv.number} — $
+                            {inv.amount?.toLocaleString?.() ?? inv.amount}
+                          </p>
+                          <p className="text-xs text-slate-400">
+                            Due: {inv.dueDate || "—"}
+                          </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="text-xs text-slate-400 mr-2">{inv.status || "Unpaid"}</div>
+                          <div className="text-xs text-slate-400 mr-2">
+                            {inv.status || "Unpaid"}
+                          </div>
                           <button
                             onClick={() => downloadInvoicePdfAdmin(inv)}
                             className="px-3 py-1 bg-slate-800 rounded text-sm text-blue-400 hover:text-white"
@@ -1056,27 +1163,38 @@ export default function AdminDashboard() {
                           </button>
                           <button
                             onClick={() => markInvoicePaid(inv)}
-                            className={`px-3 py-1 bg-slate-800 rounded text-sm ${inv.status === 'Paid' ? 'text-yellow-400' : 'text-green-400'} hover:text-white`}
+                            className={`px-3 py-1 bg-slate-800 rounded text-sm ${
+                              inv.status === "Paid"
+                                ? "text-yellow-400"
+                                : "text-green-400"
+                            } hover:text-white`}
                           >
-                            {inv.status === 'Paid' ? 'Mark Unpaid' : 'Mark Paid'}
+                            {inv.status === "Paid"
+                              ? "Mark Unpaid"
+                              : "Mark Paid"}
                           </button>
                           <button
                             onClick={async () => {
                               try {
-                                const res = await fetch('/api/mail/reminder', {
-                                  method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
+                                const res = await fetch("/api/mail/reminder", {
+                                  method: "POST",
+                                  headers: {
+                                    "Content-Type": "application/json",
+                                  },
                                   body: JSON.stringify({ invoiceId: inv.id }),
                                 });
                                 const data = await res.json();
                                 if (data.ok) {
-                                  toast.success('Reminder sent');
+                                  toast.success("Reminder sent");
                                 } else {
-                                  toast.error('Reminder failed: ' + (data.error || 'unknown'));
+                                  toast.error(
+                                    "Reminder failed: " +
+                                      (data.error || "unknown")
+                                  );
                                 }
                               } catch (err) {
-                                console.error('Reminder send failed', err);
-                                toast.error('Failed to send reminder');
+                                console.error("Reminder send failed", err);
+                                toast.error("Failed to send reminder");
                               }
                             }}
                             className="px-3 py-1 bg-slate-800 rounded text-sm text-amber-400 hover:text-white"
@@ -1152,7 +1270,9 @@ export default function AdminDashboard() {
                       required
                       type="date"
                       value={dueDate ? isoToDateInput(dueDate) : ""}
-                      onChange={(e) => setDueDate(dateInputToISOStringLocal(e.target.value))}
+                      onChange={(e) =>
+                        setDueDate(dateInputToISOStringLocal(e.target.value))
+                      }
                       className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
                       placeholder=""
                     />

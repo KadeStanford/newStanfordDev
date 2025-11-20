@@ -148,7 +148,10 @@ export default function Dashboard() {
     }
 
     setFetching(true);
-    const q = query(collection(db, "projects"), where("clientId", "==", user.uid));
+    const q = query(
+      collection(db, "projects"),
+      where("clientId", "==", user.uid)
+    );
     const unsub = onSnapshot(
       q,
       (snap) => {
@@ -197,7 +200,10 @@ export default function Dashboard() {
           }
         }
       } catch (e) {
-        console.warn("Could not fetch full invoice doc, proceeding with summary:", e);
+        console.warn(
+          "Could not fetch full invoice doc, proceeding with summary:",
+          e
+        );
       }
 
       // Try to enrich client contact info using the current project (has clientId)
@@ -207,7 +213,8 @@ export default function Dashboard() {
           const userSnap = await getDoc(userRef);
           if (userSnap.exists()) {
             const u = userSnap.data();
-            fullInv.clientName = fullInv.clientName || u.displayName || u.name || u.email;
+            fullInv.clientName =
+              fullInv.clientName || u.displayName || u.name || u.email;
             fullInv.clientEmail = fullInv.clientEmail || u.email;
             fullInv.clientPhone = fullInv.clientPhone || u.phone || "";
             fullInv.clientAddress = fullInv.clientAddress || u.address || "";
@@ -257,12 +264,18 @@ export default function Dashboard() {
               <div class="header">
                 <div>
                   <h1>Invoice ${inv.number || inv.id}</h1>
-                  <div class="muted">${inv.status || "Unpaid"} • ${formatDateForDisplay(inv.dueDate || inv.date || inv.createdAt)}</div>
+                  <div class="muted">${
+                    inv.status || "Unpaid"
+                  } • ${formatDateForDisplay(
+          inv.dueDate || inv.date || inv.createdAt
+        )}</div>
                 </div>
                 <div class="amount">$${(inv.amount || 0).toLocaleString()}</div>
               </div>
               <div class="section">
-                <strong>Due:</strong> ${formatDateForDisplay(inv.dueDate || inv.date || inv.createdAt)}
+                <strong>Due:</strong> ${formatDateForDisplay(
+                  inv.dueDate || inv.date || inv.createdAt
+                )}
               </div>
               <div class="section">
                 <h3>Description</h3>
@@ -277,7 +290,9 @@ export default function Dashboard() {
         w.document.close();
       } catch (err2) {
         console.error("Failed to print invoice:", err2);
-        alert("Unable to generate or download invoice PDF. Try a desktop browser.");
+        alert(
+          "Unable to generate or download invoice PDF. Try a desktop browser."
+        );
       }
     }
   };
@@ -377,7 +392,11 @@ export default function Dashboard() {
 
       {/* MOBILE TAB NAV (visible on small screens) */}
       {/* Mobile nav menu: hidden until toggled. When open it appears below header. */}
-      <div className={`lg:hidden ${mobileNavOpen ? "fixed" : "hidden"} top-16 left-0 right-0 z-40 bg-slate-900/90 border-b border-slate-800`}>
+      <div
+        className={`lg:hidden ${
+          mobileNavOpen ? "fixed" : "hidden"
+        } top-16 left-0 right-0 z-40 bg-slate-900/90 border-b border-slate-800`}
+      >
         <div className="flex flex-col gap-2 p-3">
           {[
             { id: "overview", label: "Overview", icon: LayoutDashboard },
@@ -409,7 +428,11 @@ export default function Dashboard() {
 
       {/* MAIN CONTENT */}
       <main className="flex-1 lg:pl-64 relative z-10">
-        <div className={`max-w-5xl mx-auto p-6 lg:pt-10 ${mobileNavOpen ? 'pt-36' : 'pt-24'}`}>
+        <div
+          className={`max-w-5xl mx-auto p-6 lg:pt-10 ${
+            mobileNavOpen ? "pt-36" : "pt-24"
+          }`}
+        >
           {!projectData ? (
             // EMPTY STATE
             <motion.div
@@ -464,7 +487,8 @@ export default function Dashboard() {
                         {projectData.status}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Calendar size={14} /> Due {formatDateForDisplay(projectData.dueDate)}
+                        <Calendar size={14} /> Due{" "}
+                        {formatDateForDisplay(projectData.dueDate)}
                       </span>
                     </div>
                   </header>
@@ -503,20 +527,36 @@ export default function Dashboard() {
                     <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3">
                       <div className="flex justify-between items-center mb-2">
                         <p className="text-sm text-slate-400">Budget</p>
-                        <p className="text-sm text-white font-mono">${projectData.budget?.toLocaleString?.() ?? projectData.budget}</p>
+                        <p className="text-sm text-white font-mono">
+                          $
+                          {projectData.budget?.toLocaleString?.() ??
+                            projectData.budget}
+                        </p>
                       </div>
                       <div className="relative h-3 bg-slate-800 rounded-full overflow-hidden">
-                        <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-600 to-purple-600" style={{ width: `${Math.min(100, projectData.progress || 0)}%` }} />
+                        <div
+                          className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-600 to-purple-600"
+                          style={{
+                            width: `${Math.min(
+                              100,
+                              projectData.progress || 0
+                            )}%`,
+                          }}
+                        />
                       </div>
                     </div>
                     <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3 flex justify-between items-center">
                       <div>
                         <p className="text-sm text-slate-400">Next Milestone</p>
-                        <p className="text-white font-medium">{projectData.nextMilestone}</p>
+                        <p className="text-white font-medium">
+                          {projectData.nextMilestone}
+                        </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm text-slate-400">Due</p>
-                        <p className="text-white font-mono">{formatDateForDisplay(projectData.dueDate)}</p>
+                        <p className="text-white font-mono">
+                          {formatDateForDisplay(projectData.dueDate)}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -632,32 +672,32 @@ export default function Dashboard() {
                     Project Documents
                   </h1>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {projectData.documents?.map((doc, i) => (
-                          <a
-                            key={i}
-                            href="#"
-                            className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-blue-500/50 transition-colors group"
-                          >
-                            <div className="w-full sm:w-12 flex items-center justify-between">
-                              <div className="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center mr-2">
-                                <FileText className="text-blue-400" />
-                              </div>
-                            </div>
-                            <div className="flex-1 min-w-0 w-full">
-                              <h4 className="text-white font-medium truncate">
-                                {doc.name}
-                              </h4>
-                              <p className="text-sm text-slate-500">
-                                {doc.size} • {doc.type.toUpperCase()}
-                              </p>
-                            </div>
-                            <div className="w-full sm:w-auto flex items-center justify-end">
-                              <button className="w-full sm:w-auto px-4 py-2 bg-slate-800/60 hover:bg-slate-800 rounded-md text-sm text-slate-200 transition-colors flex items-center gap-2 justify-center">
-                                <Download size={16} /> Download
-                              </button>
-                            </div>
-                          </a>
-                        ))}
+                    {projectData.documents?.map((doc, i) => (
+                      <a
+                        key={i}
+                        href="#"
+                        className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-blue-500/50 transition-colors group"
+                      >
+                        <div className="w-full sm:w-12 flex items-center justify-between">
+                          <div className="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center mr-2">
+                            <FileText className="text-blue-400" />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0 w-full">
+                          <h4 className="text-white font-medium truncate">
+                            {doc.name}
+                          </h4>
+                          <p className="text-sm text-slate-500">
+                            {doc.size} • {doc.type.toUpperCase()}
+                          </p>
+                        </div>
+                        <div className="w-full sm:w-auto flex items-center justify-end">
+                          <button className="w-full sm:w-auto px-4 py-2 bg-slate-800/60 hover:bg-slate-800 rounded-md text-sm text-slate-200 transition-colors flex items-center gap-2 justify-center">
+                            <Download size={16} /> Download
+                          </button>
+                        </div>
+                      </a>
+                    ))}
                   </div>
                 </motion.div>
               )}
@@ -674,56 +714,98 @@ export default function Dashboard() {
                     Invoices & Billing
                   </h1>
                   <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
-                        {/* Mobile invoice cards */}
-                        <div className="block lg:hidden space-y-3 p-4">
+                    {/* Mobile invoice cards */}
+                    <div className="block lg:hidden space-y-3 p-4">
+                      {projectData.invoices?.map((inv) => (
+                        <div
+                          key={inv.id}
+                          className="bg-slate-950/20 border border-slate-800 rounded-lg p-4 flex items-center justify-between"
+                        >
+                          <div>
+                            <p className="text-sm text-slate-400">#{inv.id}</p>
+                            <p className="text-white font-medium">
+                              ${inv.amount?.toLocaleString?.() ?? inv.amount}
+                            </p>
+                            <p className="text-xs text-slate-400">
+                              {formatDateForDisplay(
+                                inv.dueDate || inv.date || inv.createdAt
+                              )}
+                            </p>
+                          </div>
+                          <div className="text-right flex flex-col items-end gap-2">
+                            <span
+                              className={`inline-flex px-2 py-1 rounded-full text-xs font-bold ${
+                                inv.status === "Paid"
+                                  ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                  : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                              }`}
+                            >
+                              {inv.status}
+                            </span>
+                            <button
+                              onClick={() => downloadInvoicePdf(inv)}
+                              className="text-blue-400 hover:text-white text-xs"
+                            >
+                              Download
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Desktop table */}
+                    <div className="hidden lg:block">
+                      <table className="w-full text-left text-sm">
+                        <thead className="bg-slate-950 text-slate-400 uppercase font-medium">
+                          <tr>
+                            <th className="px-6 py-4">Invoice ID</th>
+                            <th className="px-6 py-4">Date</th>
+                            <th className="px-6 py-4">Amount</th>
+                            <th className="px-6 py-4">Status</th>
+                            <th className="px-6 py-4 text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800">
                           {projectData.invoices?.map((inv) => (
-                            <div key={inv.id} className="bg-slate-950/20 border border-slate-800 rounded-lg p-4 flex items-center justify-between">
-                              <div>
-                                <p className="text-sm text-slate-400">#{inv.id}</p>
-                                <p className="text-white font-medium">${inv.amount?.toLocaleString?.() ?? inv.amount}</p>
-                                <p className="text-xs text-slate-400">{formatDateForDisplay(inv.dueDate || inv.date || inv.createdAt)}</p>
-                              </div>
-                              <div className="text-right flex flex-col items-end gap-2">
-                                <span className={`inline-flex px-2 py-1 rounded-full text-xs font-bold ${inv.status === "Paid" ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"}`}>
+                            <tr
+                              key={inv.id}
+                              className="hover:bg-slate-800/30 transition-colors"
+                            >
+                              <td className="px-6 py-4 font-medium text-white">
+                                {inv.id}
+                              </td>
+                              <td className="px-6 py-4 text-slate-400">
+                                {formatDateForDisplay(
+                                  inv.dueDate || inv.date || inv.createdAt
+                                )}
+                              </td>
+                              <td className="px-6 py-4 text-white font-mono">
+                                ${inv.amount.toLocaleString()}
+                              </td>
+                              <td className="px-6 py-4">
+                                <span
+                                  className={`inline-flex px-2 py-1 rounded-full text-xs font-bold ${
+                                    inv.status === "Paid"
+                                      ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                      : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
+                                  }`}
+                                >
                                   {inv.status}
                                 </span>
-                                <button onClick={() => downloadInvoicePdf(inv)} className="text-blue-400 hover:text-white text-xs">Download</button>
-                              </div>
-                            </div>
+                              </td>
+                              <td className="px-6 py-4 text-right">
+                                <button
+                                  onClick={() => downloadInvoicePdf(inv)}
+                                  className="text-blue-400 hover:text-white font-medium text-xs"
+                                >
+                                  Download
+                                </button>
+                              </td>
+                            </tr>
                           ))}
-                        </div>
-
-                        {/* Desktop table */}
-                        <div className="hidden lg:block">
-                          <table className="w-full text-left text-sm">
-                            <thead className="bg-slate-950 text-slate-400 uppercase font-medium">
-                              <tr>
-                                <th className="px-6 py-4">Invoice ID</th>
-                                <th className="px-6 py-4">Date</th>
-                                <th className="px-6 py-4">Amount</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4 text-right">Action</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-800">
-                              {projectData.invoices?.map((inv) => (
-                                <tr key={inv.id} className="hover:bg-slate-800/30 transition-colors">
-                                  <td className="px-6 py-4 font-medium text-white">{inv.id}</td>
-                                  <td className="px-6 py-4 text-slate-400">{formatDateForDisplay(inv.dueDate || inv.date || inv.createdAt)}</td>
-                                  <td className="px-6 py-4 text-white font-mono">${inv.amount.toLocaleString()}</td>
-                                  <td className="px-6 py-4">
-                                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-bold ${inv.status === "Paid" ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"}`}>
-                                      {inv.status}
-                                    </span>
-                                  </td>
-                                  <td className="px-6 py-4 text-right">
-                                    <button onClick={() => downloadInvoicePdf(inv)} className="text-blue-400 hover:text-white font-medium text-xs">Download</button>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </motion.div>
               )}

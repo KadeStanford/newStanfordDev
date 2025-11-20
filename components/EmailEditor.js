@@ -39,11 +39,41 @@ export default function EmailEditor({ value = "", onChange }) {
   return (
     <div>
       <div className="mb-2 flex gap-2">
-        <button type="button" onClick={() => exec("bold")} className="px-2 py-1 bg-slate-800 rounded">B</button>
-        <button type="button" onClick={() => exec("italic")} className="px-2 py-1 bg-slate-800 rounded">I</button>
-        <button type="button" onClick={() => exec("insertUnorderedList")} className="px-2 py-1 bg-slate-800 rounded">• List</button>
-        <button type="button" onClick={insertLink} className="px-2 py-1 bg-slate-800 rounded">Link</button>
-        <button type="button" onClick={() => exec("removeFormat")} className="px-2 py-1 bg-slate-800 rounded">Clear</button>
+        <button
+          type="button"
+          onClick={() => exec("bold")}
+          className="px-2 py-1 bg-slate-800 rounded"
+        >
+          B
+        </button>
+        <button
+          type="button"
+          onClick={() => exec("italic")}
+          className="px-2 py-1 bg-slate-800 rounded"
+        >
+          I
+        </button>
+        <button
+          type="button"
+          onClick={() => exec("insertUnorderedList")}
+          className="px-2 py-1 bg-slate-800 rounded"
+        >
+          • List
+        </button>
+        <button
+          type="button"
+          onClick={insertLink}
+          className="px-2 py-1 bg-slate-800 rounded"
+        >
+          Link
+        </button>
+        <button
+          type="button"
+          onClick={() => exec("removeFormat")}
+          className="px-2 py-1 bg-slate-800 rounded"
+        >
+          Clear
+        </button>
       </div>
 
       <div

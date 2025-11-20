@@ -4,7 +4,8 @@ import { sendMail } from "../../../lib/mail/sendMail";
 import { invoiceReminderTemplate } from "../../../lib/mail/templates";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST")
+    return res.status(405).json({ error: "Method not allowed" });
 
   try {
     const { invoiceId } = req.body;
@@ -12,7 +13,8 @@ export default async function handler(req, res) {
 
     const invoiceRef = doc(db, "invoices", invoiceId);
     const invoiceSnap = await getDoc(invoiceRef);
-    if (!invoiceSnap.exists()) return res.status(404).json({ error: "Invoice not found" });
+    if (!invoiceSnap.exists())
+      return res.status(404).json({ error: "Invoice not found" });
 
     const invoice = invoiceSnap.data();
 
@@ -44,11 +46,21 @@ export default async function handler(req, res) {
 
     // fallback to invoice-stored email
     const to = client?.email || invoice.clientEmail || invoice.email;
-    if (!to) return res.status(400).json({ error: "No recipient email available for this invoice (no client found and no invoice email)" });
+    if (!to)
+      return res
+        .status(400)
+        .json({
+          error:
+            "No recipient email available for this invoice (no client found and no invoice email)",
+        });
 
     const { subject, html } = invoiceReminderTemplate({ invoice, client });
-    const { wrapWithEmailWrapper } = await import("../../../lib/mail/templates");
-    const wrapped = wrapWithEmailWrapper(html, { preheader: `Invoice ${invoice.number || invoice.id} reminder` });
+    const { wrapWithEmailWrapper } = await import(
+      "../../../lib/mail/templates"
+    );
+    const wrapped = wrapWithEmailWrapper(html, {
+      preheader: `Invoice ${invoice.number || invoice.id} reminder`,
+    });
     const result = await sendMail({ to, subject, html: wrapped });
 
     return res.status(200).json({ ok: true, result });
