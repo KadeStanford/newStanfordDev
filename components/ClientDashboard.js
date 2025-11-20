@@ -10,6 +10,8 @@ import {
   addDoc,
   serverTimestamp,
   onSnapshot,
+  doc as firestoreDoc,
+  getDoc,
 } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
 import StarBackground from "../components/StarBackground";
@@ -28,8 +30,10 @@ import {
   Settings,
   Plus,
   ChevronRight,
+  Menu,
   Calendar,
 } from "lucide-react";
+import { generateInvoicePdf } from "../lib/generateInvoicePdf";
 import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
 
@@ -122,37 +126,160 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [projectData, setProjectData] = useState(null);
   const [fetching, setFetching] = useState(true);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-  useEffect(() => {
-    if (!loading && !user) {
+  // Logout helper
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
       router.push("/login");
+    } catch (e) {
+      console.error("Logout failed:", e);
+    }
+  };
+
+  // Subscribe to the user's project data and clear the fetching spinner
+  useEffect(() => {
+    if (loading) return; // wait for auth state
+    if (!user) {
+      setProjectData(null);
+      setFetching(false);
       return;
     }
 
-    if (user) {
-      // Real-time listener for project data
-      const q = query(
-        collection(db, "projects"),
-        where("clientId", "==", user.uid)
-      );
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        if (!snapshot.empty) {
-          // Use the first project found for this demo
-          const data = snapshot.docs[0].data();
-          setProjectData({ id: snapshot.docs[0].id, ...data });
+    setFetching(true);
+    const q = query(collection(db, "projects"), where("clientId", "==", user.uid));
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        if (!snap.empty) {
+          const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+          setProjectData(docs[0]);
         } else {
           setProjectData(null);
         }
         setFetching(false);
+      },
+      (err) => {
+        console.error("Project listener error:", err);
+        setFetching(false);
+      }
+    );
+
+    return () => unsub();
+  }, [user, loading]);
+
+  // Date formatting helpers to display dates in the user's local timezone
+  const formatDateForDisplay = (val) => {
+    if (!val) return "—";
+    try {
+      // handle Firestore Timestamp
+      if (val?.toDate) return val.toDate().toLocaleDateString();
+      const dt = new Date(val);
+      if (isNaN(dt)) return String(val);
+      return dt.toLocaleDateString();
+    } catch (e) {
+      return String(val);
+    }
+  };
+
+  const downloadInvoicePdf = async (inv) => {
+    try {
+      // If the passed `inv` is only a lightweight summary (from project.invoices),
+      // fetch the full invoice document from Firestore so we include itemized lines.
+      let fullInv = { ...inv };
+      try {
+        if (inv?.id) {
+          const invRef = firestoreDoc(db, "invoices", inv.id);
+          const invSnap = await getDoc(invRef);
+          if (invSnap.exists()) {
+            fullInv = { ...fullInv, ...invSnap.data() };
+          }
+        }
+      } catch (e) {
+        console.warn("Could not fetch full invoice doc, proceeding with summary:", e);
+      }
+
+      // Try to enrich client contact info using the current project (has clientId)
+      try {
+        if (!fullInv.clientName && projectData?.clientId) {
+          const userRef = firestoreDoc(db, "users", projectData.clientId);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            const u = userSnap.data();
+            fullInv.clientName = fullInv.clientName || u.displayName || u.name || u.email;
+            fullInv.clientEmail = fullInv.clientEmail || u.email;
+            fullInv.clientPhone = fullInv.clientPhone || u.phone || "";
+            fullInv.clientAddress = fullInv.clientAddress || u.address || "";
+          }
+        }
+      } catch (e) {
+        console.warn("Could not fetch user contact info:", e);
+      }
+
+      const { blob, filename } = await generateInvoicePdf(fullInv, {
+        name: "Stanford Dev Solutions",
+        address: "19260 White Road Norwood LA 70761",
+        email: "Stanforddevcontact@gmail.com",
+        phone: "(225) 244-5660",
       });
 
-      return () => unsubscribe();
+      const url = URL.createObjectURL(blob);
+      try {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (e) {
+        window.open(url, "_blank");
+      } finally {
+        setTimeout(() => URL.revokeObjectURL(url), 1000 * 60);
+      }
+    } catch (err) {
+      console.error("Failed to generate or download invoice PDF:", err);
+      // Fallback printable HTML
+      try {
+        const html = `
+          <html>
+            <head>
+              <title>Invoice ${inv.number || inv.id}</title>
+              <style>
+                body { font-family: Arial, Helvetica, sans-serif; color: #111827; padding: 24px }
+                .header { display:flex; justify-content:space-between; align-items:center }
+                .muted { color: #6b7280 }
+                .section { margin-top: 16px }
+                .amount { font-size: 20px; font-weight:700 }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <div>
+                  <h1>Invoice ${inv.number || inv.id}</h1>
+                  <div class="muted">${inv.status || "Unpaid"} • ${formatDateForDisplay(inv.dueDate || inv.date || inv.createdAt)}</div>
+                </div>
+                <div class="amount">$${(inv.amount || 0).toLocaleString()}</div>
+              </div>
+              <div class="section">
+                <strong>Due:</strong> ${formatDateForDisplay(inv.dueDate || inv.date || inv.createdAt)}
+              </div>
+              <div class="section">
+                <h3>Description</h3>
+                <div>${inv.description || ""}</div>
+              </div>
+            </body>
+          </html>
+        `;
+        const w = window.open("", "_blank");
+        if (!w) throw new Error("Popup blocked");
+        w.document.write(html);
+        w.document.close();
+      } catch (err2) {
+        console.error("Failed to print invoice:", err2);
+        alert("Unable to generate or download invoice PDF. Try a desktop browser.");
+      }
     }
-  }, [user, loading, router]);
-
-  const handleLogout = async () => {
-    await signOut(auth);
-    router.push("/login");
   };
 
   if (loading || fetching)
@@ -231,15 +358,58 @@ export default function Dashboard() {
 
       {/* MOBILE HEADER */}
       <div className="lg:hidden fixed top-0 w-full z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 p-4 flex justify-between items-center">
-        <span className="font-bold text-white">ClientPortal</span>
-        <button onClick={handleLogout}>
-          <LogOut size={20} />
-        </button>
+        <div className="flex items-center gap-3">
+          <span className="font-bold text-white">ClientPortal</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setMobileNavOpen((s) => !s)}
+            aria-label="Toggle navigation"
+            className="p-2 rounded-md hover:bg-slate-800/50"
+          >
+            <Menu size={20} className="text-slate-200" />
+          </button>
+          <button onClick={handleLogout}>
+            <LogOut size={20} />
+          </button>
+        </div>
+      </div>
+
+      {/* MOBILE TAB NAV (visible on small screens) */}
+      {/* Mobile nav menu: hidden until toggled. When open it appears below header. */}
+      <div className={`lg:hidden ${mobileNavOpen ? "fixed" : "hidden"} top-16 left-0 right-0 z-40 bg-slate-900/90 border-b border-slate-800`}>
+        <div className="flex flex-col gap-2 p-3">
+          {[
+            { id: "overview", label: "Overview", icon: LayoutDashboard },
+            { id: "documents", label: "Documents", icon: FileText },
+            { id: "invoices", label: "Invoices", icon: CreditCard },
+            { id: "settings", label: "Settings", icon: Settings },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setMobileNavOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${
+                  activeTab === item.id
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-300 hover:bg-slate-800/50"
+                }`}
+              >
+                <Icon size={18} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* MAIN CONTENT */}
       <main className="flex-1 lg:pl-64 relative z-10">
-        <div className="max-w-5xl mx-auto p-6 pt-24 lg:pt-10">
+        <div className={`max-w-5xl mx-auto p-6 lg:pt-10 ${mobileNavOpen ? 'pt-36' : 'pt-24'}`}>
           {!projectData ? (
             // EMPTY STATE
             <motion.div
@@ -294,7 +464,7 @@ export default function Dashboard() {
                         {projectData.status}
                       </span>
                       <span className="flex items-center gap-1">
-                        <Calendar size={14} /> Due {projectData.dueDate}
+                        <Calendar size={14} /> Due {formatDateForDisplay(projectData.dueDate)}
                       </span>
                     </div>
                   </header>
@@ -326,6 +496,29 @@ export default function Dashboard() {
                       value={2}
                       color="orange"
                     />
+                  </div>
+
+                  {/* Compact mobile summary (shows on small screens) */}
+                  <div className="block lg:hidden space-y-3 mt-3">
+                    <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3">
+                      <div className="flex justify-between items-center mb-2">
+                        <p className="text-sm text-slate-400">Budget</p>
+                        <p className="text-sm text-white font-mono">${projectData.budget?.toLocaleString?.() ?? projectData.budget}</p>
+                      </div>
+                      <div className="relative h-3 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-600 to-purple-600" style={{ width: `${Math.min(100, projectData.progress || 0)}%` }} />
+                      </div>
+                    </div>
+                    <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-3 flex justify-between items-center">
+                      <div>
+                        <p className="text-sm text-slate-400">Next Milestone</p>
+                        <p className="text-white font-medium">{projectData.nextMilestone}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-slate-400">Due</p>
+                        <p className="text-white font-mono">{formatDateForDisplay(projectData.dueDate)}</p>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -439,27 +632,32 @@ export default function Dashboard() {
                     Project Documents
                   </h1>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {projectData.documents?.map((doc, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center gap-4 p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-blue-500/50 transition-colors group cursor-pointer"
-                      >
-                        <div className="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center">
-                          <FileText className="text-blue-400" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-white font-medium truncate">
-                            {doc.name}
-                          </h4>
-                          <p className="text-sm text-slate-500">
-                            {doc.size} • {doc.type.toUpperCase()}
-                          </p>
-                        </div>
-                        <button className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white">
-                          <Download size={20} />
-                        </button>
-                      </div>
-                    ))}
+                        {projectData.documents?.map((doc, i) => (
+                          <a
+                            key={i}
+                            href="#"
+                            className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-blue-500/50 transition-colors group"
+                          >
+                            <div className="w-full sm:w-12 flex items-center justify-between">
+                              <div className="w-12 h-12 bg-slate-800 rounded-lg flex items-center justify-center mr-2">
+                                <FileText className="text-blue-400" />
+                              </div>
+                            </div>
+                            <div className="flex-1 min-w-0 w-full">
+                              <h4 className="text-white font-medium truncate">
+                                {doc.name}
+                              </h4>
+                              <p className="text-sm text-slate-500">
+                                {doc.size} • {doc.type.toUpperCase()}
+                              </p>
+                            </div>
+                            <div className="w-full sm:w-auto flex items-center justify-end">
+                              <button className="w-full sm:w-auto px-4 py-2 bg-slate-800/60 hover:bg-slate-800 rounded-md text-sm text-slate-200 transition-colors flex items-center gap-2 justify-center">
+                                <Download size={16} /> Download
+                              </button>
+                            </div>
+                          </a>
+                        ))}
                   </div>
                 </motion.div>
               )}
@@ -476,51 +674,56 @@ export default function Dashboard() {
                     Invoices & Billing
                   </h1>
                   <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
-                    <table className="w-full text-left text-sm">
-                      <thead className="bg-slate-950 text-slate-400 uppercase font-medium">
-                        <tr>
-                          <th className="px-6 py-4">Invoice ID</th>
-                          <th className="px-6 py-4">Date</th>
-                          <th className="px-6 py-4">Amount</th>
-                          <th className="px-6 py-4">Status</th>
-                          <th className="px-6 py-4 text-right">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-800">
-                        {projectData.invoices?.map((inv) => (
-                          <tr
-                            key={inv.id}
-                            className="hover:bg-slate-800/30 transition-colors"
-                          >
-                            <td className="px-6 py-4 font-medium text-white">
-                              {inv.id}
-                            </td>
-                            <td className="px-6 py-4 text-slate-400">
-                              {inv.date}
-                            </td>
-                            <td className="px-6 py-4 text-white font-mono">
-                              ${inv.amount.toLocaleString()}
-                            </td>
-                            <td className="px-6 py-4">
-                              <span
-                                className={`inline-flex px-2 py-1 rounded-full text-xs font-bold ${
-                                  inv.status === "Paid"
-                                    ? "bg-green-500/10 text-green-400 border border-green-500/20"
-                                    : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
-                                }`}
-                              >
-                                {inv.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                              <button className="text-blue-400 hover:text-white font-medium text-xs">
-                                Download
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        {/* Mobile invoice cards */}
+                        <div className="block lg:hidden space-y-3 p-4">
+                          {projectData.invoices?.map((inv) => (
+                            <div key={inv.id} className="bg-slate-950/20 border border-slate-800 rounded-lg p-4 flex items-center justify-between">
+                              <div>
+                                <p className="text-sm text-slate-400">#{inv.id}</p>
+                                <p className="text-white font-medium">${inv.amount?.toLocaleString?.() ?? inv.amount}</p>
+                                <p className="text-xs text-slate-400">{formatDateForDisplay(inv.dueDate || inv.date || inv.createdAt)}</p>
+                              </div>
+                              <div className="text-right flex flex-col items-end gap-2">
+                                <span className={`inline-flex px-2 py-1 rounded-full text-xs font-bold ${inv.status === "Paid" ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"}`}>
+                                  {inv.status}
+                                </span>
+                                <button onClick={() => downloadInvoicePdf(inv)} className="text-blue-400 hover:text-white text-xs">Download</button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Desktop table */}
+                        <div className="hidden lg:block">
+                          <table className="w-full text-left text-sm">
+                            <thead className="bg-slate-950 text-slate-400 uppercase font-medium">
+                              <tr>
+                                <th className="px-6 py-4">Invoice ID</th>
+                                <th className="px-6 py-4">Date</th>
+                                <th className="px-6 py-4">Amount</th>
+                                <th className="px-6 py-4">Status</th>
+                                <th className="px-6 py-4 text-right">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-800">
+                              {projectData.invoices?.map((inv) => (
+                                <tr key={inv.id} className="hover:bg-slate-800/30 transition-colors">
+                                  <td className="px-6 py-4 font-medium text-white">{inv.id}</td>
+                                  <td className="px-6 py-4 text-slate-400">{formatDateForDisplay(inv.dueDate || inv.date || inv.createdAt)}</td>
+                                  <td className="px-6 py-4 text-white font-mono">${inv.amount.toLocaleString()}</td>
+                                  <td className="px-6 py-4">
+                                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-bold ${inv.status === "Paid" ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"}`}>
+                                      {inv.status}
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4 text-right">
+                                    <button onClick={() => downloadInvoicePdf(inv)} className="text-blue-400 hover:text-white font-medium text-xs">Download</button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                   </div>
                 </motion.div>
               )}
@@ -562,7 +765,7 @@ export default function Dashboard() {
                             className="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white focus:border-blue-500 outline-none"
                           />
                         </div>
-                        <button className="w-max px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors">
+                        <button className="w-full md:w-max px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold transition-colors">
                           Save Changes
                         </button>
                       </div>

@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import Link from "next/link"; // Import Link from next/link
 import { toast } from "sonner";
 import { motion } from "framer-motion";
-import { Lock, Mail, ArrowRight, Terminal } from "lucide-react";
+import { Lock, Mail, ArrowRight, Terminal, Eye, EyeOff } from "lucide-react";
 import StarBackground from "../components/StarBackground";
 import { auth, db } from "../lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -25,6 +25,8 @@ export default function Login() {
   });
   const [pwScore, setPwScore] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Get Auth functions and user state
   const { signIn, signUp, user } = useAuth(); // Import user here
@@ -44,6 +46,11 @@ export default function Login() {
     ).length;
     setPwRules({ length, lowercase, uppercase, number, special });
     setPwScore(score);
+  };
+
+  const passwordsMatch = () => {
+    if (!password && !confirmPassword) return false;
+    return password === confirmPassword;
   };
 
   const toggleMode = () => {
@@ -150,37 +157,34 @@ export default function Login() {
           <p className="text-slate-400">
             {isLogin
               ? "Access your project analytics & files."
-              : "Start your journey with StanfordDev."}
+              : "Start your journey with StanfordDevSolutions."}
           </p>
         </div>
 
         {/* Login Card */}
         <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-2xl p-8 shadow-2xl">
-          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="on">
-            <div>
-              <label className="block text-sm font-medium text-slate-400 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
-                  size={20}
-                />
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="email"
-                  autoFocus
-                  className="w-full bg-slate-950/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                  placeholder="client@company.com"
-                  required
-                />
-              </div>
-            </div>
-
+          <label className="block text-sm font-medium text-slate-400 mb-2">
+            Email Address
+          </label>
+          <div className="relative">
+            <Mail
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+              size={20}
+            />
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              autoFocus
+              className="w-full bg-slate-950/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+              placeholder="client@company.com"
+              required
+            />
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-slate-400 mb-2">
                 Password
@@ -193,17 +197,25 @@ export default function Login() {
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
                     if (!isLogin) evaluatePassword(e.target.value);
                   }}
                   autoComplete={isLogin ? "current-password" : "new-password"}
-                  className="w-full bg-slate-950/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                  className="w-full bg-slate-950/50 border border-slate-700 rounded-xl py-3 pl-12 pr-10 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                   placeholder="••••••••"
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
@@ -222,80 +234,111 @@ export default function Login() {
                     <input
                       id="confirmPassword"
                       name="confirmPassword"
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       autoComplete="new-password"
-                      className="w-full bg-slate-950/50 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                      className="w-full bg-slate-950/50 border border-slate-700 rounded-xl py-3 pl-12 pr-10 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
                       placeholder="Confirm password"
                       required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((s) => !s)}
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
                   </div>
+
+                  {confirmPassword.length > 0 && (
+                    <div className="mt-2 text-sm">
+                      {password === confirmPassword ? (
+                        <span className="text-green-400">Passwords match</span>
+                      ) : (
+                        <span className="text-red-400">
+                          Passwords do not match
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
-                {/* Password Strength Meter */}
-                <div className="bg-slate-950/30 p-3 rounded-lg border border-slate-800">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-slate-400">Strength:</span>
-                    <span
-                      className={`text-xs font-bold ${
-                        pwScore >= 4
-                          ? "text-green-400"
-                          : pwScore >= 2
-                          ? "text-yellow-400"
-                          : "text-red-400"
-                      }`}
-                    >
-                      {pwScore <= 2
-                        ? "Weak"
-                        : pwScore === 3
-                        ? "Fair"
-                        : "Strong"}
-                    </span>
+                {password.length > 0 && (
+                  <div className="bg-slate-950/30 p-3 rounded-lg border border-slate-800">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-slate-400">Strength:</span>
+                      <span
+                        className={`text-xs font-bold ${
+                          pwScore >= 4
+                            ? "text-green-400"
+                            : pwScore >= 2
+                            ? "text-yellow-400"
+                            : "text-red-400"
+                        }`}
+                      >
+                        {pwScore <= 2
+                          ? "Weak"
+                          : pwScore === 3
+                          ? "Fair"
+                          : "Strong"}
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden mb-3">
+                      <div
+                        className={`h-full transition-all duration-300 ${
+                          pwScore >= 4
+                            ? "bg-green-500"
+                            : pwScore >= 2
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
+                        }`}
+                        style={{ width: `${(pwScore / 5) * 100}%` }}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-1">
+                      <div
+                        className={`text-[10px] flex items-center gap-1 ${
+                          pwRules.length ? "text-green-400" : "text-slate-500"
+                        }`}
+                      >
+                        {pwRules.length ? "✓" : "•"} 8+ Chars
+                      </div>
+                      <div
+                        className={`text-[10px] flex items-center gap-1 ${
+                          pwRules.uppercase
+                            ? "text-green-400"
+                            : "text-slate-500"
+                        }`}
+                      >
+                        {pwRules.uppercase ? "✓" : "•"} Uppercase
+                      </div>
+                      <div
+                        className={`text-[10px] flex items-center gap-1 ${
+                          pwRules.number ? "text-green-400" : "text-slate-500"
+                        }`}
+                      >
+                        {pwRules.number ? "✓" : "•"} Number
+                      </div>
+                      <div
+                        className={`text-[10px] flex items-center gap-1 ${
+                          pwRules.special ? "text-green-400" : "text-slate-500"
+                        }`}
+                      >
+                        {pwRules.special ? "✓" : "•"} Special
+                      </div>
+                    </div>
                   </div>
-                  <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden mb-3">
-                    <div
-                      className={`h-full transition-all duration-300 ${
-                        pwScore >= 4
-                          ? "bg-green-500"
-                          : pwScore >= 2
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
-                      }`}
-                      style={{ width: `${(pwScore / 5) * 100}%` }}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-1">
-                    <div
-                      className={`text-[10px] flex items-center gap-1 ${
-                        pwRules.length ? "text-green-400" : "text-slate-500"
-                      }`}
-                    >
-                      {pwRules.length ? "✓" : "•"} 8+ Chars
-                    </div>
-                    <div
-                      className={`text-[10px] flex items-center gap-1 ${
-                        pwRules.uppercase ? "text-green-400" : "text-slate-500"
-                      }`}
-                    >
-                      {pwRules.uppercase ? "✓" : "•"} Uppercase
-                    </div>
-                    <div
-                      className={`text-[10px] flex items-center gap-1 ${
-                        pwRules.number ? "text-green-400" : "text-slate-500"
-                      }`}
-                    >
-                      {pwRules.number ? "✓" : "•"} Number
-                    </div>
-                    <div
-                      className={`text-[10px] flex items-center gap-1 ${
-                        pwRules.special ? "text-green-400" : "text-slate-500"
-                      }`}
-                    >
-                      {pwRules.special ? "✓" : "•"} Special
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             )}
 
