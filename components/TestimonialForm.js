@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Star } from "lucide-react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { toast } from "sonner";
@@ -42,49 +43,102 @@ export default function TestimonialForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 max-w-xl">
-      <div className="flex gap-3">
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Your name"
-          className="flex-1 px-4 py-2 rounded bg-slate-800 border border-slate-700"
-        />
-        <input
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          placeholder="Company (optional)"
-          className="flex-1 px-4 py-2 rounded bg-slate-800 border border-slate-700"
-        />
-      </div>
-      <textarea
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Share your experience..."
-        rows={4}
-        className="w-full px-4 py-3 rounded bg-slate-800 border border-slate-700"
-      />
-      <div className="flex items-center gap-3">
-        <label className="text-sm text-slate-400">Rating</label>
-        <select
-          value={rating}
-          onChange={(e) => setRating(e.target.value)}
-          className="px-3 py-2 rounded bg-slate-800 border border-slate-700"
-        >
-          <option value={5}>5</option>
-          <option value={4}>4</option>
-          <option value={3}>3</option>
-          <option value={2}>2</option>
-          <option value={1}>1</option>
-        </select>
-      </div>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4 w-full"
+    >
       <div>
+        <h3 className="text-lg font-bold text-white">Share your experience</h3>
+        <p className="text-sm text-slate-400">
+          Short and specific testimonials help other clients — submissions are
+          reviewed before publishing.
+        </p>
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-3">
+        <label className="flex flex-col">
+          <span className="text-sm text-slate-400 mb-1">Name</span>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your name"
+            className="w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+        </label>
+
+        <label className="flex flex-col">
+          <span className="text-sm text-slate-400 mb-1">
+            Company (optional)
+          </span>
+          <input
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            placeholder="Company"
+            className="w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+        </label>
+      </div>
+
+      <label className="flex flex-col">
+        <span className="text-sm text-slate-400 mb-1">Message</span>
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Share your experience..."
+          rows={5}
+          className="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+        />
+      </label>
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-slate-400">Rating</span>
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setRating(v)}
+                aria-label={`${v} star${v > 1 ? "s" : ""}`}
+                className={`p-1 rounded-full transition-colors ${
+                  rating >= v ? "bg-amber-500/20" : "hover:bg-white/5"
+                }`}
+              >
+                <Star
+                  className={`${
+                    rating >= v ? "text-amber-400" : "text-slate-400"
+                  }`}
+                  size={18}
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="text-sm text-slate-500">
+          Your testimonial will be reviewed before publishing.
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
         <button
           type="submit"
           disabled={submitting}
-          className="px-6 py-2 bg-emerald-600 rounded text-white font-semibold disabled:opacity-50"
+          className="px-5 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg text-white font-semibold disabled:opacity-60 shadow-md"
         >
           {submitting ? "Submitting..." : "Submit Testimonial"}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setName("");
+            setCompany("");
+            setMessage("");
+            setRating(5);
+          }}
+          className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-800/60"
+        >
+          Reset
         </button>
       </div>
     </form>

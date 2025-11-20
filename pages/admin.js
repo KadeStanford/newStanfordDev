@@ -129,6 +129,7 @@ export default function AdminDashboard() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [showAllProjects, setShowAllProjects] = useState(false);
   const [showMailConsole, setShowMailConsole] = useState(false);
   const [editProject, setEditProject] = useState(null);
   const [newUpdateText, setNewUpdateText] = useState("");
@@ -758,34 +759,118 @@ export default function AdminDashboard() {
     if (selectedProject) {
       return (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
-          <div className="flex justify-between items-start mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-1">
-                Manage Project
-              </h2>
-              <p className="text-slate-400">
-                Project:{" "}
-                <span className="text-blue-400 font-mono">
-                  {selectedProject.name}
-                </span>
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  setSelectedProject(null);
-                  setEditProject(null);
-                }}
-                className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
-              >
-                <ArrowLeft size={20} />
-              </button>
-              <button
-                onClick={handleDeleteProject}
-                className="p-2 bg-red-700/20 text-red-400 rounded-lg hover:bg-red-700/30"
-              >
-                Delete
-              </button>
+          <div className="mb-6 border-b border-slate-800 pb-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-4 min-w-0">
+                <button
+                  onClick={() => {
+                    setSelectedProject(null);
+                    setEditProject(null);
+                  }}
+                  aria-label="Back to projects"
+                  className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+                >
+                  <ArrowLeft size={20} />
+                </button>
+                <div className="min-w-0">
+                  <h2 className="text-2xl font-bold text-white truncate">
+                    {selectedProject.name}
+                  </h2>
+                  <div className="mt-1 flex items-center gap-3 text-sm text-slate-400">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-200">
+                      {editProject?.status || selectedProject.status}
+                    </span>
+                    <span className="text-slate-500">•</span>
+                    <span className="text-slate-400">Client:</span>
+                    <span className="font-mono text-slate-300">
+                      {selectedProject.clientId}
+                    </span>
+                  </div>
+                  <div className="mt-3 w-72 max-w-full">
+                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                      <div
+                        className="h-2 bg-gradient-to-r from-blue-500 to-purple-500"
+                        style={{
+                          width: `${Number(
+                            editProject?.progress ??
+                              selectedProject.progress ??
+                              0
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                    <div className="mt-2 text-xs text-slate-400">
+                      Progress:{" "}
+                      {Number(
+                        editProject?.progress ?? selectedProject.progress ?? 0
+                      )}
+                      %
+                      <span className="ml-3 text-slate-500">
+                        Budget: $
+                        {Number(
+                          editProject?.budget ?? selectedProject.budget ?? 0
+                        ).toLocaleString()}
+                      </span>
+                      <span className="ml-3 text-slate-500">
+                        Paid: $
+                        {Number(
+                          editProject?.paid ?? selectedProject.paid ?? 0
+                        ).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleDeleteProject}
+                  className="px-3 py-2 bg-red-700/20 text-red-400 rounded-lg hover:bg-red-700/30"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!selectedProject) return;
+                    try {
+                      // Ask for live URL (optional)
+                      let live = window.prompt(
+                        "Enter the live site URL (optional). Leave blank if not available:",
+                        selectedProject.liveUrl || ""
+                      );
+                      if (live) {
+                        live = String(live).trim();
+                        if (live && !/^https?:\/\//i.test(live)) {
+                          live = `https://${live}`;
+                        }
+                      }
+
+                      const ref = firestoreDoc(
+                        db,
+                        "projects",
+                        selectedProject.id
+                      );
+                      await updateDoc(ref, {
+                        status: "Completed",
+                        progress: 100,
+                        completedAt: serverTimestamp(),
+                        liveUrl: live || selectedProject.liveUrl || null,
+                        analyticsEnabled: !!(
+                          selectedProject.analyticsEnabled || live
+                        ),
+                      });
+
+                      toast.success("Project marked completed");
+                      fetchProjects();
+                    } catch (err) {
+                      console.error("Failed to mark complete:", err);
+                      toast.error("Failed to mark project completed");
+                    }
+                  }}
+                  className="px-3 py-2 bg-slate-800 text-slate-200 rounded-lg hover:bg-slate-700"
+                >
+                  Mark Complete
+                </button>
+              </div>
             </div>
           </div>
 
@@ -915,23 +1000,33 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="pt-4 flex gap-3">
-              <button
-                type="submit"
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg"
-              >
-                Save Changes
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEditProject({ ...selectedProject });
-                  setNewUpdateText("");
-                }}
-                className="px-4 py-3 bg-slate-800 text-white rounded-lg"
-              >
-                Reset
-              </button>
+            <div className="pt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <button
+                  type="submit"
+                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow hover:opacity-95 transition-all font-semibold"
+                >
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditProject({ ...selectedProject });
+                    setNewUpdateText("");
+                  }}
+                  className="px-4 py-3 bg-slate-800 text-slate-200 rounded-lg border border-slate-700 hover:bg-slate-800/80"
+                >
+                  Reset
+                </button>
+              </div>
+              <div className="text-sm text-slate-400">
+                Last saved:{" "}
+                <span className="text-slate-300">
+                  {formatDateForDisplay(
+                    selectedProject.updatedAt || selectedProject.createdAt
+                  )}
+                </span>
+              </div>
             </div>
           </form>
 
@@ -1351,6 +1446,13 @@ export default function AdminDashboard() {
     }
   };
 
+  // Decide which projects to show in the left projects list.
+  const visibleProjects = showAllProjects
+    ? projects
+    : selectedUser
+    ? projects.filter((p) => p.clientId === selectedUser.id)
+    : projects;
+
   if (loading)
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
@@ -1430,6 +1532,7 @@ export default function AdminDashboard() {
                   setSelectedUser(u);
                   setSelectedProject(null);
                   setActiveTab("projects"); // Default to projects tab when user is selected
+                  setShowAllProjects(false); // default to showing the selected client's projects
                 }}
                 className={`p-4 rounded-xl border cursor-pointer transition-all ${
                   selectedUser?.id === u.id
@@ -1438,29 +1541,67 @@ export default function AdminDashboard() {
                 }`}
               >
                 <div className="flex justify-between items-start">
-                  <p className="text-white font-medium truncate w-full">
-                    {u.email}
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-medium truncate">{u.email}</p>
+                    {u.displayName && (
+                      <p className="text-sm text-slate-300 truncate mt-1">
+                        {u.displayName}
+                      </p>
+                    )}
+                    <div className="mt-1 flex flex-wrap gap-2 items-center">
+                      {u.phone && (
+                        <p className="text-xs text-slate-400 truncate">
+                          📞 {u.phone}
+                        </p>
+                      )}
+                      {u.address && (
+                        <p className="text-xs text-slate-400 truncate">
+                          📍 {u.address}
+                        </p>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1 truncate">
+                      UID: {u.id}
+                      {u.createdAt ? (
+                        <span className="text-slate-400 ml-2">
+                          • Joined: {formatDateForDisplay(u.createdAt)}
+                        </span>
+                      ) : null}
+                    </p>
+                  </div>
+
                   {u.role === "admin" && (
                     <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded uppercase font-bold">
                       Admin
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-500 truncate mt-1">
-                  UID: {u.id}
-                </p>
               </div>
             ))}
             {/* Projects List */}
             <div className="mt-6 pt-4 border-t border-slate-800">
-              <h3 className="text-sm text-slate-400 uppercase tracking-wide mb-3">
-                Projects
-              </h3>
-              {projects.length === 0 && (
-                <p className="text-slate-500 text-sm">No projects found.</p>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm text-slate-400 uppercase tracking-wide">
+                  Projects
+                </h3>
+                <label className="text-xs text-slate-400 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={showAllProjects}
+                    onChange={() => setShowAllProjects((s) => !s)}
+                    className="accent-blue-500 mr-1"
+                  />
+                  <span>Show all</span>
+                </label>
+              </div>
+              {visibleProjects.length === 0 && (
+                <p className="text-slate-500 text-sm">
+                  {selectedUser && !showAllProjects
+                    ? "No projects found for this client."
+                    : "No projects found."}
+                </p>
               )}
-              {projects.map((p) => (
+              {visibleProjects.map((p) => (
                 <div
                   key={p.id}
                   onClick={() => handleSelectProject(p)}
