@@ -1,5 +1,14 @@
-import '@/styles/globals.css'
+import "../styles/globals.css"; // Ensure your global styles are imported
+import { AuthContextProvider } from "../context/AuthContext";
+import { Toaster } from "sonner";
 
-export default function App({ Component, pageProps }) {
-  return <Component {...pageProps} />
+function MyApp({ Component, pageProps }) {
+  return (
+    <AuthContextProvider>
+      <Component {...pageProps} />
+      <Toaster position="bottom-right" theme="dark" richColors />
+    </AuthContextProvider>
+  );
 }
+
+export default MyApp;

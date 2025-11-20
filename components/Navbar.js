@@ -1,12 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, Terminal, ChevronRight, ArrowRight } from "lucide-react";
+import {
+  Menu,
+  X,
+  Terminal,
+  ChevronRight,
+  ArrowRight,
+  User,
+  Lock, // Added Lock icon
+  LogOut as LogOutIcon,
+} from "lucide-react";
+import { useRouter } from "next/router";
+import { toast } from "sonner";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import Magnetic from "./Magnetic";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+
+  // Safe access to auth context
+  const authContext = useAuth();
+  const user = authContext ? authContext.user : null; // User now includes 'role'
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      if (authContext && authContext.logout) {
+        await authContext.logout();
+      }
+      toast.success("Signed out");
+      router.push("/");
+    } catch (err) {
+      console.error("Logout failed", err);
+      toast.error("Logout failed");
+    }
+  };
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -125,6 +155,21 @@ export default function Navbar() {
     },
   };
 
+  const getDashboardLink = () => {
+    if (!user) return "/login";
+    return user.role === "admin" ? "/admin" : "/dashboard";
+  };
+
+  const getDashboardText = () => {
+    if (!user) return "Client Login";
+    return user.role === "admin" ? "Admin Panel" : "Dashboard";
+  };
+
+  const getDashboardIcon = (size) => {
+    if (!user) return <User size={size} />;
+    return user.role === "admin" ? <Lock size={size} /> : <User size={size} />;
+  };
+
   return (
     <>
       <nav
@@ -193,6 +238,21 @@ export default function Navbar() {
               })}
               <div className="w-px h-6 bg-slate-800 mx-2" />
 
+              {/* Login/Dashboard Link - Now uses Role Check */}
+              <a
+                href={getDashboardLink()}
+                className={`px-4 py-2 text-sm font-medium transition-colors flex items-center gap-2 cursor-pointer ${
+                  user && user.role === "admin"
+                    ? "text-purple-400 hover:text-purple-300 font-bold"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                {getDashboardIcon(16)}
+                {getDashboardText()}
+              </a>
+
+              <div className="w-px h-6 bg-slate-800 mx-2" />
+
               {/* MAGNETIC BUTTON WRAPPER */}
               <Magnetic>
                 <button
@@ -206,6 +266,15 @@ export default function Navbar() {
                   Get Estimate
                 </button>
               </Magnetic>
+              {user && (
+                <button
+                  onClick={handleLogout}
+                  title="Sign out"
+                  className="ml-3 p-2 rounded-lg text-slate-300 hover:bg-slate-800/50 hover:text-white transition-colors"
+                >
+                  <LogOutIcon size={16} />
+                </button>
+              )}
             </div>
 
             {/* Mobile Menu Button (Visible on top of overlay) */}
@@ -292,6 +361,22 @@ export default function Navbar() {
                 variants={linkVariants}
                 className="h-px bg-slate-800 w-full my-4"
               />
+
+              {/* Mobile Login Link - Now uses Role Check */}
+              <motion.div variants={linkVariants} className="w-full">
+                <a
+                  href={getDashboardLink()}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`flex items-center gap-3 text-2xl font-semibold transition-colors mb-6 ${
+                    user && user.role === "admin"
+                      ? "text-purple-400 hover:text-purple-300"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  {getDashboardIcon(28)}
+                  {getDashboardText()}
+                </a>
+              </motion.div>
 
               <motion.button
                 variants={linkVariants}
