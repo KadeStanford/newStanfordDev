@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   MessageSquare,
   Briefcase,
@@ -69,6 +72,15 @@ export default function Contact() {
   const [showSummary, setShowSummary] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [generalMessage, setGeneralMessage] = useState("");
+  const [recaptchaReady, setRecaptchaReady] = useState(false);
+  const [recaptchaWidgetIds, setRecaptchaWidgetIds] = useState({
+    general: null,
+    project: null,
+  });
+  const [recaptchaTokens, setRecaptchaTokens] = useState({
+    general: null,
+    project: null,
+  });
 
   const MIN_BUDGET = 500;
   const MAX_BUDGET = 10000;
@@ -95,7 +107,91 @@ export default function Contact() {
     return errs;
   };
 
-  const handleSubmit = (e) => {
+  // --- react-hook-form for the simple/general form ---
+  const generalSchema = z.object({
+    fullName: z.string().min(1, "Please enter your full name"),
+    email: z.string().email("Please enter a valid email address"),
+    message: z.string().optional(),
+  });
+
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    formState,
+  } = useForm({
+    resolver: zodResolver(generalSchema),
+    defaultValues: {
+      fullName: project.fullName,
+      email: project.email,
+      message: generalMessage,
+    },
+  });
+
+  // Load reCAPTCHA v2 (checkbox) script and render widgets for general/project forms
+  useEffect(() => {
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    if (!siteKey) return;
+    // If grecaptcha already loaded, render widgets
+    const tryRender = () => {
+      if (!(window && window.grecaptcha && window.grecaptcha.render))
+        return false;
+      // render general widget if container exists and not rendered
+      const genContainer = document.getElementById("recaptcha-general");
+      if (genContainer && !recaptchaWidgetIds.general) {
+        try {
+          const id = window.grecaptcha.render(genContainer, {
+            sitekey: siteKey,
+            callback: (token) =>
+              setRecaptchaTokens((s) => ({ ...s, general: token })),
+            "expired-callback": () =>
+              setRecaptchaTokens((s) => ({ ...s, general: null })),
+          });
+          setRecaptchaWidgetIds((s) => ({ ...s, general: id }));
+        } catch (e) {
+          console.warn("grecaptcha.render general failed", e);
+        }
+      }
+
+      const projContainer = document.getElementById("recaptcha-project");
+      if (projContainer && !recaptchaWidgetIds.project) {
+        try {
+          const id = window.grecaptcha.render(projContainer, {
+            sitekey: siteKey,
+            callback: (token) =>
+              setRecaptchaTokens((s) => ({ ...s, project: token })),
+            "expired-callback": () =>
+              setRecaptchaTokens((s) => ({ ...s, project: null })),
+          });
+          setRecaptchaWidgetIds((s) => ({ ...s, project: id }));
+        } catch (e) {
+          console.warn("grecaptcha.render project failed", e);
+        }
+      }
+
+      // mark ready if at least one widget is rendered or grecaptcha exists
+      setRecaptchaReady(true);
+      return true;
+    };
+
+    if (window && window.grecaptcha && window.grecaptcha.render) {
+      tryRender();
+      return;
+    }
+
+    const s = document.createElement("script");
+    s.src = `https://www.google.com/recaptcha/api.js?render=explicit`;
+    s.async = true;
+    s.onload = () => {
+      // give the library a tick to initialize
+      setTimeout(() => tryRender(), 50);
+    };
+    document.head.appendChild(s);
+
+    // cleanup: leave script in place for caching
+    return () => {};
+  }, [recaptchaWidgetIds.general, recaptchaWidgetIds.project]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
@@ -107,12 +203,39 @@ export default function Contact() {
     setErrors({});
     // If this is the general contact form, send immediately
     if (contactMode === "general") {
+      // run react-hook-form validation separately on the client
+      const errs = validate();
+      if (Object.keys(errs).length > 0) {
+        setErrors(errs);
+        setShowSummary(false);
+        toast.error("Please check the form for errors.");
+        return;
+      }
+
       const payload = {
         type: "general",
         fullName: project.fullName,
         email: project.email,
         message: generalMessage,
       };
+
+      // For reCAPTCHA v2 checkbox: try to use token from widget or read it directly.
+      try {
+        const widgetId = recaptchaWidgetIds.general;
+        let token = recaptchaTokens.general || null;
+        if (!token && window.grecaptcha && typeof widgetId === "number") {
+          token = window.grecaptcha.getResponse(widgetId) || null;
+        }
+        if (!token) {
+          setSubmitting(false);
+          toast.error("Please complete the CAPTCHA before sending.");
+          return;
+        }
+        payload.recaptchaToken = token;
+      } catch (e) {
+        console.warn("Failed to retrieve reCAPTCHA token:", e);
+      }
+
       // send and reset on success
       setSubmitting(true);
       const toastId = toast.loading("Sending message...");
@@ -132,6 +255,16 @@ export default function Contact() {
           });
           setProject((p) => ({ ...p, fullName: "", email: "" }));
           setGeneralMessage("");
+          // reset reCAPTCHA widget/token for general form
+          try {
+            const wid = recaptchaWidgetIds.general;
+            if (window.grecaptcha && typeof wid === "number") {
+              window.grecaptcha.reset(wid);
+            }
+            setRecaptchaTokens((s) => ({ ...s, general: null }));
+          } catch (e) {
+            /* ignore */
+          }
         })
         .catch((err) => {
           console.error(err);
@@ -163,6 +296,23 @@ export default function Contact() {
         formattedBudget,
         colorPalette,
       };
+
+      // Add reCAPTCHA token for project form (v2 checkbox)
+      try {
+        const widgetId = recaptchaWidgetIds.project;
+        let token = recaptchaTokens.project || null;
+        if (!token && window.grecaptcha && typeof widgetId === "number") {
+          token = window.grecaptcha.getResponse(widgetId) || null;
+        }
+        if (!token) {
+          setSubmitting(false);
+          toast.error("Please complete the CAPTCHA before sending.");
+          return;
+        }
+        data.recaptchaToken = token;
+      } catch (e) {
+        console.warn("Failed to retrieve reCAPTCHA token for project form:", e);
+      }
 
       // Send to API
       const resp = await fetch("/api/contact", {
@@ -216,6 +366,16 @@ export default function Contact() {
         nda: false,
       });
       setAttachments([]);
+      // reset reCAPTCHA widget/token for project form
+      try {
+        const wid = recaptchaWidgetIds.project;
+        if (window.grecaptcha && typeof wid === "number") {
+          window.grecaptcha.reset(wid);
+        }
+        setRecaptchaTokens((s) => ({ ...s, project: null }));
+      } catch (e) {
+        /* ignore */
+      }
     } finally {
       setSubmitting(false);
     }
@@ -245,6 +405,33 @@ export default function Contact() {
 
   const getPercent = (value) =>
     Math.round(((value - MIN_BUDGET) / (MAX_BUDGET - MIN_BUDGET)) * 100);
+
+  // Helper checks whether the recaptcha widget for a form has a token/response
+  const canSubmitGeneral = () => {
+    try {
+      if (recaptchaTokens.general) return true;
+      const wid = recaptchaWidgetIds.general;
+      if (typeof window !== "undefined" && wid != null && window.grecaptcha) {
+        return !!window.grecaptcha.getResponse(wid);
+      }
+    } catch (e) {
+      // ignore
+    }
+    return false;
+  };
+
+  const canSubmitProject = () => {
+    try {
+      if (recaptchaTokens.project) return true;
+      const wid = recaptchaWidgetIds.project;
+      if (typeof window !== "undefined" && wid != null && window.grecaptcha) {
+        return !!window.grecaptcha.getResponse(wid);
+      }
+    } catch (e) {
+      // ignore
+    }
+    return false;
+  };
 
   return (
     <section id="contact" className="py-32 relative z-10 overflow-hidden">
@@ -343,8 +530,16 @@ export default function Contact() {
                     onChange={(e) => setGeneralMessage(e.target.value)}
                   ></textarea>
                 </div>
+                {/* reCAPTCHA widget for general form */}
+                <div id="recaptcha-general" className="mt-2" />
+                {!canSubmitGeneral() && (
+                  <p className="text-sm text-slate-400 mt-2">
+                    Please complete the CAPTCHA to enable sending.
+                  </p>
+                )}
+
                 <button
-                  disabled={submitting}
+                  disabled={submitting || !canSubmitGeneral()}
                   className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-lg shadow-lg shadow-blue-600/20 transition-all transform hover:-translate-y-1 cursor-pointer disabled:opacity-60"
                 >
                   Send Message
@@ -433,6 +628,20 @@ export default function Contact() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-400 mb-2">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        className="w-full bg-slate-950/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-purple-500 outline-none transition-all"
+                        placeholder="(555) 555-5555"
+                        value={project.phone}
+                        onChange={(e) =>
+                          setProject((p) => ({ ...p, phone: e.target.value }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-400 mb-2">
                         Current Website (if any)
                       </label>
                       <input
@@ -445,6 +654,26 @@ export default function Contact() {
                         }
                       />
                     </div>
+                  </div>
+                </div>
+
+                {/* Additional logistics: estimated pages */}
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-400 mb-2">
+                      Estimated number of pages
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      step={1}
+                      value={project.pages}
+                      onChange={(e) =>
+                        setProject((p) => ({ ...p, pages: e.target.value }))
+                      }
+                      className="w-48 bg-slate-950/50 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                      placeholder="e.g. 5"
+                    />
                   </div>
                 </div>
 
@@ -499,6 +728,36 @@ export default function Contact() {
                         onChange={(e) => handleBudgetChange(e, "max")}
                         className="absolute top-1/2 -translate-y-1/2 w-full appearance-none bg-transparent pointer-events-none z-21 [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:bg-white"
                       />
+                    </div>
+                    <div className="mt-4 grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-400 mb-2">
+                          Min Budget
+                        </label>
+                        <input
+                          type="number"
+                          min={MIN_BUDGET}
+                          max={project.budgetMax - STEP}
+                          step={STEP}
+                          value={project.budgetMin}
+                          onChange={(e) => handleBudgetChange(e, "min")}
+                          className="w-full bg-slate-950/50 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-400 mb-2">
+                          Max Budget
+                        </label>
+                        <input
+                          type="number"
+                          min={project.budgetMin + STEP}
+                          max={MAX_BUDGET}
+                          step={STEP}
+                          value={project.budgetMax}
+                          onChange={(e) => handleBudgetChange(e, "max")}
+                          className="w-full bg-slate-950/50 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"
+                        />
+                      </div>
                     </div>
                     <div className="flex justify-between mt-2 text-xs text-slate-500 font-mono uppercase">
                       <span>${MIN_BUDGET}</span>
@@ -795,7 +1054,17 @@ export default function Contact() {
                   </div>
                 </div>
 
-                <button className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-lg shadow-lg shadow-purple-600/20 transition-all transform hover:-translate-y-1 cursor-pointer">
+                {/* reCAPTCHA widget for project form (renders above submit) */}
+                <div id="recaptcha-project" className="mb-4" />
+                {!canSubmitProject() && (
+                  <p className="text-sm text-slate-400 mb-2">
+                    Please complete the CAPTCHA to enable sending.
+                  </p>
+                )}
+                <button
+                  disabled={!canSubmitProject() || submitting}
+                  className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-lg shadow-lg shadow-purple-600/20 transition-all transform hover:-translate-y-1 cursor-pointer disabled:opacity-60"
+                >
                   Request Free Estimate
                 </button>
               </form>

@@ -27,8 +27,9 @@ function StarField({ count, size, radius = 1.5 }) {
   useFrame((state, delta) => {
     // Rotate the starfield
     if (ref.current) {
-      ref.current.rotation.x -= delta / 10;
-      ref.current.rotation.y -= delta / 15;
+      // slowed rotation: larger divisors => slower movement
+      ref.current.rotation.x -= delta / 30;
+      ref.current.rotation.y -= delta / 45;
     }
   });
 
