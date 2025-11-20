@@ -59,7 +59,8 @@ export default function Home() {
 
       <Navbar />
 
-      <main className="relative z-10 px-6">
+      {/* UPDATED: Removed 'px-6' so Hero can be full width */}
+      <main className="relative z-10">
         {/* Hero handles its own internal animations */}
         <Hero />
 
