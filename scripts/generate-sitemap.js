@@ -15,7 +15,10 @@ if (!process.env.NEXT_PUBLIC_SITE_URL) {
       const match = content.match(/^\s*NEXT_PUBLIC_SITE_URL\s*=\s*(.+)\s*$/m);
       if (match && match[1]) {
         let v = match[1].trim();
-        if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+        if (
+          (v.startsWith('"') && v.endsWith('"')) ||
+          (v.startsWith("'") && v.endsWith("'"))
+        ) {
           v = v.slice(1, -1);
         }
         process.env.NEXT_PUBLIC_SITE_URL = v;
