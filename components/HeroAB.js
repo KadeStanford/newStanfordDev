@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import useABTest from "../lib/useABTest";
 import Hero from "./Hero";
 import { motion } from "framer-motion";
@@ -64,12 +65,12 @@ const HeroLite = () => {
             >
               Request a Free Estimate
             </a>
-            <a
+            <Link
               href="/login"
               className="px-6 py-3 border border-slate-700 text-slate-200 rounded-lg hover:bg-slate-800"
             >
               Login or Sign Up
-            </a>
+            </Link>
           </div>
         </motion.div>
       </div>
