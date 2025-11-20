@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Nav from "@/components/Navbar";
+import Estimator from "@/components/Estimator";
 import { useState } from "react";
 import axios from "axios";
 
@@ -167,6 +168,15 @@ function Contact() {
                 If you are unsure, choose &apos;Not sure&apos; — we will suggest
                 options that fit your goals and budget.
               </p>
+              {/* Estimator: updates the budget field with estimated price */}
+              <div className="mt-4">
+                <Estimator
+                  projectType={formState.projectType}
+                  onEstimateChange={(val) =>
+                    setFormState((s) => ({ ...s, budget: val }))
+                  }
+                />
+              </div>
             </div>
           </div>
           <div className="md:col-span-2 flex justify-center">

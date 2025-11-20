@@ -8,6 +8,7 @@ import Hero from "../components/HeroAB";
 import About from "../components/About";
 import Services from "../components/Services";
 import Work from "../components/Work";
+import TestimonialsDisplay from "../components/TestimonialsDisplay";
 import WhyUs from "../components/WhyUs";
 import Contact from "../components/Contact";
 import LiveAnalytics from "../components/LiveAnalytics";
@@ -79,6 +80,10 @@ export default function Home() {
         </ScrollReveal>
 
         <ScrollReveal>
+          <TestimonialsDisplay limit={3} />
+        </ScrollReveal>
+
+        <ScrollReveal>
           <WhyUs />
         </ScrollReveal>
 
@@ -90,6 +95,8 @@ export default function Home() {
         <ScrollReveal>
           <LiveAnalytics />
         </ScrollReveal>
+
+        {/* Testimonials now appear under Featured Work in the Work section */}
 
         <ScrollReveal>
           <Contact />

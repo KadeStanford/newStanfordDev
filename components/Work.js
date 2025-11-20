@@ -207,6 +207,8 @@ export default function Work() {
           </div>
         </div>
 
+        {/* (Testimonials moved below the carousel to display after cards) */}
+
         {/* Embla Carousel Container */}
         {/* Removed negative margins on mobile to prevent overflow */}
         <div className="overflow-hidden" ref={emblaRef}>
@@ -230,6 +232,8 @@ export default function Work() {
             ))}
           </div>
         </div>
+
+        {/* Testimonials were moved to the homepage to control placement */}
       </div>
     </section>
   );

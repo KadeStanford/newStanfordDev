@@ -25,14 +25,106 @@ import {
   LogOut,
   ShieldAlert,
   Mail as MailIcon,
+  MessageSquare, // Icon for Testimonials tab
 } from "lucide-react";
 import AdminMailConsole from "../components/AdminMailConsole";
 import { toast } from "sonner";
 import { generateInvoicePdf } from "../lib/generateInvoicePdf";
 
+// --- Tabbed Interface Components ---
+
+// New Component: Testimonial Management Panel
+const TestimonialPanel = ({
+  testimonials,
+  testimonialsLoading,
+  formatDateForDisplay,
+  approveTestimonial,
+  toggleFeatured,
+  setDisplayOrder,
+  deleteTestimonial,
+}) => (
+  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 h-full">
+    <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+      <MessageSquare className="text-blue-400" size={24} /> Manage Testimonials
+    </h2>
+
+    {testimonialsLoading ? (
+      <p className="text-sm text-slate-400">Loading testimonials...</p>
+    ) : testimonials.length === 0 ? (
+      <p className="text-sm text-slate-400">No testimonials found.</p>
+    ) : (
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-3">
+        {testimonials.map((t) => (
+          <div
+            key={t.id}
+            className="p-4 bg-slate-950/20 rounded-xl border border-slate-800 flex justify-between gap-6 items-start"
+          >
+            <div className="flex-1">
+              <p className="text-sm text-white font-medium">
+                {t.name} {t.company ? `— ${t.company}` : ""}
+              </p>
+              <p className="text-xs text-slate-500 mb-2">
+                Created: {formatDateForDisplay(t.createdAt)}
+              </p>
+              <p className="text-sm text-slate-200 italic">
+                &quot;{t.message}&quot;
+              </p>
+            </div>
+            <div className="w-56 flex flex-col items-end gap-2 flex-shrink-0">
+              <div className="flex justify-between w-full text-xs font-medium border-b border-slate-700 pb-1 mb-1">
+                <span
+                  className={t.approved ? "text-green-400" : "text-red-400"}
+                >
+                  {t.approved ? "Approved" : "Unapproved"}
+                </span>
+                <span
+                  className={t.featured ? "text-amber-400" : "text-slate-500"}
+                >
+                  {t.featured ? "Featured" : "Not Featured"}
+                </span>
+                <span className="text-slate-400">
+                  Order: {t.displayOrder ?? 0}
+                </span>
+              </div>
+
+              {!t.approved && (
+                <button
+                  onClick={() => approveTestimonial(t)}
+                  className="px-3 py-1 bg-green-600 hover:bg-green-500 rounded text-sm text-white w-full transition-colors"
+                >
+                  Approve
+                </button>
+              )}
+              <button
+                onClick={() => toggleFeatured(t)}
+                className="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-sm text-amber-400 w-full transition-colors"
+              >
+                {t.featured ? "Unfeature" : "Feature"}
+              </button>
+              <button
+                onClick={() => setDisplayOrder(t)}
+                className="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded text-sm text-slate-300 w-full transition-colors"
+              >
+                Set Order
+              </button>
+              <button
+                onClick={() => deleteTestimonial(t)}
+                className="px-3 py-1 bg-red-700/30 hover:bg-red-700/50 rounded text-sm text-red-300 w-full transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+);
+
 export default function AdminDashboard() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState("dashboard"); // 'dashboard', 'projects', 'testimonials'
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [projects, setProjects] = useState([]);
@@ -45,7 +137,7 @@ export default function AdminDashboard() {
 
   // Invoice form state
   const [invoiceNumber, setInvoiceNumber] = useState("");
-  const [invoiceAmount, setInvoiceAmount] = useState("");
+  const [invoiceAmount, setInvoiceAmount] = useState(""); // Kept for form reset compatibility, but calculated from items
   const [invoiceDescription, setInvoiceDescription] = useState("");
   const [invoiceDueDate, setInvoiceDueDate] = useState("");
 
@@ -54,6 +146,10 @@ export default function AdminDashboard() {
     { description: "", qty: 1, unitPrice: 0 },
   ]);
   const [editingInvoice, setEditingInvoice] = useState(null);
+
+  // Testimonials admin state
+  const [testimonials, setTestimonials] = useState([]);
+  const [testimonialsLoading, setTestimonialsLoading] = useState(false);
 
   // Company information (customize as needed)
   const COMPANY_INFO = {
@@ -99,12 +195,12 @@ export default function AdminDashboard() {
     }
   };
 
-  // Form State
+  // Form State for New Project
   const [projectName, setProjectName] = useState("");
   const [budget, setBudget] = useState("");
   const [dueDate, setDueDate] = useState("");
 
-  // Fetch users only if Admin
+  // Fetch users, projects, and testimonials only if Admin
   useEffect(() => {
     if (!loading) {
       if (!user || user.role !== "admin") {
@@ -114,8 +210,92 @@ export default function AdminDashboard() {
       }
       fetchUsers();
       fetchProjects();
+      fetchTestimonials();
     }
   }, [user, loading, router]);
+
+  // --- Testimonial Handlers ---
+  const fetchTestimonials = async () => {
+    setTestimonialsLoading(true);
+    try {
+      const q = query(
+        collection(db, "testimonials"),
+        orderBy("createdAt", "desc")
+      );
+      const snap = await getDocs(q);
+      const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      setTestimonials(list);
+    } catch (err) {
+      console.error("Failed to fetch testimonials", err);
+      toast.error("Failed to load testimonials");
+    } finally {
+      setTestimonialsLoading(false);
+    }
+  };
+
+  const approveTestimonial = async (t) => {
+    try {
+      const ref = firestoreDoc(db, "testimonials", t.id);
+      await updateDoc(ref, { approved: true });
+      toast.success("Testimonial approved");
+      fetchTestimonials();
+    } catch (err) {
+      console.error("Approve failed", err);
+      toast.error("Failed to approve testimonial");
+    }
+  };
+
+  const toggleFeatured = async (t) => {
+    try {
+      const ref = firestoreDoc(db, "testimonials", t.id);
+      await updateDoc(ref, { featured: !t.featured });
+      toast.success(t.featured ? "Unfeatured" : "Featured");
+      fetchTestimonials();
+    } catch (err) {
+      console.error("Toggle feature failed", err);
+      toast.error("Failed to update testimonial");
+    }
+  };
+
+  const setDisplayOrder = async (t) => {
+    try {
+      const val = window.prompt(
+        "Enter display order (integer, lower shows first)",
+        String(t.displayOrder || 0)
+      );
+      if (val === null) return;
+      const num = Number(val);
+      if (Number.isNaN(num)) {
+        toast.error("Invalid number");
+        return;
+      }
+      const ref = firestoreDoc(db, "testimonials", t.id);
+      await updateDoc(ref, { displayOrder: num });
+      toast.success("Display order updated");
+      fetchTestimonials();
+    } catch (err) {
+      console.error("Set order failed", err);
+      toast.error("Failed to set order");
+    }
+  };
+
+  const deleteTestimonial = async (t) => {
+    try {
+      const ok = window.confirm(
+        "Delete this testimonial? This cannot be undone."
+      );
+      if (!ok) return;
+      const ref = firestoreDoc(db, "testimonials", t.id);
+      await deleteDoc(ref);
+      toast.success("Testimonial deleted");
+      fetchTestimonials();
+    } catch (err) {
+      console.error("Delete failed", err);
+      toast.error("Failed to delete testimonial");
+    }
+  };
+
+  // --- Project and User Handlers (Remaining logic unchanged) ---
 
   const fetchProjects = async () => {
     try {
@@ -134,6 +314,7 @@ export default function AdminDashboard() {
     setSelectedProject(p);
     setEditProject({ ...p });
     setSelectedUser(null);
+    setActiveTab("projects"); // Switch to projects tab
   };
 
   const handleSaveProject = async (e) => {
@@ -264,8 +445,6 @@ export default function AdminDashboard() {
   };
 
   // Generate and download a nicely formatted invoice PDF.
-  // If a lightweight invoice summary is passed (from project.invoices),
-  // attempt to fetch the full invoice doc from `invoices` collection to include description and createdAt.
   const downloadInvoicePdfAdmin = async (invSummary) => {
     try {
       let invoiceData = invSummary || {};
@@ -500,6 +679,7 @@ export default function AdminDashboard() {
       await fetchProjects();
       setSelectedProject(null);
       setEditProject(null);
+      setActiveTab("dashboard");
     } catch (err) {
       console.error("Delete failed:", err);
       toast.error("Failed to delete project.");
@@ -551,9 +731,623 @@ export default function AdminDashboard() {
       setBudget("");
       setDueDate("");
       setSelectedUser(null);
+      fetchProjects();
+      setActiveTab("projects"); // Switch to projects tab
     } catch (error) {
       console.error("Error creating project:", error);
       toast.error("Failed to create project.");
+    }
+  };
+
+  const renderRightPanelContent = () => {
+    if (activeTab === "testimonials") {
+      return (
+        <TestimonialPanel
+          testimonials={testimonials}
+          testimonialsLoading={testimonialsLoading}
+          formatDateForDisplay={formatDateForDisplay}
+          approveTestimonial={approveTestimonial}
+          toggleFeatured={toggleFeatured}
+          setDisplayOrder={setDisplayOrder}
+          deleteTestimonial={deleteTestimonial}
+        />
+      );
+    }
+
+    // Default to Project Management/User Selection logic
+    if (selectedProject) {
+      return (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-1">
+                Manage Project
+              </h2>
+              <p className="text-slate-400">
+                Project:{" "}
+                <span className="text-blue-400 font-mono">
+                  {selectedProject.name}
+                </span>
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setSelectedProject(null);
+                  setEditProject(null);
+                }}
+                className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+              >
+                <ArrowLeft size={20} />
+              </button>
+              <button
+                onClick={handleDeleteProject}
+                className="p-2 bg-red-700/20 text-red-400 rounded-lg hover:bg-red-700/30"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+
+          {/* Project Edit Form */}
+          <form onSubmit={handleSaveProject} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-2">
+                Project Name
+              </label>
+              <input
+                value={editProject?.name || ""}
+                onChange={(e) =>
+                  setEditProject({ ...editProject, name: e.target.value })
+                }
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">
+                  Status
+                </label>
+                <select
+                  value={editProject?.status || "Just Started"}
+                  onChange={(e) =>
+                    setEditProject({
+                      ...editProject,
+                      status: e.target.value,
+                    })
+                  }
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
+                >
+                  <option>Just Started</option>
+                  <option>In Progress</option>
+                  <option>Paused</option>
+                  <option>Completed</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">
+                  Progress (%)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={editProject?.progress ?? 0}
+                  onChange={(e) =>
+                    setEditProject({
+                      ...editProject,
+                      progress: e.target.value,
+                    })
+                  }
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">
+                  Budget ($)
+                </label>
+                <input
+                  type="number"
+                  value={editProject?.budget ?? 0}
+                  onChange={(e) =>
+                    setEditProject({
+                      ...editProject,
+                      budget: e.target.value,
+                    })
+                  }
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">
+                  Paid ($)
+                </label>
+                <input
+                  type="number"
+                  value={editProject?.paid ?? 0}
+                  onChange={(e) =>
+                    setEditProject({ ...editProject, paid: e.target.value })
+                  }
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">
+                  Next Milestone
+                </label>
+                <input
+                  value={editProject?.nextMilestone || ""}
+                  onChange={(e) =>
+                    setEditProject({
+                      ...editProject,
+                      nextMilestone: e.target.value,
+                    })
+                  }
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">
+                  Due Date
+                </label>
+                <input
+                  type="date"
+                  value={
+                    editProject?.dueDate
+                      ? isoToDateInput(editProject.dueDate)
+                      : ""
+                  }
+                  onChange={(e) =>
+                    setEditProject({
+                      ...editProject,
+                      dueDate: dateInputToISOStringLocal(e.target.value),
+                    })
+                  }
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
+                />
+              </div>
+            </div>
+
+            <div className="pt-4 flex gap-3">
+              <button
+                type="submit"
+                className="px-6 py-3 bg-blue-600 text-white rounded-lg"
+              >
+                Save Changes
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditProject({ ...selectedProject });
+                  setNewUpdateText("");
+                }}
+                className="px-4 py-3 bg-slate-800 text-white rounded-lg"
+              >
+                Reset
+              </button>
+            </div>
+          </form>
+
+          {/* Project Updates Section */}
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-white mb-2">Updates</h3>
+            <div className="flex gap-2 mb-3">
+              <input
+                value={newUpdateText}
+                onChange={(e) => setNewUpdateText(e.target.value)}
+                placeholder="Write an update..."
+                className="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
+              />
+              <button
+                onClick={handleAddUpdate}
+                className="px-4 py-3 bg-blue-600 text-white rounded-lg"
+              >
+                Add
+              </button>
+            </div>
+            <div className="space-y-3">
+              {(() => {
+                const updates = selectedProject.updates || [];
+                const displayed = updates.slice().reverse();
+                return displayed.map((u, i) => {
+                  const originalIndex = updates.length - 1 - i;
+                  const isEditing = editingUpdateIndex === originalIndex;
+                  return (
+                    <div
+                      key={originalIndex}
+                      className="p-3 bg-slate-950/30 rounded-lg border border-slate-800"
+                    >
+                      {isEditing ? (
+                        <div className="flex flex-col gap-2">
+                          <textarea
+                            value={editingUpdateText}
+                            onChange={(e) =>
+                              setEditingUpdateText(e.target.value)
+                            }
+                            className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
+                            rows={3}
+                          />
+                          <div className="flex gap-2 justify-end">
+                            <button
+                              onClick={cancelEditUpdate}
+                              className="px-3 py-1 bg-slate-800 rounded text-sm text-slate-300"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={saveEditedUpdate}
+                              className="px-3 py-1 bg-blue-600 rounded text-sm text-white"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <p className="text-sm text-white font-medium">
+                              {u.title}
+                            </p>
+                            <p className="text-xs text-slate-400">{u.date}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-slate-400 mr-3">
+                              {u.type}
+                            </span>
+                            <button
+                              onClick={() => startEditUpdate(originalIndex)}
+                              className="px-3 py-1 bg-slate-800 rounded text-sm text-yellow-400 hover:text-white"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => deleteUpdateAtIndex(originalIndex)}
+                              className="px-3 py-1 bg-red-800 rounded text-sm text-red-300 hover:text-white"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+
+          {/* Invoices Section */}
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-white mb-2">Invoices</h3>
+
+            <form onSubmit={handleCreateInvoice} className="mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <input
+                  required
+                  value={invoiceNumber}
+                  onChange={(e) => setInvoiceNumber(e.target.value)}
+                  placeholder="Invoice #"
+                  className="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
+                />
+
+                <input
+                  type="date"
+                  value={invoiceDueDate ? isoToDateInput(invoiceDueDate) : ""}
+                  onChange={(e) =>
+                    setInvoiceDueDate(dateInputToISOStringLocal(e.target.value))
+                  }
+                  className="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
+                />
+
+                <div className="col-span-1 md:col-span-2 flex items-center gap-2">
+                  <div className="flex-1">
+                    <input
+                      value={invoiceDescription}
+                      onChange={(e) => setInvoiceDescription(e.target.value)}
+                      placeholder="Description (optional)"
+                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Items editor */}
+              <div className="mt-3 space-y-2">
+                {invoiceItems.map((it, i) => (
+                  <div key={i} className="grid grid-cols-12 gap-2 items-center">
+                    <input
+                      className="col-span-7 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
+                      placeholder="Item description"
+                      value={it.description}
+                      onChange={(e) => {
+                        const next = [...invoiceItems];
+                        next[i].description = e.target.value;
+                        setInvoiceItems(next);
+                      }}
+                    />
+                    <input
+                      type="number"
+                      className="col-span-2 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
+                      value={it.qty}
+                      min={1}
+                      onChange={(e) => {
+                        const next = [...invoiceItems];
+                        next[i].qty = Number(e.target.value);
+                        setInvoiceItems(next);
+                      }}
+                    />
+                    <input
+                      type="number"
+                      className="col-span-2 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
+                      value={it.unitPrice}
+                      min={0}
+                      onChange={(e) => {
+                        const next = [...invoiceItems];
+                        next[i].unitPrice = Number(e.target.value);
+                        setInvoiceItems(next);
+                      }}
+                    />
+                    <div className="col-span-1 text-right">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = invoiceItems.filter(
+                            (_, idx) => idx !== i
+                          );
+                          setInvoiceItems(
+                            next.length
+                              ? next
+                              : [{ description: "", qty: 1, unitPrice: 0 }]
+                          );
+                        }}
+                        className="px-2 py-1 bg-red-700/20 rounded text-sm text-red-300"
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                <div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setInvoiceItems([
+                        ...invoiceItems,
+                        { description: "", qty: 1, unitPrice: 0 },
+                      ])
+                    }
+                    className="px-3 py-2 bg-slate-800 rounded text-sm text-slate-200"
+                  >
+                    + Add Item
+                  </button>
+                </div>
+              </div>
+
+              {/* Totals and actions */}
+              <div className="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                  <p className="text-sm text-slate-400">Total</p>
+                  <p className="text-xl font-bold text-white">
+                    $
+                    {invoiceItems
+                      .reduce(
+                        (s, it) =>
+                          s + Number(it.qty || 0) * Number(it.unitPrice || 0),
+                        0
+                      )
+                      .toLocaleString()}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    className="px-4 py-3 bg-green-600 text-white rounded-lg"
+                  >
+                    {editingInvoice ? "Save Invoice" : "Create & Link Invoice"}
+                  </button>
+                  {editingInvoice && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingInvoice(null);
+                        setInvoiceNumber("");
+                        setInvoiceDescription("");
+                        setInvoiceDueDate("");
+                        setInvoiceItems([
+                          { description: "", qty: 1, unitPrice: 0 },
+                        ]);
+                      }}
+                      className="px-4 py-3 bg-slate-800 text-white rounded-lg"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </div>
+            </form>
+
+            <div className="space-y-3">
+              {(selectedProject.invoices || [])
+                .slice()
+                .reverse()
+                .map((inv, idx) => (
+                  <div
+                    key={inv.id || idx}
+                    className="p-3 bg-slate-950/20 rounded-lg border border-slate-800 flex justify-between items-center"
+                  >
+                    <div>
+                      <p className="text-sm text-white font-medium">
+                        #{inv.number} — $
+                        {inv.amount?.toLocaleString?.() ?? inv.amount}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        Due: {inv.dueDate || "—"}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="text-xs text-slate-400 mr-2">
+                        {inv.status || "Unpaid"}
+                      </div>
+                      <button
+                        onClick={() => downloadInvoicePdfAdmin(inv)}
+                        className="px-3 py-1 bg-slate-800 rounded text-sm text-blue-400 hover:text-white"
+                      >
+                        Download
+                      </button>
+                      <button
+                        onClick={() => editInvoice(inv)}
+                        className="px-3 py-1 bg-slate-800 rounded text-sm text-yellow-400 hover:text-white"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => markInvoicePaid(inv)}
+                        className={`px-3 py-1 bg-slate-800 rounded text-sm ${
+                          inv.status === "Paid"
+                            ? "text-yellow-400"
+                            : "text-green-400"
+                        } hover:text-white`}
+                      >
+                        {inv.status === "Paid" ? "Mark Unpaid" : "Mark Paid"}
+                      </button>
+                      <button
+                        onClick={async () => {
+                          try {
+                            const res = await fetch("/api/mail/reminder", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({ invoiceId: inv.id }),
+                            });
+                            const data = await res.json();
+                            if (data.ok) {
+                              toast.success("Reminder sent");
+                            } else {
+                              toast.error(
+                                "Reminder failed: " + (data.error || "unknown")
+                              );
+                            }
+                          } catch (err) {
+                            console.error("Reminder send failed", err);
+                            toast.error("Failed to send reminder");
+                          }
+                        }}
+                        className="px-3 py-1 bg-slate-800 rounded text-sm text-amber-400 hover:text-white"
+                      >
+                        Send Reminder
+                      </button>
+                      <button
+                        onClick={() => deleteInvoice(inv)}
+                        className="px-3 py-1 bg-red-800 rounded text-sm text-red-300 hover:text-white"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+      );
+    } else if (selectedUser) {
+      return (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-1">
+                Start New Project
+              </h2>
+              <p className="text-slate-400">
+                Selected Client:{" "}
+                <span className="text-blue-400 font-mono">
+                  {selectedUser.email}
+                </span>
+              </p>
+            </div>
+            <button
+              onClick={() => setSelectedUser(null)}
+              className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+          </div>
+
+          <form onSubmit={handleCreateProject} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-2">
+                Project Name
+              </label>
+              <input
+                required
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
+                placeholder="e.g. Corporate Website Redesign"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">
+                  Total Budget ($)
+                </label>
+                <input
+                  required
+                  type="number"
+                  value={budget}
+                  onChange={(e) => setBudget(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
+                  placeholder="5000"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">
+                  Due Date
+                </label>
+                <input
+                  required
+                  type="date"
+                  value={dueDate ? isoToDateInput(dueDate) : ""}
+                  onChange={(e) =>
+                    setDueDate(dateInputToISOStringLocal(e.target.value))
+                  }
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
+                  placeholder=""
+                />
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 transform active:scale-95">
+                <Plus size={20} /> Create Project & Initialize Dashboard
+              </button>
+            </div>
+          </form>
+        </div>
+      );
+    } else {
+      return (
+        <div className="h-full flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-800 rounded-2xl p-12 bg-slate-900/20">
+          <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4">
+            <Briefcase size={32} className="text-slate-600" />
+          </div>
+          <h3 className="text-lg font-semibold text-slate-300 mb-2">
+            Welcome, Administrator
+          </h3>
+          <p className="text-sm max-w-xs text-center">
+            Use the navigation above to manage projects, clients, or
+            testimonials.
+          </p>
+        </div>
+      );
     }
   };
 
@@ -618,8 +1412,9 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
-      {/* LEFT: User List */}
+
       <main className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* LEFT: User/Project List (Navigation) */}
         <div className="lg:col-span-1 bg-slate-900/50 border border-slate-800 rounded-2xl p-6 h-fit">
           <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
             <Users size={20} className="text-blue-500" /> Client Database
@@ -631,7 +1426,11 @@ export default function AdminDashboard() {
             {users.map((u) => (
               <div
                 key={u.id}
-                onClick={() => setSelectedUser(u)}
+                onClick={() => {
+                  setSelectedUser(u);
+                  setSelectedProject(null);
+                  setActiveTab("projects"); // Default to projects tab when user is selected
+                }}
                 className={`p-4 rounded-xl border cursor-pointer transition-all ${
                   selectedUser?.id === u.id
                     ? "bg-blue-600/20 border-blue-500"
@@ -690,616 +1489,39 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* RIGHT: Action Panel */}
+        {/* RIGHT: Tabbed Action Panel */}
         <div className="lg:col-span-2">
-          {selectedProject ? (
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-1">
-                    Manage Project
-                  </h2>
-                  <p className="text-slate-400">
-                    Project:{" "}
-                    <span className="text-blue-400 font-mono">
-                      {selectedProject.name}
-                    </span>
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      setSelectedProject(null);
-                      setEditProject(null);
-                    }}
-                    className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
-                  >
-                    <ArrowLeft size={20} />
-                  </button>
-                  <button
-                    onClick={handleDeleteProject}
-                    className="p-2 bg-red-700/20 text-red-400 rounded-lg hover:bg-red-700/30"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+          {/* Tabs Navigation */}
+          <div className="mb-4 flex gap-4 border-b border-slate-800">
+            <button
+              onClick={() => setActiveTab("projects")}
+              className={`flex items-center gap-2 py-2 px-3 text-sm font-medium transition-all ${
+                activeTab === "projects"
+                  ? "border-b-2 border-blue-500 text-white"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <Briefcase size={16} /> Projects & Clients
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("testimonials");
+                // Clear selections when switching to global view
+                setSelectedProject(null);
+                setSelectedUser(null);
+              }}
+              className={`flex items-center gap-2 py-2 px-3 text-sm font-medium transition-all ${
+                activeTab === "testimonials"
+                  ? "border-b-2 border-blue-500 text-white"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <MessageSquare size={16} /> Testimonials
+            </button>
+          </div>
 
-              <form onSubmit={handleSaveProject} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">
-                    Project Name
-                  </label>
-                  <input
-                    value={editProject?.name || ""}
-                    onChange={(e) =>
-                      setEditProject({ ...editProject, name: e.target.value })
-                    }
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
-                      Status
-                    </label>
-                    <select
-                      value={editProject?.status || "Just Started"}
-                      onChange={(e) =>
-                        setEditProject({
-                          ...editProject,
-                          status: e.target.value,
-                        })
-                      }
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
-                    >
-                      <option>Just Started</option>
-                      <option>In Progress</option>
-                      <option>Paused</option>
-                      <option>Completed</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
-                      Progress (%)
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={editProject?.progress ?? 0}
-                      onChange={(e) =>
-                        setEditProject({
-                          ...editProject,
-                          progress: e.target.value,
-                        })
-                      }
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
-                      Budget ($)
-                    </label>
-                    <input
-                      type="number"
-                      value={editProject?.budget ?? 0}
-                      onChange={(e) =>
-                        setEditProject({
-                          ...editProject,
-                          budget: e.target.value,
-                        })
-                      }
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
-                      Paid ($)
-                    </label>
-                    <input
-                      type="number"
-                      value={editProject?.paid ?? 0}
-                      onChange={(e) =>
-                        setEditProject({ ...editProject, paid: e.target.value })
-                      }
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
-                      Next Milestone
-                    </label>
-                    <input
-                      value={editProject?.nextMilestone || ""}
-                      onChange={(e) =>
-                        setEditProject({
-                          ...editProject,
-                          nextMilestone: e.target.value,
-                        })
-                      }
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
-                      Due Date
-                    </label>
-                    <input
-                      type="date"
-                      value={
-                        editProject?.dueDate
-                          ? isoToDateInput(editProject.dueDate)
-                          : ""
-                      }
-                      onChange={(e) =>
-                        setEditProject({
-                          ...editProject,
-                          dueDate: dateInputToISOStringLocal(e.target.value),
-                        })
-                      }
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-4 flex gap-3">
-                  <button
-                    type="submit"
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg"
-                  >
-                    Save Changes
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditProject({ ...selectedProject });
-                      setNewUpdateText("");
-                    }}
-                    className="px-4 py-3 bg-slate-800 text-white rounded-lg"
-                  >
-                    Reset
-                  </button>
-                </div>
-              </form>
-
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  Updates
-                </h3>
-                <div className="flex gap-2 mb-3">
-                  <input
-                    value={newUpdateText}
-                    onChange={(e) => setNewUpdateText(e.target.value)}
-                    placeholder="Write an update..."
-                    className="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
-                  />
-                  <button
-                    onClick={handleAddUpdate}
-                    className="px-4 py-3 bg-blue-600 text-white rounded-lg"
-                  >
-                    Add
-                  </button>
-                </div>
-                <div className="space-y-3">
-                  {(() => {
-                    const updates = selectedProject.updates || [];
-                    const displayed = updates.slice().reverse();
-                    return displayed.map((u, i) => {
-                      const originalIndex = updates.length - 1 - i;
-                      const isEditing = editingUpdateIndex === originalIndex;
-                      return (
-                        <div
-                          key={originalIndex}
-                          className="p-3 bg-slate-950/30 rounded-lg border border-slate-800"
-                        >
-                          {isEditing ? (
-                            <div className="flex flex-col gap-2">
-                              <textarea
-                                value={editingUpdateText}
-                                onChange={(e) =>
-                                  setEditingUpdateText(e.target.value)
-                                }
-                                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
-                                rows={3}
-                              />
-                              <div className="flex gap-2 justify-end">
-                                <button
-                                  onClick={cancelEditUpdate}
-                                  className="px-3 py-1 bg-slate-800 rounded text-sm text-slate-300"
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  onClick={saveEditedUpdate}
-                                  className="px-3 py-1 bg-blue-600 rounded text-sm text-white"
-                                >
-                                  Save
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex justify-between items-center">
-                              <div>
-                                <p className="text-sm text-white font-medium">
-                                  {u.title}
-                                </p>
-                                <p className="text-xs text-slate-400">
-                                  {u.date}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs text-slate-400 mr-3">
-                                  {u.type}
-                                </span>
-                                <button
-                                  onClick={() => startEditUpdate(originalIndex)}
-                                  className="px-3 py-1 bg-slate-800 rounded text-sm text-yellow-400 hover:text-white"
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    deleteUpdateAtIndex(originalIndex)
-                                  }
-                                  className="px-3 py-1 bg-red-800 rounded text-sm text-red-300 hover:text-white"
-                                >
-                                  Delete
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    });
-                  })()}
-                </div>
-              </div>
-              {/* Invoices Section */}
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  Invoices
-                </h3>
-
-                <form onSubmit={handleCreateInvoice} className="mb-4">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <input
-                      required
-                      value={invoiceNumber}
-                      onChange={(e) => setInvoiceNumber(e.target.value)}
-                      placeholder="Invoice #"
-                      className="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
-                    />
-
-                    <input
-                      type="date"
-                      value={
-                        invoiceDueDate ? isoToDateInput(invoiceDueDate) : ""
-                      }
-                      onChange={(e) =>
-                        setInvoiceDueDate(
-                          dateInputToISOStringLocal(e.target.value)
-                        )
-                      }
-                      className="bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
-                    />
-
-                    <div className="col-span-1 md:col-span-2 flex items-center gap-2">
-                      <div className="flex-1">
-                        <input
-                          value={invoiceDescription}
-                          onChange={(e) =>
-                            setInvoiceDescription(e.target.value)
-                          }
-                          placeholder="Description (optional)"
-                          className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Items editor */}
-                  <div className="mt-3 space-y-2">
-                    {invoiceItems.map((it, i) => (
-                      <div
-                        key={i}
-                        className="grid grid-cols-12 gap-2 items-center"
-                      >
-                        <input
-                          className="col-span-7 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
-                          placeholder="Item description"
-                          value={it.description}
-                          onChange={(e) => {
-                            const next = [...invoiceItems];
-                            next[i].description = e.target.value;
-                            setInvoiceItems(next);
-                          }}
-                        />
-                        <input
-                          type="number"
-                          className="col-span-2 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
-                          value={it.qty}
-                          min={1}
-                          onChange={(e) => {
-                            const next = [...invoiceItems];
-                            next[i].qty = Number(e.target.value);
-                            setInvoiceItems(next);
-                          }}
-                        />
-                        <input
-                          type="number"
-                          className="col-span-2 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
-                          value={it.unitPrice}
-                          min={0}
-                          onChange={(e) => {
-                            const next = [...invoiceItems];
-                            next[i].unitPrice = Number(e.target.value);
-                            setInvoiceItems(next);
-                          }}
-                        />
-                        <div className="col-span-1 text-right">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const next = invoiceItems.filter(
-                                (_, idx) => idx !== i
-                              );
-                              setInvoiceItems(
-                                next.length
-                                  ? next
-                                  : [{ description: "", qty: 1, unitPrice: 0 }]
-                              );
-                            }}
-                            className="px-2 py-1 bg-red-700/20 rounded text-sm text-red-300"
-                          >
-                            &times;
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-
-                    <div>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setInvoiceItems([
-                            ...invoiceItems,
-                            { description: "", qty: 1, unitPrice: 0 },
-                          ])
-                        }
-                        className="px-3 py-2 bg-slate-800 rounded text-sm text-slate-200"
-                      >
-                        + Add Item
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Totals and actions */}
-                  <div className="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                    <div>
-                      <p className="text-sm text-slate-400">Total</p>
-                      <p className="text-xl font-bold text-white">
-                        $
-                        {invoiceItems
-                          .reduce(
-                            (s, it) =>
-                              s +
-                              Number(it.qty || 0) * Number(it.unitPrice || 0),
-                            0
-                          )
-                          .toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        type="submit"
-                        className="px-4 py-3 bg-green-600 text-white rounded-lg"
-                      >
-                        {editingInvoice
-                          ? "Save Invoice"
-                          : "Create & Link Invoice"}
-                      </button>
-                      {editingInvoice && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingInvoice(null);
-                            setInvoiceNumber("");
-                            setInvoiceDescription("");
-                            setInvoiceDueDate("");
-                            setInvoiceItems([
-                              { description: "", qty: 1, unitPrice: 0 },
-                            ]);
-                          }}
-                          className="px-4 py-3 bg-slate-800 text-white rounded-lg"
-                        >
-                          Cancel
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </form>
-
-                <div className="space-y-3">
-                  {(selectedProject.invoices || [])
-                    .slice()
-                    .reverse()
-                    .map((inv, idx) => (
-                      <div
-                        key={inv.id || idx}
-                        className="p-3 bg-slate-950/20 rounded-lg border border-slate-800 flex justify-between items-center"
-                      >
-                        <div>
-                          <p className="text-sm text-white font-medium">
-                            #{inv.number} — $
-                            {inv.amount?.toLocaleString?.() ?? inv.amount}
-                          </p>
-                          <p className="text-xs text-slate-400">
-                            Due: {inv.dueDate || "—"}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="text-xs text-slate-400 mr-2">
-                            {inv.status || "Unpaid"}
-                          </div>
-                          <button
-                            onClick={() => downloadInvoicePdfAdmin(inv)}
-                            className="px-3 py-1 bg-slate-800 rounded text-sm text-blue-400 hover:text-white"
-                          >
-                            Download
-                          </button>
-                          <button
-                            onClick={() => editInvoice(inv)}
-                            className="px-3 py-1 bg-slate-800 rounded text-sm text-yellow-400 hover:text-white"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => markInvoicePaid(inv)}
-                            className={`px-3 py-1 bg-slate-800 rounded text-sm ${
-                              inv.status === "Paid"
-                                ? "text-yellow-400"
-                                : "text-green-400"
-                            } hover:text-white`}
-                          >
-                            {inv.status === "Paid"
-                              ? "Mark Unpaid"
-                              : "Mark Paid"}
-                          </button>
-                          <button
-                            onClick={async () => {
-                              try {
-                                const res = await fetch("/api/mail/reminder", {
-                                  method: "POST",
-                                  headers: {
-                                    "Content-Type": "application/json",
-                                  },
-                                  body: JSON.stringify({ invoiceId: inv.id }),
-                                });
-                                const data = await res.json();
-                                if (data.ok) {
-                                  toast.success("Reminder sent");
-                                } else {
-                                  toast.error(
-                                    "Reminder failed: " +
-                                      (data.error || "unknown")
-                                  );
-                                }
-                              } catch (err) {
-                                console.error("Reminder send failed", err);
-                                toast.error("Failed to send reminder");
-                              }
-                            }}
-                            className="px-3 py-1 bg-slate-800 rounded text-sm text-amber-400 hover:text-white"
-                          >
-                            Send Reminder
-                          </button>
-                          <button
-                            onClick={() => deleteInvoice(inv)}
-                            className="px-3 py-1 bg-red-800 rounded text-sm text-red-300 hover:text-white"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            </div>
-          ) : selectedUser ? (
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-white mb-1">
-                    Start New Project
-                  </h2>
-                  <p className="text-slate-400">
-                    Selected Client:{" "}
-                    <span className="text-blue-400 font-mono">
-                      {selectedUser.email}
-                    </span>
-                  </p>
-                </div>
-                <button
-                  onClick={() => setSelectedUser(null)}
-                  className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-white transition-colors"
-                >
-                  <ArrowLeft size={20} />
-                </button>
-              </div>
-
-              <form onSubmit={handleCreateProject} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">
-                    Project Name
-                  </label>
-                  <input
-                    required
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
-                    placeholder="e.g. Corporate Website Redesign"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
-                      Total Budget ($)
-                    </label>
-                    <input
-                      required
-                      type="number"
-                      value={budget}
-                      onChange={(e) => setBudget(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
-                      placeholder="5000"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-2">
-                      Due Date
-                    </label>
-                    <input
-                      required
-                      type="date"
-                      value={dueDate ? isoToDateInput(dueDate) : ""}
-                      onChange={(e) =>
-                        setDueDate(dateInputToISOStringLocal(e.target.value))
-                      }
-                      className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
-                      placeholder=""
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 transform active:scale-95">
-                    <Plus size={20} /> Create Project & Initialize Dashboard
-                  </button>
-                </div>
-              </form>
-            </div>
-          ) : (
-            <div className="h-full flex flex-col items-center justify-center text-slate-500 border-2 border-dashed border-slate-800 rounded-2xl p-12 bg-slate-900/20">
-              <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4">
-                <Briefcase size={32} className="text-slate-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-slate-300 mb-2">
-                No Client Selected
-              </h3>
-              <p className="text-sm max-w-xs text-center">
-                Select a client from the database list on the left to manage
-                their account or start a new project.
-              </p>
-            </div>
-          )}
+          {/* Tab Content */}
+          {renderRightPanelContent()}
         </div>
       </main>
     </div>

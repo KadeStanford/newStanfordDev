@@ -33,6 +33,7 @@ import {
   Menu,
   Calendar,
 } from "lucide-react";
+import TestimonialForm from "../components/TestimonialForm";
 import { generateInvoicePdf } from "../lib/generateInvoicePdf";
 import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
@@ -333,6 +334,7 @@ export default function Dashboard() {
             { id: "overview", label: "Overview", icon: LayoutDashboard },
             { id: "documents", label: "Documents", icon: FileText },
             { id: "invoices", label: "Invoices", icon: CreditCard },
+            { id: "testimonials", label: "Testimonials", icon: CheckCircle2 },
             { id: "settings", label: "Settings", icon: Settings },
           ].map((item) => (
             <button
@@ -402,6 +404,7 @@ export default function Dashboard() {
             { id: "overview", label: "Overview", icon: LayoutDashboard },
             { id: "documents", label: "Documents", icon: FileText },
             { id: "invoices", label: "Invoices", icon: CreditCard },
+            { id: "testimonials", label: "Testimonials", icon: CheckCircle2 },
             { id: "settings", label: "Settings", icon: Settings },
           ].map((item) => {
             const Icon = item.icon;
@@ -852,6 +855,27 @@ export default function Dashboard() {
                         </button>
                       </div>
                     </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* TESTIMONIALS TAB */}
+              {activeTab === "testimonials" && (
+                <motion.div
+                  key="testimonials"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                >
+                  <h1 className="text-3xl font-bold text-white mb-6">
+                    Submit a Testimonial
+                  </h1>
+                  <p className="text-slate-400 mb-6 max-w-prose">
+                    Share your experience working with us. Submissions are
+                    reviewed by our team before appearing on the site.
+                  </p>
+                  <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+                    <TestimonialForm />
                   </div>
                 </motion.div>
               )}
