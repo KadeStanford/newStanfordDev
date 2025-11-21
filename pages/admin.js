@@ -13,19 +13,17 @@ import {
   doc as firestoreDoc,
   deleteDoc,
   arrayUnion,
-  Timestamp,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import {
   Users,
   Plus,
   Briefcase,
-  LayoutDashboard,
   ArrowLeft,
   LogOut,
   ShieldAlert,
   Mail as MailIcon,
-  MessageSquare, // Icon for Testimonials tab
+  MessageSquare,
 } from "lucide-react";
 import AdminMailConsole from "../components/AdminMailConsole";
 import { toast } from "sonner";
@@ -33,7 +31,7 @@ import { generateInvoicePdf } from "../lib/generateInvoicePdf";
 
 // --- Tabbed Interface Components ---
 
-// New Component: Testimonial Management Panel
+// Testimonial Management Panel
 const TestimonialPanel = ({
   testimonials,
   testimonialsLoading,
@@ -124,7 +122,7 @@ const TestimonialPanel = ({
 export default function AdminDashboard() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("dashboard"); // 'dashboard', 'projects', 'testimonials'
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [projects, setProjects] = useState([]);
@@ -138,7 +136,7 @@ export default function AdminDashboard() {
 
   // Invoice form state
   const [invoiceNumber, setInvoiceNumber] = useState("");
-  const [invoiceAmount, setInvoiceAmount] = useState(""); // Kept for form reset compatibility, but calculated from items
+  const [invoiceAmount, setInvoiceAmount] = useState("");
   const [invoiceDescription, setInvoiceDescription] = useState("");
   const [invoiceDueDate, setInvoiceDueDate] = useState("");
 
@@ -152,7 +150,6 @@ export default function AdminDashboard() {
   const [testimonials, setTestimonials] = useState([]);
   const [testimonialsLoading, setTestimonialsLoading] = useState(false);
 
-  // Company information (customize as needed)
   const COMPANY_INFO = {
     name: "Stanford Dev Solutions",
     address: "19260 White Road Norwood LA 70761",
@@ -160,9 +157,8 @@ export default function AdminDashboard() {
     phone: "(225) 244-5660",
   };
 
-  // Date helpers to preserve user's local date selection and display in their timezone
+  // Date helpers
   const dateInputToISOStringLocal = (dateStr) => {
-    // dateStr expected in YYYY-MM-DD from <input type="date"> and should be interpreted in the user's local timezone
     if (!dateStr) return "";
     const [y, m, d] = dateStr.split("-").map((s) => Number(s));
     const dt = new Date(y, m - 1, d);
@@ -186,7 +182,6 @@ export default function AdminDashboard() {
   const formatDateForDisplay = (val) => {
     if (!val) return "—";
     try {
-      // handle Firestore Timestamp
       if (val?.toDate) return val.toDate().toLocaleDateString();
       const dt = new Date(val);
       if (isNaN(dt)) return String(val);
@@ -201,7 +196,6 @@ export default function AdminDashboard() {
   const [budget, setBudget] = useState("");
   const [dueDate, setDueDate] = useState("");
 
-  // Fetch users, projects, and testimonials only if Admin
   useEffect(() => {
     if (!loading) {
       if (!user || user.role !== "admin") {
@@ -296,7 +290,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- Project and User Handlers (Remaining logic unchanged) ---
+  // --- Project and User Handlers ---
 
   const fetchProjects = async () => {
     try {
@@ -315,7 +309,7 @@ export default function AdminDashboard() {
     setSelectedProject(p);
     setEditProject({ ...p });
     setSelectedUser(null);
-    setActiveTab("projects"); // Switch to projects tab
+    setActiveTab("projects");
   };
 
   const handleSaveProject = async (e) => {
@@ -331,10 +325,12 @@ export default function AdminDashboard() {
         paid: Number(editProject.paid || 0),
         nextMilestone: editProject.nextMilestone,
         dueDate: editProject.dueDate,
+        // --- ADDED: Save GA Property ID ---
+        gaPropertyId: editProject.gaPropertyId || "",
       };
       await updateDoc(ref, payload);
       toast.success("Project updated");
-      // Refresh projects and keep the project open with updated data
+
       const updatedList = await fetchProjects();
       const refreshed = updatedList.find((p) => p.id === selectedProject.id);
       if (refreshed) {
@@ -354,7 +350,6 @@ export default function AdminDashboard() {
     e?.preventDefault?.();
     if (!selectedProject) return;
 
-    // calculate total from items
     const total = invoiceItems.reduce(
       (s, it) => s + Number(it.qty || 0) * Number(it.unitPrice || 0),
       0
@@ -378,11 +373,9 @@ export default function AdminDashboard() {
       };
 
       if (editingInvoice) {
-        // Update existing invoice doc
         const invRef = firestoreDoc(db, "invoices", editingInvoice.id);
         await updateDoc(invRef, invoicePayload);
 
-        // Update project summary entry
         const projRef = firestoreDoc(db, "projects", selectedProject.id);
         const projSnap = await getDoc(projRef);
         if (projSnap.exists()) {
@@ -404,10 +397,7 @@ export default function AdminDashboard() {
         toast.success("Invoice updated");
         setEditingInvoice(null);
       } else {
-        // Create new invoice
         const invRef = await addDoc(collection(db, "invoices"), invoicePayload);
-
-        // Link summary to project
         const projRef = firestoreDoc(db, "projects", selectedProject.id);
         const summary = {
           id: invRef.id,
@@ -419,20 +409,16 @@ export default function AdminDashboard() {
         await updateDoc(projRef, { invoices: arrayUnion(summary) });
 
         toast.success("Invoice created and linked to project");
-
-        // Prepare full invoice object and download PDF
         const fullInvoice = { id: invRef.id, ...invoicePayload };
         await downloadInvoicePdfAdmin(fullInvoice);
       }
 
-      // Reset form
       setInvoiceNumber("");
       setInvoiceAmount("");
       setInvoiceDescription("");
       setInvoiceDueDate("");
       setInvoiceItems([{ description: "", qty: 1, unitPrice: 0 }]);
 
-      // Refresh and keep selected
       const updatedList = await fetchProjects();
       const refreshed = updatedList.find((p) => p.id === selectedProject.id);
       if (refreshed) {
@@ -445,7 +431,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Generate and download a nicely formatted invoice PDF.
   const downloadInvoicePdfAdmin = async (invSummary) => {
     try {
       let invoiceData = invSummary || {};
@@ -485,7 +470,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Edit an existing invoice: load full invoice data into form
   const editInvoice = async (invSummary) => {
     try {
       let inv = invSummary;
@@ -498,7 +482,6 @@ export default function AdminDashboard() {
       setInvoiceDescription(inv.description || "");
       setInvoiceDueDate(inv.dueDate || "");
       setInvoiceItems(inv.items || [{ description: "", qty: 1, unitPrice: 0 }]);
-      // scroll to form or keep UI focused
     } catch (err) {
       console.error("Failed to load invoice for edit:", err);
       toast.error("Failed to load invoice for editing.");
@@ -509,11 +492,9 @@ export default function AdminDashboard() {
     if (!invSummary?.id) return;
     if (!confirm("Delete this invoice? This cannot be undone.")) return;
     try {
-      // delete invoice doc
       const invRef = firestoreDoc(db, "invoices", invSummary.id);
       await deleteDoc(invRef);
 
-      // remove from project summaries
       const projRef = firestoreDoc(db, "projects", selectedProject.id);
       const projSnap = await getDoc(projRef);
       if (projSnap.exists()) {
@@ -540,17 +521,14 @@ export default function AdminDashboard() {
   const markInvoicePaid = async (invSummary) => {
     if (!invSummary?.id) return;
     try {
-      // Fetch current invoice status so we can toggle
       const invRef = firestoreDoc(db, "invoices", invSummary.id);
       const invSnap = await getDoc(invRef);
       if (!invSnap.exists()) return;
       const currentStatus = invSnap.data()?.status || "Unpaid";
       const newStatus = currentStatus === "Paid" ? "Unpaid" : "Paid";
 
-      // Update invoice doc with toggled status
       await updateDoc(invRef, { status: newStatus });
 
-      // update project summary entry to reflect new status
       const projRef = firestoreDoc(db, "projects", selectedProject.id);
       const projSnap = await getDoc(projRef);
       if (projSnap.exists()) {
@@ -598,7 +576,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Start editing a specific update (by its array index)
   const startEditUpdate = (index) => {
     if (!selectedProject) return;
     const updates = selectedProject.updates || [];
@@ -707,9 +684,8 @@ export default function AdminDashboard() {
     if (!selectedUser) return;
 
     try {
-      // Create the project document linked to the selected user
       await addDoc(collection(db, "projects"), {
-        clientId: selectedUser.id, // LINKING: This connects the project to the client's dashboard
+        clientId: selectedUser.id,
         name: projectName,
         status: "Just Started",
         progress: 0,
@@ -717,6 +693,8 @@ export default function AdminDashboard() {
         paid: 0,
         nextMilestone: "Project Kickoff",
         dueDate: dueDate,
+        // --- ADDED: Init GA Property ID ---
+        gaPropertyId: "",
         createdAt: serverTimestamp(),
         updates: [
           { title: "Project Created", date: "Just now", type: "neutral" },
@@ -727,13 +705,12 @@ export default function AdminDashboard() {
 
       toast.success(`Project created for ${selectedUser.email}`);
 
-      // Reset form
       setProjectName("");
       setBudget("");
       setDueDate("");
       setSelectedUser(null);
       fetchProjects();
-      setActiveTab("projects"); // Switch to projects tab
+      setActiveTab("projects");
     } catch (error) {
       console.error("Error creating project:", error);
       toast.error("Failed to create project.");
@@ -755,7 +732,6 @@ export default function AdminDashboard() {
       );
     }
 
-    // Default to Project Management/User Selection logic
     if (selectedProject) {
       return (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8">
@@ -832,7 +808,6 @@ export default function AdminDashboard() {
                   onClick={async () => {
                     if (!selectedProject) return;
                     try {
-                      // Ask for live URL (optional)
                       let live = window.prompt(
                         "Enter the live site URL (optional). Leave blank if not available:",
                         selectedProject.liveUrl || ""
@@ -887,6 +862,28 @@ export default function AdminDashboard() {
                 }
                 className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 outline-none transition-colors"
               />
+            </div>
+
+            {/* --- ADDED: GA Property ID Input --- */}
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-2">
+                GA4 Property ID
+              </label>
+              <input
+                value={editProject?.gaPropertyId || ""}
+                onChange={(e) =>
+                  setEditProject({
+                    ...editProject,
+                    gaPropertyId: e.target.value,
+                  })
+                }
+                placeholder="e.g. 345678901"
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white font-mono focus:border-blue-500 outline-none"
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                Required for Analytics tab. Found in GA Admin {">"} Property
+                Settings.
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-6">
@@ -1446,7 +1443,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Decide which projects to show in the left projects list.
   const visibleProjects = showAllProjects
     ? projects
     : selectedUser
@@ -1491,7 +1487,6 @@ export default function AdminDashboard() {
           </button>
         </div>
       </header>
-      {/* Mail Console Slide-over */}
       {showMailConsole && (
         <div className="fixed inset-0 z-50">
           <div
@@ -1531,8 +1526,8 @@ export default function AdminDashboard() {
                 onClick={() => {
                   setSelectedUser(u);
                   setSelectedProject(null);
-                  setActiveTab("projects"); // Default to projects tab when user is selected
-                  setShowAllProjects(false); // default to showing the selected client's projects
+                  setActiveTab("projects");
+                  setShowAllProjects(false);
                 }}
                 className={`p-4 rounded-xl border cursor-pointer transition-all ${
                   selectedUser?.id === u.id
@@ -1647,7 +1642,6 @@ export default function AdminDashboard() {
             <button
               onClick={() => {
                 setActiveTab("testimonials");
-                // Clear selections when switching to global view
                 setSelectedProject(null);
                 setSelectedUser(null);
               }}

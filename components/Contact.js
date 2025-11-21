@@ -24,6 +24,13 @@ import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { Meteors } from "./Meteors";
 
+// Helper function to track GA events
+const trackAnalyticsEvent = (eventName, params = {}) => {
+  if (typeof window !== "undefined" && typeof window.gtag === "function") {
+    window.gtag("event", eventName, params);
+  }
+};
+
 export default function Contact() {
   const [contactMode, setContactMode] = useState("general");
   const [colorPalette, setColorPalette] = useState(["#3b82f6", "#1e293b"]);
@@ -250,9 +257,10 @@ export default function Contact() {
       return;
     }
     setErrors({});
+
     // If this is the general contact form, send immediately
     if (contactMode === "general") {
-      // run react-hook-form validation separately on the client
+      // run manual validation again for safety (RHF isn't fully integrated here)
       const errs = validate();
       if (Object.keys(errs).length > 0) {
         setErrors(errs);
@@ -302,6 +310,15 @@ export default function Contact() {
           toast.success("Message sent! We'll be in touch soon.", {
             id: toastId,
           });
+
+          // --- GA TRACKING FOR GENERAL SUBMISSION ---
+          trackAnalyticsEvent("form_submission", {
+            form_type: "general_contact",
+            event_category: "lead_generation",
+            event_label: "general_question_sent",
+          });
+          // --- END GA TRACKING ---
+
           setProject((p) => ({ ...p, fullName: "", email: "" }));
           setGeneralMessage("");
           // reset reCAPTCHA widget/token for general form
@@ -338,6 +355,7 @@ export default function Contact() {
           ? "$10,000+"
           : "$" + project.budgetMax.toLocaleString()
       }`;
+      const budgetValue = project.budgetMin; // Use the minimum budget as the value metric
 
       const data = {
         type: "project",
@@ -387,6 +405,17 @@ export default function Contact() {
       toast.success("Request received! We'll be in touch soon.", {
         id: toastId,
       });
+
+      // --- GA TRACKING FOR PROJECT SUBMISSION (ESTIMATE) ---
+      trackAnalyticsEvent("form_submission", {
+        form_type: "project_estimate",
+        project_type: project.projectType, // 'website', 'ecommerce', etc.
+        project_budget_min: budgetValue, // Sending numeric value to GA
+        event_category: "lead_generation",
+        event_label: "estimate_request_sent",
+        value: budgetValue,
+      });
+      // --- END GA TRACKING ---
 
       // Reset form
       setProject({
@@ -457,6 +486,10 @@ export default function Contact() {
 
   // Helper checks whether the recaptcha widget for a form has a token/response
   const canSubmitGeneral = () => {
+    // Only check CAPTCHA readiness if the Site Key is present
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    if (!siteKey) return true;
+
     try {
       if (recaptchaTokens.general) return true;
       const wid = recaptchaWidgetIds.general;
@@ -470,6 +503,10 @@ export default function Contact() {
   };
 
   const canSubmitProject = () => {
+    // Only check CAPTCHA readiness if the Site Key is present
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    if (!siteKey) return true;
+
     try {
       if (recaptchaTokens.project) return true;
       const wid = recaptchaWidgetIds.project;

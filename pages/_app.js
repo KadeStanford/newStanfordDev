@@ -4,8 +4,12 @@ import { Toaster } from "sonner";
 import { DefaultSeo } from "next-seo";
 import SEO from "../next-seo.config";
 import { useEffect } from "react";
+import Script from "next/script"; // Import Script component
 
 function MyApp({ Component, pageProps }) {
+  // Use environment variable for GA ID
+  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   useEffect(() => {
     // Client-only PostHog init (optional). Requires NEXT_PUBLIC_POSTHOG_KEY.
     const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
@@ -26,6 +30,33 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <AuthContextProvider>
+      {/* Google Analytics Setup using next/script */}
+      {GA_MEASUREMENT_ID && (
+        <>
+          {/* 1. Loads the gtag.js script asynchronously */}
+          <Script
+            strategy="afterInteractive" // Loads after hydration
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          />
+
+          {/* 2. Initializes the dataLayer and runs the config command */}
+          <Script
+            id="google-analytics-init"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', {
+                  page_path: window.location.pathname,
+                });
+              `,
+            }}
+          />
+        </>
+      )}
+
       <DefaultSeo {...SEO} />
       <Component {...pageProps} />
       <Toaster position="bottom-right" theme="dark" richColors />
