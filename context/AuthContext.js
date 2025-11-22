@@ -1,12 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import {
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "../lib/firebase";
+// Note: firebase client instances are dynamically imported below to avoid
+// running firebase client code during SSR.
 
 const AuthContext = createContext({});
 
@@ -17,51 +11,93 @@ export const AuthContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-      if (authUser) {
-        try {
-          // Fetch the user's role from Firestore
-          const userDocRef = doc(db, "users", authUser.uid);
-          const userDoc = await getDoc(userDocRef);
+    // Defer setting up the auth listener until after hydration
+    let unsubscribe = () => {};
+    let mounted = true;
 
-          let userData = {};
-          if (userDoc.exists()) {
-            userData = userDoc.data();
-          }
+    (async () => {
+      if (typeof window === "undefined") return;
 
-          setUser({
-            uid: authUser.uid,
-            email: authUser.email,
-            displayName: authUser.displayName,
-            role: userData.role || "client", // Default to client if undefined
-          });
-        } catch (error) {
-          console.error("Error fetching user role:", error);
-          // Fallback if firestore fails
-          setUser({
-            uid: authUser.uid,
-            email: authUser.email,
-            role: "client",
-          });
-        }
-      } else {
-        setUser(null);
+      // Dynamically import Firebase auth + firestore helpers so they
+      // don't run during SSR and only load after the page is interactive.
+      const [authMod, firestoreMod] = await Promise.all([
+        import("firebase/auth"),
+        import("firebase/firestore"),
+      ]);
+
+      const onAuthStateChanged = authMod.onAuthStateChanged;
+      const doc = firestoreMod.doc;
+      const getDoc = firestoreMod.getDoc;
+      const setDoc = firestoreMod.setDoc;
+
+      // Ensure firebase client instances are available (lib/firebase initializes on client)
+      const { auth, db } = await import("../lib/firebase");
+
+      if (!auth) {
+        // If auth failed to initialize for any reason, bail out gracefully
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-    });
 
-    return () => unsubscribe();
+      unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+        if (!mounted) return;
+
+        if (authUser) {
+          try {
+            // Fetch the user's role from Firestore
+            const userDocRef = doc(db, "users", authUser.uid);
+            const userDoc = await getDoc(userDocRef);
+
+            let userData = {};
+            if (userDoc && userDoc.exists && userDoc.exists()) {
+              userData = userDoc.data();
+            }
+
+            setUser({
+              uid: authUser.uid,
+              email: authUser.email,
+              displayName: authUser.displayName,
+              role: userData.role || "client",
+            });
+          } catch (error) {
+            console.error("Error fetching user role:", error);
+            setUser({
+              uid: authUser.uid,
+              email: authUser.email,
+              role: "client",
+            });
+          }
+        } else {
+          setUser(null);
+        }
+        setLoading(false);
+      });
+    })();
+
+    return () => {
+      mounted = false;
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const signUp = async (email, password) => {
-    // 1. Create the Authentication User
+    const [authMod, firestoreMod] = await Promise.all([
+      import("firebase/auth"),
+      import("firebase/firestore"),
+    ]);
+    const createUserWithEmailAndPassword =
+      authMod.createUserWithEmailAndPassword;
+    const setDoc = firestoreMod.setDoc;
+    const doc = firestoreMod.doc;
+
+    const { auth, db } = await import("../lib/firebase");
+
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
 
-    // 2. Create the User Document in Firestore with role="client"
     await setDoc(doc(db, "users", userCredential.user.uid), {
       email: email,
       role: "client",
@@ -71,11 +107,17 @@ export const AuthContextProvider = ({ children }) => {
     return userCredential;
   };
 
-  const signIn = (email, password) => {
+  const signIn = async (email, password) => {
+    const authMod = await import("firebase/auth");
+    const signInWithEmailAndPassword = authMod.signInWithEmailAndPassword;
+    const { auth } = await import("../lib/firebase");
     return signInWithEmailAndPassword(auth, email, password);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const authMod = await import("firebase/auth");
+    const signOut = authMod.signOut;
+    const { auth } = await import("../lib/firebase");
     return signOut(auth);
   };
 

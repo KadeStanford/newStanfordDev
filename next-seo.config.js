@@ -1,4 +1,5 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://stanforddevsolutions.com";
 
 const SEO = {
   title: "Stanford Development Solutions | Custom Web Development",
@@ -9,11 +10,21 @@ const SEO = {
     url: siteUrl,
     site_name: "Stanford Development Solutions",
   },
-  twitter: {
-    handle: "@yourhandle",
-    site: "@yourhandle",
-    cardType: "summary_large_image",
-  },
+  // sensible defaults for Next SEO usage
+  additionalLinkTags: [
+    {
+      rel: "icon",
+      href: `${siteUrl}/favicon.ico`,
+    },
+  ],
 };
 
-module.exports = SEO;
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Stanford Development Solutions",
+  url: siteUrl,
+  logo: `${siteUrl}/images/logo.png`,
+};
+
+module.exports = { SEO, siteUrl, organizationSchema };

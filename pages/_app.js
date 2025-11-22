@@ -2,7 +2,7 @@ import "../styles/globals.css"; // Ensure your global styles are imported
 import { AuthContextProvider } from "../context/AuthContext";
 import { Toaster } from "sonner";
 import { DefaultSeo } from "next-seo";
-import SEO from "../next-seo.config";
+import siteSeoConfig from "../next-seo.config";
 import { useEffect } from "react";
 import Script from "next/script"; // Import Script component
 
@@ -57,7 +57,12 @@ function MyApp({ Component, pageProps }) {
         </>
       )}
 
-      <DefaultSeo {...SEO} />
+      {/* support CommonJS export (object with SEO) and plain default */}
+      <DefaultSeo
+        {...(siteSeoConfig && siteSeoConfig.SEO
+          ? siteSeoConfig.SEO
+          : siteSeoConfig)}
+      />
       <Component {...pageProps} />
       <Toaster position="bottom-right" theme="dark" richColors />
     </AuthContextProvider>

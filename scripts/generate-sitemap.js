@@ -45,14 +45,19 @@ async function getPages() {
         "pages/api/**",
         "pages/**/[*].*",
         "pages/**/admin/**",
+        "pages/admin.js",
       ],
     }
   );
 
-  return pages
-    .map((p) => p.replace("pages", ""))
-    .map((p) => p.replace(/\.js$|\.jsx$|\.tsx$|\.ts$/i, ""))
-    .map((p) => (p === "/index" ? "/" : p));
+  return (
+    pages
+      .map((p) => p.replace("pages", ""))
+      .map((p) => p.replace(/\.js$|\.jsx$|\.tsx$|\.ts$/i, ""))
+      // normalize nested index files: /blog/index -> /blog, and top-level /index -> /
+      .map((p) => p.replace(/\/index$/, ""))
+      .map((p) => (p === "" ? "/" : p))
+  );
 }
 
 async function getPosts() {

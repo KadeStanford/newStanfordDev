@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://stanforddevsolutions.com/admin</loc>
+  </url>
+  <url>
     <loc>https://stanforddevsolutions.com/contact</loc>
   </url>
   <url>
@@ -16,10 +19,10 @@
     <loc>https://stanforddevsolutions.com/portfolio</loc>
   </url>
   <url>
-    <loc>https://stanforddevsolutions.com/blog</loc>
+    <loc>https://stanforddevsolutions.com/blog/[slug]</loc>
   </url>
   <url>
-    <loc>https://stanforddevsolutions.com/blog/[slug]</loc>
+    <loc>https://stanforddevsolutions.com/blog/index</loc>
   </url>
   <url>
     <loc>https://stanforddevsolutions.com/blog/example</loc>
