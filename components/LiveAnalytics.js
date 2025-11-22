@@ -67,7 +67,28 @@ export default function LiveAnalytics() {
   const [history, setHistory] = useState([]);
   const mounted = useRef(false);
 
+  // Detect if we should disable realtime/polling for perf audits. This
+  // allows running Lighthouse against the production site with
+  // ?perf_audit=1 (or by setting NEXT_PUBLIC_DISABLE_REALTIME=1) to avoid
+  // long-lived Listen channels or frequent polling during the audit.
+  const [disableRealtime] = useState(() => {
+    try {
+      if (typeof window === "undefined") return false;
+      const params = new URLSearchParams(window.location.search);
+      return (
+        params.has("perf_audit") || process.env.NEXT_PUBLIC_DISABLE_REALTIME === "1"
+      );
+    } catch (e) {
+      return false;
+    }
+  });
+
   useEffect(() => {
+    if (disableRealtime) {
+      // Skip attaching intervals/heartbeats during perf audit mode.
+      return undefined;
+    }
+
     mounted.current = true;
 
     const sendHeartbeat = async () => {
@@ -114,7 +135,7 @@ export default function LiveAnalytics() {
       clearInterval(hb);
       clearInterval(poll);
     };
-  }, []);
+  }, [disableRealtime]);
 
   return (
     <section className="max-w-4xl mx-auto py-12 px-6">

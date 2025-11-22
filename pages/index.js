@@ -11,11 +11,24 @@ import Work from "../components/Work";
 import TestimonialsDisplay from "../components/TestimonialsDisplay";
 import WhyUs from "../components/WhyUs";
 import Contact from "../components/Contact";
-import LiveAnalytics from "../components/LiveAnalytics";
 import Footer from "../components/Footer";
-import StarBackground from "../components/StarBackground";
 import ScrollReveal from "../components/ScrollReveal";
-import GlobeSection from "../components/GlobeSection"; // Import GlobeSection
+import dynamic from "next/dynamic";
+
+// Lazy-load heavy/visual components to keep initial JS small and avoid
+// opening costly WebGL or polling work during the critical path.
+const StarBackground = dynamic(() => import("../components/StarBackground"), {
+  ssr: false,
+  loading: () => null,
+});
+const LiveAnalytics = dynamic(() => import("../components/LiveAnalytics"), {
+  ssr: false,
+  loading: () => null,
+});
+const GlobeSection = dynamic(() => import("../components/GlobeSection"), {
+  ssr: false,
+  loading: () => null,
+});
 
 export default function Home() {
   // Initialize Lenis Smooth Scroll

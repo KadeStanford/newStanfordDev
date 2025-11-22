@@ -33,16 +33,15 @@ function MyApp({ Component, pageProps }) {
       {/* Google Analytics Setup using next/script */}
       {GA_MEASUREMENT_ID && (
         <>
-          {/* 1. Loads the gtag.js script asynchronously */}
+          {/* Load analytics lazily when the browser is idle to avoid blocking initial paint */}
           <Script
-            strategy="afterInteractive" // Loads after hydration
+            strategy="lazyOnload"
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           />
 
-          {/* 2. Initializes the dataLayer and runs the config command */}
           <Script
             id="google-analytics-init"
-            strategy="afterInteractive"
+            strategy="lazyOnload"
             dangerouslySetInnerHTML={{
               __html: `
                 window.dataLayer = window.dataLayer || [];
