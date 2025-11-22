@@ -76,7 +76,8 @@ export default function LiveAnalytics() {
       if (typeof window === "undefined") return false;
       const params = new URLSearchParams(window.location.search);
       return (
-        params.has("perf_audit") || process.env.NEXT_PUBLIC_DISABLE_REALTIME === "1"
+        params.has("perf_audit") ||
+        process.env.NEXT_PUBLIC_DISABLE_REALTIME === "1"
       );
     } catch (e) {
       return false;
