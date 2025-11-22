@@ -365,24 +365,55 @@ export default async function handler(req, res) {
     });
   }
 
-  const GA_SA_KEY = process.env.GA_SA_KEY;
+  // Support multiple ways of providing the GA service account:
+  // 1) GA_SA_KEY_BASE64 (base64-encoded JSON) - preferred for hosting envs
+  // 2) GA_SA_KEY (raw JSON or escaped-newline single-line)
+  // 3) FIREBASE_SERVICE_ACCOUNT (raw JSON)
+  const hasBase64 = !!process.env.GA_SA_KEY_BASE64;
+  const hasRaw = !!process.env.GA_SA_KEY;
+  const hasFirebaseSA = !!process.env.FIREBASE_SERVICE_ACCOUNT;
 
-  if (!GA_SA_KEY) {
-    return res
-      .status(500)
-      .json({ error: "GA_SA_KEY not configured on server" });
-  }
-
-  let sa;
-  try {
-    sa = JSON.parse(GA_SA_KEY);
-    if (sa.private_key) {
-      sa.private_key = sa.private_key.replace(/\\n/g, "\n");
+  let sa = null;
+  if (hasBase64) {
+    try {
+      const decoded = Buffer.from(process.env.GA_SA_KEY_BASE64, "base64").toString("utf8");
+      sa = JSON.parse(decoded);
+    } catch (e) {
+      console.error("Failed to parse GA_SA_KEY_BASE64:", e);
+      return res.status(500).json({ error: "Failed to parse GA_SA_KEY_BASE64" });
     }
-  } catch (e) {
-    console.error("Failed to parse GA_SA_KEY:", e);
-    return res.status(500).json({ error: "Failed to parse GA_SA_KEY" });
   }
+
+  if (!sa && (hasRaw || hasFirebaseSA)) {
+    const raw = process.env.GA_SA_KEY || process.env.FIREBASE_SERVICE_ACCOUNT;
+    if (typeof raw === "object") {
+      sa = raw;
+    } else if (typeof raw === "string") {
+      try {
+        sa = JSON.parse(raw);
+      } catch (e1) {
+        try {
+          // handle escaped newline sequences
+          const replaced = raw.replace(/\\n/g, "\n");
+          sa = JSON.parse(replaced);
+        } catch (e2) {
+          try {
+            const decoded = Buffer.from(raw, "base64").toString("utf8");
+            sa = JSON.parse(decoded);
+          } catch (e3) {
+            console.error("Failed to parse service account from GA_SA_KEY/FIREBASE_SERVICE_ACCOUNT:", e1, e2, e3);
+            return res.status(500).json({ error: "Failed to parse GA service account" });
+          }
+        }
+      }
+    }
+  }
+
+  if (!sa) {
+    return res.status(500).json({ error: "GA service account not configured on server" });
+  }
+
+  if (sa.private_key) sa.private_key = sa.private_key.replace(/\\n/g, "\n");
 
   const client = new BetaAnalyticsDataClient({ credentials: sa });
 
