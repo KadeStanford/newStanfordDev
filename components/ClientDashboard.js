@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../context/AuthContext";
-import { signOut, updateProfile } from "firebase/auth";
 import {
   collection,
   query,
@@ -647,7 +646,8 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      const authMod = await import("firebase/auth");
+      await authMod.signOut(auth);
       router.push("/login");
     } catch (e) {
       console.error("Logout failed:", e);
@@ -753,9 +753,14 @@ export default function Dashboard() {
         auth.currentUser &&
         profileFields.displayName !== auth.currentUser.displayName
       ) {
-        await updateProfile(auth.currentUser, {
-          displayName: profileFields.displayName || null,
-        });
+        try {
+          const authMod = await import("firebase/auth");
+          await authMod.updateProfile(auth.currentUser, {
+            displayName: profileFields.displayName || null,
+          });
+        } catch (e) {
+          console.warn("updateProfile failed:", e);
+        }
       }
 
       const uRef = firestoreDoc(db, "users", user.uid);

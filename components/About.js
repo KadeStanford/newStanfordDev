@@ -1,8 +1,57 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Github, Linkedin, Mail, ArrowUpRight } from "lucide-react";
 import Tilt from "react-parallax-tilt";
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
+
+// Render annotations only after a short mount delay so the library can
+// measure the DOM element sizes reliably. This prevents NaN coordinates
+// in generated SVG paths when measurements happen too early.
+function AnnotationWrapper() {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setIsReady(true), 120);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (!isReady) {
+    // Render plain text as a safe fallback while measurements stabilize.
+    return (
+      <p className="text-slate-300 leading-relaxed max-w-2xl text-lg">
+        I build <span className="text-blue-400">fast</span>,{" "}
+        <span className="text-purple-400">accessible</span>, and beautiful
+        websites for small businesses. I focus on{" "}
+        <span className="bg-yellow-400/10 px-1 rounded text-yellow-300">
+          custom solutions
+        </span>{" "}
+        that convert visitors into customers while keeping maintenance simple
+        for non-technical owners.
+      </p>
+    );
+  }
+
+  return (
+    <RoughNotationGroup show={true}>
+      <p className="text-slate-300 leading-relaxed max-w-2xl text-lg">
+        I build{" "}
+        <RoughNotation type="underline" color="#3b82f6">
+          fast
+        </RoughNotation>
+        ,{" "}
+        <RoughNotation type="underline" color="#8b5cf6">
+          accessible
+        </RoughNotation>
+        , and beautiful websites for small businesses. I focus on{" "}
+        <RoughNotation type="highlight" color="#3b82f620" multiline>
+          custom solutions
+        </RoughNotation>{" "}
+        that convert visitors into customers while keeping maintenance simple
+        for non-technical owners.
+      </p>
+    </RoughNotationGroup>
+  );
+}
 
 export default function About() {
   return (
@@ -71,24 +120,7 @@ export default function About() {
               </h3>
             </div>
 
-            <RoughNotationGroup show={true}>
-              <p className="text-slate-300 leading-relaxed max-w-2xl text-lg">
-                I build{" "}
-                <RoughNotation type="underline" color="#3b82f6">
-                  fast
-                </RoughNotation>
-                ,{" "}
-                <RoughNotation type="underline" color="#8b5cf6">
-                  accessible
-                </RoughNotation>
-                , and beautiful websites for small businesses. I focus on{" "}
-                <RoughNotation type="highlight" color="#3b82f620" multiline>
-                  custom solutions
-                </RoughNotation>{" "}
-                that convert visitors into customers while keeping maintenance
-                simple for non-technical owners.
-              </p>
-            </RoughNotationGroup>
+            <AnnotationWrapper />
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-2 justify-center md:justify-start">
               <button
