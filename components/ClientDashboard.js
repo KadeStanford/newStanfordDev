@@ -335,14 +335,24 @@ const AnalyticsSparkline = ({
   color = "#7c3aed",
 }) => {
   if (!data || data.length === 0) return null;
-  const counts = data.map((d) =>
-    typeof d === "object" ? d.count || d.activeUsers || 0 : d
-  );
-  const max = Math.max(...counts, 1);
+  // Normalize incoming data to finite numbers to avoid NaN coordinates
+  const counts = (data || [])
+    .map((d) => {
+      let raw =
+        typeof d === "object" && d !== null
+          ? d.count ?? d.activeUsers ?? d.value ?? 0
+          : d;
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : NaN;
+    })
+    .filter(Number.isFinite);
+  const max = counts.length ? Math.max(...counts) : 1;
   const len = counts.length;
   const viewW = 200;
   const viewH = 50;
   const step = len > 1 ? viewW / (len - 1) : viewW;
+
+  if (!counts || counts.length === 0) return null;
 
   const points = counts
     .map((val, i) => {

@@ -12,20 +12,33 @@ function Sparkline({
   if (!data || data.length === 0) {
     return <div className={`${className} text-xs text-slate-400`}>no data</div>;
   }
+  // Ensure we only use finite numeric values to avoid NaN coordinates
+  const numeric = data
+    .map((v) =>
+      typeof v === "object" && v !== null
+        ? Number(v.value ?? v.count ?? v.active ?? v)
+        : Number(v)
+    )
+    .map((n) => (Number.isFinite(n) ? n : NaN))
+    .filter(Number.isFinite);
 
-  const max = Math.max(...data);
-  const min = Math.min(...data);
+  if (!numeric || numeric.length === 0) {
+    return <div className={`${className} text-xs text-slate-400`}>no data</div>;
+  }
+
+  const max = Math.max(...numeric);
+  const min = Math.min(...numeric);
   const range = max - min || 1;
 
-  const points = data
+  const points = numeric
     .map((v, i) => {
-      const x = (i / (data.length - 1)) * width;
+      const x = (i / (numeric.length - 1)) * width;
       const y = height - ((v - min) / range) * height;
       return `${x},${y}`;
     })
     .join(" ");
 
-  const last = data[data.length - 1];
+  const last = numeric[numeric.length - 1];
   const lastX = width;
   const lastY = height - ((last - min) / range) * height;
 
