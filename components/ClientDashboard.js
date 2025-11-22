@@ -651,34 +651,66 @@ export default function Dashboard() {
       setFetching(false);
       return;
     }
+    // Delay attaching realtime listeners slightly after hydration to avoid
+    // creating persistent Firestore Listen channels during initial page load.
+    // This reduces inflight requests that can make Lighthouse time out.
+    let didUnsubscribe = false;
+    let unsub = () => {};
 
-    setFetching(true);
-    const q = query(
-      collection(db, "projects"),
-      where("clientId", "==", user.uid)
-    );
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        if (!snap.empty) {
-          const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-          setProjects(docs);
-          setSelectedProjectId((prev) =>
-            docs.some((d) => d.id === prev) ? prev : null
-          );
-        } else {
-          setProjects([]);
-          setSelectedProjectId(null);
+    const attach = () => {
+      if (didUnsubscribe) return;
+      setFetching(true);
+      const q = query(
+        collection(db, "projects"),
+        where("clientId", "==", user.uid)
+      );
+      unsub = onSnapshot(
+        q,
+        (snap) => {
+          if (!snap.empty) {
+            const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+            setProjects(docs);
+            setSelectedProjectId((prev) =>
+              docs.some((d) => d.id === prev) ? prev : null
+            );
+          } else {
+            setProjects([]);
+            setSelectedProjectId(null);
+          }
+          setFetching(false);
+        },
+        (err) => {
+          console.error("Project listener error:", err);
+          setFetching(false);
         }
-        setFetching(false);
-      },
-      (err) => {
-        console.error("Project listener error:", err);
-        setFetching(false);
-      }
-    );
+      );
+    };
 
-    return () => unsub();
+    // Use a small delay (1.5s) and requestIdleCallback when available so the
+    // listener attaches off the critical path.
+    const idleCallback = () => {
+      if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+        window.requestIdleCallback(attach, { timeout: 1500 });
+      } else {
+        // Fallback to setTimeout
+        const t = setTimeout(attach, 1500);
+        // ensure we clear timeout on cleanup
+        unsub._timeout = t;
+      }
+    };
+
+    idleCallback();
+
+    return () => {
+      didUnsubscribe = true;
+      try {
+        if (unsub && typeof unsub === "function") unsub();
+      } catch (e) {
+        // ignore
+      }
+      // clear any fallback timeout
+      if (unsub && unsub._timeout) clearTimeout(unsub._timeout);
+    };
   }, [user, loading]);
 
   useEffect(() => {
