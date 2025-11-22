@@ -148,12 +148,16 @@ export default function Contact() {
     // Ensure the grecaptcha script is loaded only once and return a promise that resolves when available
     function ensureRecaptcha() {
       if (typeof window === "undefined") return Promise.reject();
-      if (window.grecaptcha && window.grecaptcha.render) return Promise.resolve();
-      if (window.__recaptchaLoadingPromise) return window.__recaptchaLoadingPromise;
+      if (window.grecaptcha && window.grecaptcha.render)
+        return Promise.resolve();
+      if (window.__recaptchaLoadingPromise)
+        return window.__recaptchaLoadingPromise;
 
       window.__recaptchaLoadingPromise = new Promise((resolve) => {
         // avoid adding duplicate script tags
-        const existing = Array.from(document.scripts).find((s) => s.src && s.src.includes("/recaptcha/api.js"));
+        const existing = Array.from(document.scripts).find(
+          (s) => s.src && s.src.includes("/recaptcha/api.js")
+        );
         if (existing) {
           existing.addEventListener("load", () => setTimeout(resolve, 50));
           return;
@@ -181,12 +185,18 @@ export default function Contact() {
         if (window.grecaptcha && window.grecaptcha.render) {
           try {
             const genContainer = document.getElementById("recaptcha-general");
-            if (genContainer && (recaptchaWidgetIds.general == null || recaptchaWidgetIds.general === null)) {
+            if (
+              genContainer &&
+              (recaptchaWidgetIds.general == null ||
+                recaptchaWidgetIds.general === null)
+            ) {
               try {
                 const id = window.grecaptcha.render(genContainer, {
                   sitekey: siteKey,
-                  callback: (token) => setRecaptchaTokens((s) => ({ ...s, general: token })),
-                  "expired-callback": () => setRecaptchaTokens((s) => ({ ...s, general: null })),
+                  callback: (token) =>
+                    setRecaptchaTokens((s) => ({ ...s, general: token })),
+                  "expired-callback": () =>
+                    setRecaptchaTokens((s) => ({ ...s, general: null })),
                 });
                 setRecaptchaWidgetIds((s) => ({ ...s, general: id }));
               } catch (e) {
@@ -195,12 +205,18 @@ export default function Contact() {
             }
 
             const projContainer = document.getElementById("recaptcha-project");
-            if (projContainer && (recaptchaWidgetIds.project == null || recaptchaWidgetIds.project === null)) {
+            if (
+              projContainer &&
+              (recaptchaWidgetIds.project == null ||
+                recaptchaWidgetIds.project === null)
+            ) {
               try {
                 const id = window.grecaptcha.render(projContainer, {
                   sitekey: siteKey,
-                  callback: (token) => setRecaptchaTokens((s) => ({ ...s, project: token })),
-                  "expired-callback": () => setRecaptchaTokens((s) => ({ ...s, project: null })),
+                  callback: (token) =>
+                    setRecaptchaTokens((s) => ({ ...s, project: token })),
+                  "expired-callback": () =>
+                    setRecaptchaTokens((s) => ({ ...s, project: null })),
                 });
                 setRecaptchaWidgetIds((s) => ({ ...s, project: id }));
               } catch (e) {
@@ -233,14 +249,17 @@ export default function Contact() {
     const rootEl = document.getElementById("contact");
     let io;
     if (rootEl && typeof IntersectionObserver !== "undefined") {
-      io = new IntersectionObserver((entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            triggerLoad();
-            if (io) io.disconnect();
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              triggerLoad();
+              if (io) io.disconnect();
+            }
           }
-        }
-      }, { root: null, rootMargin: "0px", threshold: 0.15 });
+        },
+        { root: null, rootMargin: "0px", threshold: 0.15 }
+      );
       io.observe(rootEl);
     }
 
