@@ -135,25 +135,25 @@ export default function Contact() {
   });
 
   // Load reCAPTCHA v2 (checkbox) script and render widgets for general/project forms
+  // BUT: avoid loading reCAPTCHA during initial page load — wait until the
+  // contact section is visible or the user interacts with the form. This
+  // reduces third-party payloads during the critical path (LCP/TBT).
   useEffect(() => {
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
     if (!siteKey) return;
 
     let cancelled = false;
+    let hasTriggered = false;
 
     // Ensure the grecaptcha script is loaded only once and return a promise that resolves when available
     function ensureRecaptcha() {
       if (typeof window === "undefined") return Promise.reject();
-      if (window.grecaptcha && window.grecaptcha.render)
-        return Promise.resolve();
-      if (window.__recaptchaLoadingPromise)
-        return window.__recaptchaLoadingPromise;
+      if (window.grecaptcha && window.grecaptcha.render) return Promise.resolve();
+      if (window.__recaptchaLoadingPromise) return window.__recaptchaLoadingPromise;
 
       window.__recaptchaLoadingPromise = new Promise((resolve) => {
         // avoid adding duplicate script tags
-        const existing = Array.from(document.scripts).find(
-          (s) => s.src && s.src.includes("/recaptcha/api.js")
-        );
+        const existing = Array.from(document.scripts).find((s) => s.src && s.src.includes("/recaptcha/api.js"));
         if (existing) {
           existing.addEventListener("load", () => setTimeout(resolve, 50));
           return;
@@ -172,27 +172,21 @@ export default function Contact() {
 
     // Attempt to render widgets; retry a few times if grecaptcha not ready yet
     async function tryRenderWithRetries() {
+      if (cancelled) return;
       await ensureRecaptcha();
       const maxAttempts = 10;
       let attempt = 0;
       while (!cancelled && attempt < maxAttempts) {
         attempt += 1;
         if (window.grecaptcha && window.grecaptcha.render) {
-          // Render general widget
           try {
             const genContainer = document.getElementById("recaptcha-general");
-            if (
-              genContainer &&
-              (recaptchaWidgetIds.general == null ||
-                recaptchaWidgetIds.general === null)
-            ) {
+            if (genContainer && (recaptchaWidgetIds.general == null || recaptchaWidgetIds.general === null)) {
               try {
                 const id = window.grecaptcha.render(genContainer, {
                   sitekey: siteKey,
-                  callback: (token) =>
-                    setRecaptchaTokens((s) => ({ ...s, general: token })),
-                  "expired-callback": () =>
-                    setRecaptchaTokens((s) => ({ ...s, general: null })),
+                  callback: (token) => setRecaptchaTokens((s) => ({ ...s, general: token })),
+                  "expired-callback": () => setRecaptchaTokens((s) => ({ ...s, general: null })),
                 });
                 setRecaptchaWidgetIds((s) => ({ ...s, general: id }));
               } catch (e) {
@@ -200,20 +194,13 @@ export default function Contact() {
               }
             }
 
-            // Render project widget
             const projContainer = document.getElementById("recaptcha-project");
-            if (
-              projContainer &&
-              (recaptchaWidgetIds.project == null ||
-                recaptchaWidgetIds.project === null)
-            ) {
+            if (projContainer && (recaptchaWidgetIds.project == null || recaptchaWidgetIds.project === null)) {
               try {
                 const id = window.grecaptcha.render(projContainer, {
                   sitekey: siteKey,
-                  callback: (token) =>
-                    setRecaptchaTokens((s) => ({ ...s, project: token })),
-                  "expired-callback": () =>
-                    setRecaptchaTokens((s) => ({ ...s, project: null })),
+                  callback: (token) => setRecaptchaTokens((s) => ({ ...s, project: token })),
+                  "expired-callback": () => setRecaptchaTokens((s) => ({ ...s, project: null })),
                 });
                 setRecaptchaWidgetIds((s) => ({ ...s, project: id }));
               } catch (e) {
@@ -221,7 +208,6 @@ export default function Contact() {
               }
             }
 
-            // If grecaptcha exists mark ready
             setRecaptchaReady(true);
             return;
           } catch (err) {
@@ -229,20 +215,61 @@ export default function Contact() {
           }
         }
 
-        // wait and retry
-        // increasing backoff
+        // wait and retry (backoff)
         await new Promise((res) => setTimeout(res, 200 * attempt));
       }
 
-      // if we exit loop without rendering, still mark ready false
       if (!cancelled) setRecaptchaReady(false);
     }
 
-    tryRenderWithRetries();
-
-    return () => {
-      cancelled = true;
+    // trigger loading either when the contact section enters view or user interacts
+    const triggerLoad = () => {
+      if (hasTriggered) return;
+      hasTriggered = true;
+      tryRenderWithRetries();
     };
+
+    // 1) IntersectionObserver on the #contact section
+    const rootEl = document.getElementById("contact");
+    let io;
+    if (rootEl && typeof IntersectionObserver !== "undefined") {
+      io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            triggerLoad();
+            if (io) io.disconnect();
+          }
+        }
+      }, { root: null, rootMargin: "0px", threshold: 0.15 });
+      io.observe(rootEl);
+    }
+
+    // 2) Fallback: user interaction within the section (focus or click)
+    const onFocusIn = (ev) => {
+      if (!rootEl) return;
+      if (rootEl.contains(ev.target)) triggerLoad();
+    };
+    const onClick = (ev) => {
+      if (!rootEl) return;
+      if (rootEl.contains(ev.target)) triggerLoad();
+    };
+    window.addEventListener("focusin", onFocusIn, true);
+    window.addEventListener("click", onClick, true);
+
+    // If neither observer nor interactions available after a reasonable delay,
+    // do not auto-load — keep reCAPTCHA deferred. However, if contactMode toggles
+    // explicitly to 'project' we should attempt to load then.
+    const cleanup = () => {
+      cancelled = true;
+      if (io) io.disconnect();
+      window.removeEventListener("focusin", onFocusIn, true);
+      window.removeEventListener("click", onClick, true);
+    };
+
+    // If user switches to the project form directly, load recaptcha immediately
+    if (contactMode === "project") triggerLoad();
+
+    return cleanup;
     // Re-run when contactMode changes so widgets render when the project form appears
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contactMode]);
