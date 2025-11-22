@@ -376,11 +376,16 @@ export default async function handler(req, res) {
   let sa = null;
   if (hasBase64) {
     try {
-      const decoded = Buffer.from(process.env.GA_SA_KEY_BASE64, "base64").toString("utf8");
+      const decoded = Buffer.from(
+        process.env.GA_SA_KEY_BASE64,
+        "base64"
+      ).toString("utf8");
       sa = JSON.parse(decoded);
     } catch (e) {
       console.error("Failed to parse GA_SA_KEY_BASE64:", e);
-      return res.status(500).json({ error: "Failed to parse GA_SA_KEY_BASE64" });
+      return res
+        .status(500)
+        .json({ error: "Failed to parse GA_SA_KEY_BASE64" });
     }
   }
 
@@ -401,8 +406,15 @@ export default async function handler(req, res) {
             const decoded = Buffer.from(raw, "base64").toString("utf8");
             sa = JSON.parse(decoded);
           } catch (e3) {
-            console.error("Failed to parse service account from GA_SA_KEY/FIREBASE_SERVICE_ACCOUNT:", e1, e2, e3);
-            return res.status(500).json({ error: "Failed to parse GA service account" });
+            console.error(
+              "Failed to parse service account from GA_SA_KEY/FIREBASE_SERVICE_ACCOUNT:",
+              e1,
+              e2,
+              e3
+            );
+            return res
+              .status(500)
+              .json({ error: "Failed to parse GA service account" });
           }
         }
       }
@@ -410,7 +422,9 @@ export default async function handler(req, res) {
   }
 
   if (!sa) {
-    return res.status(500).json({ error: "GA service account not configured on server" });
+    return res
+      .status(500)
+      .json({ error: "GA service account not configured on server" });
   }
 
   if (sa.private_key) sa.private_key = sa.private_key.replace(/\\n/g, "\n");
