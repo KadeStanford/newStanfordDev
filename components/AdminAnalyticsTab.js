@@ -141,11 +141,13 @@ export default function AdminAnalyticsTab() {
             <p className="font-medium text-amber-200">GA4 not fully available</p>
             <p className="text-amber-100/90 mt-1">{payload.gaError}</p>
             <p className="text-xs text-amber-200/70 mt-2">
-              Set <code className="bg-black/20 px-1 rounded">SITE_GA4_PROPERTY_ID</code>{" "}
-              to your property&apos;s numeric ID (Admin → Property settings).
-              Use the same service account vars as client dashboards (
-              <code className="bg-black/20 px-1 rounded">GA_SA_KEY_BASE64</code>{" "}
-              etc.).
+              Set <code className="bg-black/20 px-1 rounded">SITE_GA4_PROPERTY_ID</code>
+              {" "}or{" "}
+              <code className="bg-black/20 px-1 rounded">NEXT_PUBLIC_SITE_GA4_PROPERTY_ID</code>
+              {" "}to the numeric Property ID (GA → Admin → Property settings),
+              redeploy, then refresh. Same GA service account as client dashboards (
+              <code className="bg-black/20 px-1 rounded">GA_SA_KEY_BASE64</code>
+              ).
             </p>
           </div>
         </div>

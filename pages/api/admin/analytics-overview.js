@@ -34,10 +34,14 @@ export default async function handler(req, res) {
 
   const range = req.query.range || "7d";
   const startDate = rangeToStartDate(range);
+  const rawProperty =
+    process.env.SITE_GA4_PROPERTY_ID ||
+    process.env.NEXT_PUBLIC_SITE_GA4_PROPERTY_ID ||
+    "";
   const propertyId =
     (req.query.propertyId &&
       String(req.query.propertyId).replace(/\D/g, "")) ||
-    process.env.SITE_GA4_PROPERTY_ID?.replace(/\D/g, "") ||
+    String(rawProperty).replace(/\D/g, "") ||
     null;
 
   let ga = null;
@@ -75,7 +79,7 @@ export default async function handler(req, res) {
     }
   } else {
     gaError =
-      "SITE_GA4_PROPERTY_ID is not set. Add the numeric GA4 property ID for your marketing site.";
+      "GA4 property ID is not set. Add SITE_GA4_PROPERTY_ID (or NEXT_PUBLIC_SITE_GA4_PROPERTY_ID) with your numeric Property ID from GA → Admin → Property settings, then redeploy.";
   }
 
   const live = getStats();
