@@ -77,7 +77,8 @@ export default function AdminAnalyticsTab() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error || "Failed to load analytics");
+        const hint = data.code ? ` [${data.code}]` : "";
+        toast.error((data.error || "Failed to load analytics") + hint);
         setPayload(null);
         return;
       }

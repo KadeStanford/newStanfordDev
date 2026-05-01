@@ -21,20 +21,45 @@ function ts(val) {
   return isNaN(d) ? 0 : d.getTime();
 }
 
+/** Normalize POST body (some hosts deliver JSON as a string). */
+function getPostJson(req) {
+  if (req.method !== "POST") return {};
+  const raw = req.body;
+  if (raw == null) return {};
+  if (typeof raw === "object" && !Buffer.isBuffer(raw)) return raw;
+  if (typeof raw === "string") {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return {};
+    }
+  }
+  return {};
+}
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "512kb",
+    },
+  },
+};
+
 export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "POST") {
     res.setHeader("Allow", "GET, POST");
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const post = getPostJson(req);
   const range =
     req.method === "POST"
-      ? req.body?.range || "7d"
+      ? post.range || "7d"
       : req.query?.range || "7d";
 
   const idTokenFromBody =
-    req.method === "POST" && req.body?.idToken
-      ? String(req.body.idToken)
+    req.method === "POST" && post.idToken
+      ? String(post.idToken)
       : null;
 
   try {
@@ -44,9 +69,10 @@ export default async function handler(req, res) {
       await verifyAdminFromRequest(req);
     }
   } catch (e) {
-    return res
-      .status(e.status || 401)
-      .json({ error: e.message || "Unauthorized" });
+    return res.status(e.status || 401).json({
+      error: e.message || "Unauthorized",
+      code: e.code || "AUTH_ERROR",
+    });
   }
 
   const startDate = rangeToStartDate(range);
