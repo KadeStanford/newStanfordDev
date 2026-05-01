@@ -1,5 +1,6 @@
-# AWS Amplify Hosting — repeat builds are faster when `node_modules` and Next's `.next/cache` are restored.
-# Omit custom `artifacts` so Amplify keeps its default Next.js SSR packaging.
+# AWS Amplify Hosting — Next.js 14 (Pages router + API routes)
+# Amplify looks for `.next/required-server-files.json`; `baseDirectory` must be `.next`, not repo root.
+# https://docs.aws.amazon.com/amplify/latest/userguide/deploy-nextjs-app.html
 version: 1
 frontend:
   phases:
@@ -9,9 +10,8 @@ frontend:
     build:
       commands:
         - npm run build
-  # Amplify requires this block (CodeBuild error if omitted). Whole app output for Next SSR.
   artifacts:
-    baseDirectory: .
+    baseDirectory: .next
     files:
       - "**/*"
   cache:
