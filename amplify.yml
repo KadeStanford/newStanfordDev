@@ -9,6 +9,11 @@ frontend:
     build:
       commands:
         - npm run build
+  # Amplify requires this block (CodeBuild error if omitted). Whole app output for Next SSR.
+  artifacts:
+    baseDirectory: .
+    files:
+      - "**/*"
   cache:
     paths:
       - node_modules/**/*
