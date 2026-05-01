@@ -1,0 +1,126 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDocPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(userDocPath())
+        && get(userDocPath()).data.role == 'admin';
+    }
+
+    function ownsProject(projectId) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/projects/$(projectId))
+        && get(/databases/$(database)/documents/projects/$(projectId)).data.clientId == request.auth.uid;
+    }
+
+    // --- Users (AuthContext, profiles, admin user list) ---
+    match /users/{userId} {
+      allow create: if isSignedIn()
+        && request.auth.uid == userId
+        && request.resource.data.role == 'client';
+
+      allow read: if isSignedIn()
+        && (request.auth.uid == userId || isAdmin());
+
+      allow update: if isAdmin()
+        || (
+          isSignedIn()
+          && request.auth.uid == userId
+          && request.resource.data.role == resource.data.role
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    // --- Projects (client dashboard + admin) ---
+    match /projects/{projectId} {
+      allow read: if isSignedIn()
+        && (isAdmin() || resource.data.clientId == request.auth.uid);
+
+      allow create: if isSignedIn()
+        && (
+          isAdmin()
+          || request.resource.data.clientId == request.auth.uid
+        );
+
+      allow update, delete: if isAdmin();
+    }
+
+    // --- Invoices (summaries on projects; full docs for PDF / dashboard) ---
+    match /invoices/{invoiceId} {
+      allow read: if isSignedIn()
+        && (
+          isAdmin()
+          || (
+            resource.data.projectId != null
+            && exists(/databases/$(database)/documents/projects/$(resource.data.projectId))
+            && get(/databases/$(database)/documents/projects/$(resource.data.projectId)).data.clientId == request.auth.uid
+          )
+        );
+
+      allow create, update, delete: if isAdmin();
+    }
+
+    // --- Analytics (GA cache + demo data; events subcollection client-blocked) ---
+    match /analytics/{projectId} {
+      allow read: if isSignedIn()
+        && (isAdmin() || ownsProject(projectId));
+
+      allow write: if isSignedIn()
+        && (isAdmin() || ownsProject(projectId));
+
+      match /stats/{statId} {
+        allow read: if isSignedIn()
+          && (isAdmin() || ownsProject(projectId));
+
+        allow write: if isSignedIn()
+          && (isAdmin() || ownsProject(projectId));
+      }
+
+      match /events/{eventId} {
+        allow read, write: if false;
+      }
+    }
+
+    // --- Testimonials (public submit; public read approved+featured; admin moderates) ---
+    match /testimonials/{id} {
+      allow create: if request.resource.data.approved == false
+        && request.resource.data.featured == false
+        && request.resource.data.displayOrder == 0
+        && request.resource.data.rating is number
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0
+        && request.resource.data.message.size() <= 4000
+        && (
+          !request.resource.data.keys().hasAny(['company'])
+          || request.resource.data.company == null
+          || (request.resource.data.company is string && request.resource.data.company.size() <= 120)
+        );
+
+      allow read: if (
+          resource.data.approved == true && resource.data.featured == true
+        )
+        || (isSignedIn() && isAdmin());
+
+      allow update, delete: if isSignedIn() && isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

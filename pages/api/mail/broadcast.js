@@ -1,6 +1,5 @@
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { db } from "../../../lib/firebase";
-import { sendMail } from "../../../lib/mail/sendMail";
+const { db } = require("../../../lib/firebaseAdmin");
+const { sendMail } = require("../../../lib/mail/sendMail");
 
 function chunkArray(arr, size) {
   const out = [];
@@ -18,8 +17,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Missing subject or html body" });
 
     // Fetch all users ordered by email (similar to admin UI fetch)
-    const q = query(collection(db, "users"), orderBy("email"));
-    const snap = await getDocs(q);
+    const snap = await db.collection("users").orderBy("email").get();
     const recipients = snap.docs
       .map((d) => ({ id: d.id, ...(d.data() || {}) }))
       .filter((u) => u?.email && u.role !== "admin");

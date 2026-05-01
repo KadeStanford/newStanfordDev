@@ -39,6 +39,7 @@ export default function TestimonialsDisplay({ limit = 3 }) {
         // Fetch featured testimonials only (avoid composite index issues)
         const q = query(
           collection(db, "testimonials"),
+          where("approved", "==", true),
           where("featured", "==", true)
         );
         const snap = await getDocs(q);

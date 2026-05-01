@@ -1,5 +1,5 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+const { FieldValue } = require("firebase-admin/firestore");
+const { db } = require("../../lib/firebaseAdmin");
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -17,14 +17,17 @@ export default async function handler(req, res) {
     } = req.body || {};
     if (!projectId) return res.status(400).json({ error: "Missing projectId" });
 
-    const eventsRef = collection(db, "analytics", projectId, "events");
-    await addDoc(eventsRef, {
-      path,
-      referrer,
-      userAgent,
-      extra,
-      createdAt: serverTimestamp(),
-    });
+    await db
+      .collection("analytics")
+      .doc(projectId)
+      .collection("events")
+      .add({
+        path,
+        referrer,
+        userAgent,
+        extra,
+        createdAt: FieldValue.serverTimestamp(),
+      });
 
     return res.status(201).json({ ok: true });
   } catch (err) {

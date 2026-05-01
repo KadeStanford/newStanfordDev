@@ -24,8 +24,10 @@ import {
   ShieldAlert,
   Mail as MailIcon,
   MessageSquare,
+  BarChart3,
 } from "lucide-react";
 import AdminMailConsole from "../components/AdminMailConsole";
+import AdminAnalyticsTab from "../components/AdminAnalyticsTab";
 import { toast } from "sonner";
 import { generateInvoicePdf } from "../lib/generateInvoicePdf";
 
@@ -718,6 +720,14 @@ export default function AdminDashboard() {
   };
 
   const renderRightPanelContent = () => {
+    if (activeTab === "analytics") {
+      return (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8">
+          <AdminAnalyticsTab />
+        </div>
+      );
+    }
+
     if (activeTab === "testimonials") {
       return (
         <TestimonialPanel
@@ -1628,8 +1638,24 @@ export default function AdminDashboard() {
         {/* RIGHT: Tabbed Action Panel */}
         <div className="lg:col-span-2">
           {/* Tabs Navigation */}
-          <div className="mb-4 flex gap-4 border-b border-slate-800">
+          <div className="mb-4 flex gap-4 border-b border-slate-800 flex-wrap">
             <button
+              type="button"
+              onClick={() => {
+                setActiveTab("analytics");
+                setSelectedProject(null);
+                setSelectedUser(null);
+              }}
+              className={`flex items-center gap-2 py-2 px-3 text-sm font-medium transition-all ${
+                activeTab === "analytics"
+                  ? "border-b-2 border-cyan-500 text-white"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <BarChart3 size={16} /> Analytics
+            </button>
+            <button
+              type="button"
               onClick={() => setActiveTab("projects")}
               className={`flex items-center gap-2 py-2 px-3 text-sm font-medium transition-all ${
                 activeTab === "projects"
@@ -1645,6 +1671,7 @@ export default function AdminDashboard() {
                 setSelectedProject(null);
                 setSelectedUser(null);
               }}
+              type="button"
               className={`flex items-center gap-2 py-2 px-3 text-sm font-medium transition-all ${
                 activeTab === "testimonials"
                   ? "border-b-2 border-blue-500 text-white"

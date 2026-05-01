@@ -1,6 +1,5 @@
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../lib/firebase";
-import { sendMail } from "../../../lib/mail/sendMail";
+const { db } = require("../../../lib/firebaseAdmin");
+const { sendMail } = require("../../../lib/mail/sendMail");
 import { invoiceReminderTemplate } from "../../../lib/mail/templates";
 
 export default async function handler(req, res) {
@@ -11,9 +10,8 @@ export default async function handler(req, res) {
     const { invoiceId } = req.body;
     if (!invoiceId) return res.status(400).json({ error: "Missing invoiceId" });
 
-    const invoiceRef = doc(db, "invoices", invoiceId);
-    const invoiceSnap = await getDoc(invoiceRef);
-    if (!invoiceSnap.exists())
+    const invoiceSnap = await db.collection("invoices").doc(invoiceId).get();
+    if (!invoiceSnap.exists)
       return res.status(404).json({ error: "Invoice not found" });
 
     const invoice = invoiceSnap.data();
@@ -23,9 +21,11 @@ export default async function handler(req, res) {
     let clientId = invoice.clientId;
     if (!clientId && invoice.projectId) {
       try {
-        const projRef = doc(db, "projects", invoice.projectId);
-        const projSnap = await getDoc(projRef);
-        if (projSnap.exists()) {
+        const projSnap = await db
+          .collection("projects")
+          .doc(invoice.projectId)
+          .get();
+        if (projSnap.exists) {
           const proj = projSnap.data();
           clientId = proj.clientId || clientId;
         }
@@ -36,9 +36,8 @@ export default async function handler(req, res) {
 
     if (clientId) {
       try {
-        const clientRef = doc(db, "users", clientId);
-        const clientSnap = await getDoc(clientRef);
-        if (clientSnap.exists()) client = clientSnap.data();
+        const clientSnap = await db.collection("users").doc(clientId).get();
+        if (clientSnap.exists) client = clientSnap.data();
       } catch (e) {
         console.warn("Could not fetch client user doc:", e);
       }
