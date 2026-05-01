@@ -12,6 +12,7 @@ const {
   fetchGaTopEvents,
   fetchGaLandingPages,
 } = require("../../../lib/ga4ReportsCore");
+const { resolveGa4NumericPropertyId } = require("../../../lib/gaPropertyIdEnv");
 
 function ts(val) {
   if (!val) return 0;
@@ -72,19 +73,24 @@ export default async function handler(req, res) {
     return res.status(e.status || 401).json({
       error: e.message || "Unauthorized",
       code: e.code || "AUTH_ERROR",
+      firebaseCode: e.firebaseCode || undefined,
     });
   }
 
   const startDate = rangeToStartDate(range);
-  const rawProperty =
+
+  const fromQuery = req.query?.propertyId
+    ? resolveGa4NumericPropertyId(req.query.propertyId)
+    : { propertyId: null, hint: null };
+  const fromEnv = resolveGa4NumericPropertyId(
     process.env.SITE_GA4_PROPERTY_ID ||
-    process.env.NEXT_PUBLIC_SITE_GA4_PROPERTY_ID ||
-    "";
-  const propertyId =
-    (req.query.propertyId &&
-      String(req.query.propertyId).replace(/\D/g, "")) ||
-    String(rawProperty).replace(/\D/g, "") ||
-    null;
+      process.env.NEXT_PUBLIC_SITE_GA4_PROPERTY_ID ||
+      ""
+  );
+  const propertyId = fromQuery.propertyId || fromEnv.propertyId || null;
+  const gaPropertyConfigHint = fromQuery.propertyId
+    ? null
+    : fromQuery.hint || fromEnv.hint || null;
 
   let ga = null;
   let gaError = null;
@@ -121,7 +127,8 @@ export default async function handler(req, res) {
     }
   } else {
     gaError =
-      "GA4 property ID is not set. Add SITE_GA4_PROPERTY_ID (or NEXT_PUBLIC_SITE_GA4_PROPERTY_ID) with your numeric Property ID from GA → Admin → Property settings, then redeploy.";
+      gaPropertyConfigHint ||
+      "GA4 property ID is missing or invalid. Use the numeric Property ID from GA → Admin → Property settings (not the G- measurement ID).";
   }
 
   const live = getStats();
@@ -189,6 +196,7 @@ export default async function handler(req, res) {
     ok: true,
     range,
     gaPropertyId: propertyId,
+    gaPropertyHint: gaPropertyConfigHint || undefined,
     ga,
     gaError,
     topEvents,

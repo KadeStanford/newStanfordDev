@@ -77,7 +77,8 @@ export default function AdminAnalyticsTab() {
       });
       const data = await res.json();
       if (!res.ok) {
-        const hint = data.code ? ` [${data.code}]` : "";
+        const tags = [data.code, data.firebaseCode].filter(Boolean).join(" · ");
+        const hint = tags ? ` [${tags}]` : "";
         toast.error((data.error || "Failed to load analytics") + hint);
         setPayload(null);
         return;
@@ -137,6 +138,16 @@ export default function AdminAnalyticsTab() {
           </button>
         </div>
       </div>
+
+      {payload?.gaPropertyHint && (
+        <div className="flex gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-100">
+          <AlertCircle className="flex-shrink-0 mt-0.5" size={18} />
+          <div className="text-sm">
+            <p className="font-medium text-red-200">GA4 Property ID misconfigured</p>
+            <p className="text-red-100/90 mt-1">{payload.gaPropertyHint}</p>
+          </div>
+        </div>
+      )}
 
       {payload?.gaError && (
         <div className="flex gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-amber-100">
