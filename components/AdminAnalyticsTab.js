@@ -61,17 +61,20 @@ export default function AdminAnalyticsTab() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { auth } = await import("../lib/firebase");
+      const { getFirebaseAuth } = await import("../lib/firebase");
+      const auth = await getFirebaseAuth();
       if (!auth?.currentUser) {
         toast.error("Not signed in");
         setLoading(false);
         return;
       }
       const idToken = await auth.currentUser.getIdToken(true);
-      const res = await fetch(
-        `/api/admin/analytics-overview?range=${encodeURIComponent(range)}`,
-        { headers: { Authorization: `Bearer ${idToken}` } }
-      );
+      // POST keeps the token in the body so CDNs/proxies cannot strip Authorization on GET.
+      const res = await fetch("/api/admin/analytics-overview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ range, idToken }),
+      });
       const data = await res.json();
       if (!res.ok) {
         toast.error(data.error || "Failed to load analytics");

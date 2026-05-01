@@ -1,6 +1,9 @@
 const { BetaAnalyticsDataClient } = require("@google-analytics/data");
 const { db } = require("../../../lib/firebaseAdmin");
-const { verifyAdminFromRequest } = require("../../../lib/verifyAdminRequest");
+const {
+  verifyAdminFromRequest,
+  verifyAdminToken,
+} = require("../../../lib/verifyAdminRequest");
 const { getStats } = require("../../../lib/analyticsStore");
 const {
   parseGaServiceAccountFromEnv,
@@ -19,20 +22,33 @@ function ts(val) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
+  if (req.method !== "GET" && req.method !== "POST") {
+    res.setHeader("Allow", "GET, POST");
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  const range =
+    req.method === "POST"
+      ? req.body?.range || "7d"
+      : req.query?.range || "7d";
+
+  const idTokenFromBody =
+    req.method === "POST" && req.body?.idToken
+      ? String(req.body.idToken)
+      : null;
+
   try {
-    await verifyAdminFromRequest(req);
+    if (idTokenFromBody) {
+      await verifyAdminToken(idTokenFromBody);
+    } else {
+      await verifyAdminFromRequest(req);
+    }
   } catch (e) {
     return res
       .status(e.status || 401)
       .json({ error: e.message || "Unauthorized" });
   }
 
-  const range = req.query.range || "7d";
   const startDate = rangeToStartDate(range);
   const rawProperty =
     process.env.SITE_GA4_PROPERTY_ID ||
