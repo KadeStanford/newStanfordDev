@@ -14,3 +14,8 @@ cache:
   paths:
     - node_modules/**/*
     - .next/cache/**/*
+
+# Required by CodeBuild — tune file globs if your deploy step only needs a subset (e.g. `.next/standalone`).
+artifacts:
+  files:
+    - "**/*"
