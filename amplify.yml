@@ -1,0 +1,15 @@
+# AWS Amplify Hosting — repeat builds are faster when `node_modules` and Next's `.next/cache` are restored.
+# Omit custom `artifacts` so Amplify keeps its default Next.js SSR packaging.
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci --prefer-offline --no-audit
+    build:
+      commands:
+        - npm run build
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*

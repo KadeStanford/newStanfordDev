@@ -10,9 +10,9 @@
     "lint": "next lint",
     "postinstall": "npm rebuild lightningcss --update-binary || true",
     "analyze": "cross-env ANALYZE=1 next build",
-    "firebase:deploy": "firebase deploy --only firestore",
-    "firebase:rules": "firebase deploy --only firestore:rules",
-    "firebase:indexes": "firebase deploy --only firestore:indexes"
+    "firebase:deploy": "npx firebase-tools@14 deploy --only firestore",
+    "firebase:rules": "npx firebase-tools@14 deploy --only firestore:rules",
+    "firebase:indexes": "npx firebase-tools@14 deploy --only firestore:indexes"
   },
   "dependencies": {
     "@babel/parser": "^7.28.5",
@@ -68,7 +68,6 @@
     "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.5",
-    "firebase-tools": "^14.27.0",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.18"
   },

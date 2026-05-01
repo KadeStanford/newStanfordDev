@@ -1,0 +1,16 @@
+# AWS CodeBuild — enable caching in the CodeBuild project settings for these paths, or use:
+# cache: paths below (CodeBuild local cache / S3 cache depending on setup).
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - npm ci --prefer-offline --no-audit
+  build:
+    commands:
+      - npm run build
+cache:
+  paths:
+    - node_modules/**/*
+    - .next/cache/**/*
