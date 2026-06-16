@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../lib/firebase";
+import { getFirebaseDb } from "../lib/firebase";
 import { ChevronLeft, ChevronRight, MessageSquare } from "lucide-react";
 
 function Stars({ value = 5 }) {
@@ -36,6 +36,9 @@ export default function TestimonialsDisplay({ limit = 3 }) {
     let mounted = true;
     async function load() {
       try {
+        const db = await getFirebaseDb();
+        if (!db) return;
+
         // Fetch featured testimonials only (avoid composite index issues)
         const q = query(
           collection(db, "testimonials"),
