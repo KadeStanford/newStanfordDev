@@ -49,6 +49,7 @@ async function getPages() {
         "pages/admin.js",
         "pages/dashboard.js",
         "pages/demo-analytics.js",
+        "pages/ios-next-test.js",
         "pages/login.js",
       ],
     }
