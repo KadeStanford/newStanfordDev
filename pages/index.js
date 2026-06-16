@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Lenis from "lenis";
 import { Toaster } from "sonner";
@@ -35,9 +35,47 @@ const Contact = dynamic(() => import("../components/Contact"), {
   ),
 });
 
+const PerfDiagnostics = dynamic(() => import("../components/PerfDiagnostics"), {
+  ssr: false,
+});
+
+const DEFAULT_DEBUG_FLAGS = {
+  debug: false,
+  lite: false,
+  nostars: false,
+  nograph: false,
+  noreveal: false,
+  nodeferred: false,
+  nolenis: false,
+};
+
+function getDebugFlags() {
+  if (typeof window === "undefined") return DEFAULT_DEBUG_FLAGS;
+
+  const params = new URLSearchParams(window.location.search);
+  const lite = params.get("lite") === "1";
+  return {
+    debug: params.get("iosdebug") === "1",
+    lite,
+    nostars: lite || params.get("nostars") === "1",
+    nograph: lite || params.get("nograph") === "1",
+    noreveal: lite || params.get("noreveal") === "1",
+    nodeferred: lite || params.get("nodeferred") === "1",
+    nolenis: lite || params.get("nolenis") === "1",
+  };
+}
+
 export default function Home() {
+  const [debugFlags, setDebugFlags] = useState(DEFAULT_DEBUG_FLAGS);
+
+  useEffect(() => {
+    setDebugFlags(getDebugFlags());
+  }, []);
+
   // Initialize Lenis Smooth Scroll
   useEffect(() => {
+    if (debugFlags.nolenis) return undefined;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -59,7 +97,10 @@ export default function Home() {
     return () => {
       lenis.destroy();
     };
-  }, []);
+  }, [debugFlags.nolenis]);
+
+  const reveal = (children, delay = 0) =>
+    debugFlags.noreveal ? children : <ScrollReveal delay={delay}>{children}</ScrollReveal>;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500 selection:text-white overflow-x-hidden relative">
@@ -75,7 +116,7 @@ export default function Home() {
       </Head>
 
       {/* 3D Star Background */}
-      <StarBackground />
+      {!debugFlags.nostars && <StarBackground />}
 
       {/* Global Notifications */}
       <Toaster position="bottom-right" theme="dark" richColors />
@@ -87,32 +128,25 @@ export default function Home() {
         <Hero />
 
         {/* Wrap other sections in ScrollReveal */}
-        <ScrollReveal>
-          <About />
-        </ScrollReveal>
+        {reveal(<About />)}
 
-        <ScrollReveal delay={0.2}>
-          <Services />
-        </ScrollReveal>
+        {reveal(<Services disableNetwork={debugFlags.nograph} />, 0.2)}
 
-        <ScrollReveal>
-          <Work />
-        </ScrollReveal>
+        {reveal(<Work />)}
 
-        <ScrollReveal>
-          <TestimonialsDisplay limit={3} />
-        </ScrollReveal>
+        {!debugFlags.nodeferred && (
+          reveal(<TestimonialsDisplay limit={3} />)
+        )}
 
-        <ScrollReveal>
-          <WhyUs />
-        </ScrollReveal>
+        {reveal(<WhyUs />)}
 
-        <ScrollReveal>
-          <Contact />
-        </ScrollReveal>
+        {!debugFlags.nodeferred && (
+          reveal(<Contact />)
+        )}
       </main>
 
       <Footer />
+      {debugFlags.debug && <PerfDiagnostics flags={debugFlags} />}
     </div>
   );
 }

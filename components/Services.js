@@ -166,7 +166,7 @@ const ConsultingGraphic = () => (
   </div>
 );
 
-export default function Services() {
+export default function Services({ disableNetwork = false }) {
   const services = [
     {
       title: "Custom Websites",
@@ -217,7 +217,7 @@ export default function Services() {
       id="services"
       className="py-32 relative z-10 bg-transparent overflow-hidden"
     >
-      <NetworkBackground />
+      {!disableNetwork && <NetworkBackground />}
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 mb-16 text-center">
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
