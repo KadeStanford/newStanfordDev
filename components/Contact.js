@@ -23,6 +23,7 @@ import {
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { Meteors } from "./Meteors";
+import { isEmailJsConfigured, sendLeadEmail } from "../lib/emailjsClient";
 
 // Helper function to track GA events
 const trackAnalyticsEvent = (eventName, params = {}) => {
@@ -55,8 +56,8 @@ export default function Contact() {
     phone: "",
     website: "",
     projectType: "website",
-    budgetMin: 1000,
-    budgetMax: 5000,
+    budgetMin: 500,
+    budgetMax: 1500,
     timeline: "",
     pages: "",
     goals: [],
@@ -92,6 +93,24 @@ export default function Contact() {
   const MIN_BUDGET = 500;
   const MAX_BUDGET = 10000;
   const STEP = 100;
+
+  const submitLead = async (payload) => {
+    if (isEmailJsConfigured()) {
+      return sendLeadEmail(payload);
+    }
+
+    const resp = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!resp.ok) {
+      throw new Error("Failed to send");
+    }
+
+    return resp.json();
+  };
 
   const addColorToPalette = () => {
     if (!colorPalette.includes(activeColor)) {
@@ -342,18 +361,10 @@ export default function Contact() {
       // send and reset on success
       setSubmitting(true);
       const toastId = toast.loading("Sending message...");
-      fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
-        .then((r) => {
-          if (!r.ok) throw new Error("Network response was not ok");
-          return r.json();
-        })
+      submitLead(payload)
         .then(() => {
           confetti({ particleCount: 120, spread: 60, origin: { y: 0.6 } });
-          toast.success("Message sent! We'll be in touch soon.", {
+          toast.success("Message sent! I will be in touch soon.", {
             id: toastId,
           });
 
@@ -427,16 +438,7 @@ export default function Contact() {
         console.warn("Failed to retrieve reCAPTCHA token for project form:", e);
       }
 
-      // Send to API
-      const resp = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!resp.ok) {
-        throw new Error("Failed to send");
-      }
+      await submitLead(data);
 
       setShowSummary(false);
 
@@ -448,7 +450,7 @@ export default function Contact() {
         colors: ["#3b82f6", "#8b5cf6", "#10b981"],
       });
 
-      toast.success("Request received! We'll be in touch soon.", {
+      toast.success("Request received! I will be in touch soon.", {
         id: toastId,
       });
 
@@ -471,8 +473,8 @@ export default function Contact() {
         phone: "",
         website: "",
         projectType: "website",
-        budgetMin: 1000,
-        budgetMax: 5000,
+        budgetMin: 500,
+        budgetMax: 1500,
         timeline: "",
         pages: "",
         goals: [],
@@ -500,6 +502,11 @@ export default function Contact() {
       } catch (e) {
         /* ignore */
       }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to send request. Try again or email me directly.", {
+        id: toastId,
+      });
     } finally {
       setSubmitting(false);
     }
@@ -507,9 +514,9 @@ export default function Contact() {
 
   const getIntroText = () => {
     if (contactMode === "general") {
-      return "Have a quick question? No obligation — tell us a little and we'll reply promptly.";
+      return "Have a quick question? Send it over and I will reply personally.";
     }
-    return "No obligation — tell us about your business and we'll provide a clear, friendly estimate.";
+    return "Want the free local audit from the ad? Tell me a little about your business and I will send clear next steps.";
   };
 
   const handleBudgetChange = (e, type) => {
@@ -579,7 +586,7 @@ export default function Contact() {
       <div className="max-w-5xl mx-auto px-6 relative z-10">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Get a <span className="text-blue-500">Free Estimate</span>
+            Get a <span className="text-blue-500">Free Local Audit</span>
           </h2>
           <p className="text-xl text-slate-400 mb-8 max-w-2xl mx-auto">
             {getIntroText()}
@@ -605,7 +612,7 @@ export default function Contact() {
                   : "text-slate-400 hover:text-white"
               }`}
             >
-              Free Estimate
+              Free Local Audit
             </button>
           </div>
         </div>
@@ -690,11 +697,11 @@ export default function Contact() {
               <Briefcase className="text-purple-500" size={24} />
               <div>
                 <h3 className="text-2xl font-bold text-white">
-                  Free Estimate — Tell us about your business
+                  Free Local Audit — Tell me about your business
                 </h3>
                 <p className="text-slate-400 text-sm mt-1">
-                  The more details you provide, the more accurate our estimate
-                  will be.
+                  I will look over your online presence and send the first
+                  things I would improve.
                 </p>
               </div>
             </div>
@@ -1199,7 +1206,7 @@ export default function Contact() {
                 disabled={!canSubmitProject() || submitting}
                 className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 rounded-lg shadow-lg shadow-purple-600/20 transition-all transform hover:-translate-y-1 cursor-pointer disabled:opacity-60"
               >
-                Request Free Estimate
+                Request Free Local Audit
               </button>
             </form>
 
@@ -1215,7 +1222,7 @@ export default function Contact() {
                     Review your request
                   </h3>
                   <p className="text-slate-400 text-sm mb-4">
-                    We will review this and reach out — you can edit before
+                    I will review this and reach out — you can edit before
                     sending.
                   </p>
                   <div className="grid grid-cols-1 gap-3 text-sm text-slate-200 border-t border-slate-800 pt-4">

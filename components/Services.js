@@ -1,6 +1,6 @@
 import React from "react";
 import { BentoGrid, BentoGridItem } from "./ui/BentoGrid";
-import { Globe, Wrench, Cpu, Code, Wifi, Smartphone } from "lucide-react";
+import { Globe, Wrench, Cpu, Code, BarChart3, Megaphone } from "lucide-react";
 import NetworkBackground from "./NetworkBackground";
 
 // --- REUSABLE COMPONENTS ---
@@ -169,44 +169,45 @@ const ConsultingGraphic = () => (
 export default function Services() {
   const services = [
     {
-      title: "Web Development",
+      title: "Custom Websites",
       icon: <Globe className="h-5 w-5 text-blue-400" />,
       description:
-        "Custom high-performance websites using Next.js, React, and Tailwind CSS.",
+        "Fast, mobile-friendly websites built around trust, clear services, and easy quote requests.",
       header: <BrowserGraphic />,
     },
     {
-      title: "Network Solutions",
-      icon: <Wifi className="h-5 w-5 text-purple-400" />,
+      title: "Facebook & Google Ads",
+      icon: <Megaphone className="h-5 w-5 text-purple-400" />,
       description:
-        "Home & small office network design, router configuration, and optimization.",
-      header: <NetworkGraphic />,
+        "Practical ad setup for local businesses, with landing pages and tracking ready from the start.",
+      header: <ConsultingGraphic />,
     },
     {
-      title: "IT Support & Repair",
+      title: "Local SEO Cleanup",
       icon: <Wrench className="h-5 w-5 text-red-400" />,
       description:
-        "Hardware diagnostics, component upgrades, and software troubleshooting.",
+        "Service pages, page titles, metadata, schema, and Google-friendly content for your local market.",
       header: <HardwareGraphic />,
     },
     {
-      title: "Automation Scripting",
-      icon: <Code className="h-5 w-5 text-pink-400" />,
+      title: "Lead Tracking",
+      icon: <BarChart3 className="h-5 w-5 text-pink-400" />,
       description:
-        "Custom Python and Bash scripting to automate repetitive workflows.",
+        "Track form submissions, phone clicks, and campaign sources so you know what is working.",
       header: <TerminalGraphic />,
     },
     {
       title: "Tech Consulting",
       icon: <Cpu className="h-5 w-5 text-teal-400" />,
       description:
-        "Expert advice on hardware procurement, software stack selection, and setups.",
-      header: <ConsultingGraphic />,
+        "Straight answers on domains, hosting, software tools, analytics, and the next best move online.",
+      header: <NetworkGraphic />,
     },
     {
-      title: "Mobile App Dev",
-      icon: <Smartphone className="h-5 w-5 text-violet-400" />,
-      description: "Cross-platform mobile applications for iOS and Android.",
+      title: "Maintenance & Support",
+      icon: <Code className="h-5 w-5 text-violet-400" />,
+      description:
+        "Simple monthly help for edits, backups, performance checks, and small improvements over time.",
       header: <MobileGraphic />,
     },
   ];
@@ -220,11 +221,12 @@ export default function Services() {
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 mb-16 text-center">
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-          Technical Expertise
+          Websites, Ads, and Local Growth Support
         </h2>
         <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
-          Beyond web development, I provide a full suite of IT services to help
-          businesses build, secure, and maintain their digital infrastructure.
+          I help local businesses get the basics right first: a clean website,
+          a clear lead path, practical ad setup, and tracking that helps you
+          make better decisions.
         </p>
       </div>
 

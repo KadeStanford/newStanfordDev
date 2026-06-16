@@ -1,0 +1,392 @@
+<!--
+  ============================================================
+  Stanford Development Solutions - EmailJS Templates Reference
+  ============================================================
+
+  Create two templates in EmailJS:
+
+  1. SDS General Contact
+     Used by the "General Question" form.
+
+  2. SDS Free Local Audit
+     Used by the "Free Local Audit" form.
+
+  3. SDS Customer Confirmation
+     Sent back to the person who filled out either form.
+
+  For both templates, set these EmailJS fields:
+
+  To Email:
+  {{to_email}}
+
+  From Name:
+  Stanford Development Solutions
+
+  Reply To:
+  {{reply_to}}
+
+  Then copy only the HTML between <!DOCTYPE html> and </html> for the
+  matching template below and paste it into the EmailJS template editor.
+
+  The site sends these variables:
+  to_email, reply_to, from_name, from_email, from_phone, service, message,
+  company, current_website, submission_type, project_type, budget, timeline,
+  pages, preferred_contact, inspiration_links, competitor_links,
+  inspiration_notes, readiness, color_palette
+  ============================================================
+-->
+
+<!-- ==============================
+     TEMPLATE 1: SDS GENERAL CONTACT
+     Suggested subject: New SDS message from {{from_name}}
+     ============================== -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background:#eef2f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#172033;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef2f7;padding:28px 14px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="620" cellpadding="0" cellspacing="0" style="width:100%;max-width:620px;background:#ffffff;border:1px solid #d9e2f1;border-radius:12px;overflow:hidden;box-shadow:0 14px 35px rgba(15,23,42,0.10);">
+          <tr>
+            <td style="background:#071225;padding:28px 32px 24px;">
+              <p style="margin:0 0 8px;color:#8db7ff;font-size:12px;line-height:1.4;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;">Stanford Development Solutions</p>
+              <h1 style="margin:0;color:#ffffff;font-size:26px;line-height:1.2;font-weight:800;">New website message</h1>
+              <p style="margin:12px 0 0;color:#b9c7da;font-size:14px;line-height:1.6;">Someone filled out the general contact form on your site.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="height:5px;background:linear-gradient(90deg,#2563eb,#38bdf8,#22c55e);font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 30px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:22px;">
+                <tr>
+                  <td style="background:#f8fafc;padding:14px 18px;border-bottom:1px solid #e2e8f0;">
+                    <span style="font-size:12px;color:#475569;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;">Contact Details</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 18px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding:7px 0;width:118px;color:#64748b;font-size:13px;vertical-align:top;">Name</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{from_name}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Email</td>
+                        <td style="padding:7px 0;font-size:15px;font-weight:700;"><a href="mailto:{{from_email}}" style="color:#2563eb;text-decoration:none;">{{from_email}}</a></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Phone</td>
+                        <td style="padding:7px 0;font-size:15px;font-weight:700;"><a href="tel:{{from_phone}}" style="color:#0f172a;text-decoration:none;">{{from_phone}}</a></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Type</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{service}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+                <tr>
+                  <td style="background:#f8fafc;padding:14px 18px;border-bottom:1px solid #e2e8f0;">
+                    <span style="font-size:12px;color:#475569;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;">Message</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:18px;background:#ffffff;">
+                    <p style="margin:0;color:#334155;font-size:15px;line-height:1.7;white-space:pre-wrap;">{{message}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center">
+                    <a href="mailto:{{from_email}}" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;font-size:14px;font-weight:800;padding:13px 22px;border-radius:7px;margin:4px;">Reply by Email</a>
+                    <a href="tel:{{from_phone}}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;font-size:14px;font-weight:800;padding:13px 22px;border-radius:7px;margin:4px;">Call Lead</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#071225;padding:18px 32px;text-align:center;">
+              <p style="margin:0;color:#ffffff;font-size:13px;font-weight:700;">Stanford Development Solutions</p>
+              <p style="margin:5px 0 0;color:#94a3b8;font-size:12px;">Submitted through stanforddevsolutions.com</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+
+
+<!-- ==============================
+     TEMPLATE 3: SDS CUSTOMER CONFIRMATION
+     Suggested subject: I got your request - Stanford Development Solutions
+
+     For this template in EmailJS, set:
+     To Email: {{from_email}}
+     From Name: Kade Stanford
+     Reply To: {{to_email}}
+     ============================== -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background:#eef2f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#172033;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef2f7;padding:28px 14px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="620" cellpadding="0" cellspacing="0" style="width:100%;max-width:620px;background:#ffffff;border:1px solid #d9e2f1;border-radius:12px;overflow:hidden;box-shadow:0 14px 35px rgba(15,23,42,0.10);">
+          <tr>
+            <td style="background:#071225;padding:28px 32px 24px;">
+              <p style="margin:0 0 8px;color:#8db7ff;font-size:12px;line-height:1.4;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;">Stanford Development Solutions</p>
+              <h1 style="margin:0;color:#ffffff;font-size:26px;line-height:1.2;font-weight:800;">I got your request</h1>
+              <p style="margin:12px 0 0;color:#b9c7da;font-size:14px;line-height:1.6;">Thanks for reaching out. Your message made it to my inbox.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="height:5px;background:linear-gradient(90deg,#2563eb,#38bdf8,#22c55e);font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 30px;">
+              <p style="margin:0 0 18px;color:#334155;font-size:16px;line-height:1.7;">Hi {{from_name}},</p>
+              <p style="margin:0 0 18px;color:#334155;font-size:16px;line-height:1.7;">I received your request and will read through it personally. If you asked for a free local audit, I will look over your website, Google/Facebook presence, and lead path before I reply.</p>
+              <p style="margin:0 0 24px;color:#334155;font-size:16px;line-height:1.7;">If something is urgent or you want to add context, you can reply directly to this email.</p>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+                <tr>
+                  <td style="background:#f8fafc;padding:14px 18px;border-bottom:1px solid #e2e8f0;">
+                    <span style="font-size:12px;color:#475569;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;">What I Received</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 18px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding:7px 0;width:120px;color:#64748b;font-size:13px;vertical-align:top;">Request</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{service}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Name</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{from_name}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Email</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{from_email}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Company</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{company}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;margin-bottom:24px;">
+                <tr>
+                  <td style="padding:18px;">
+                    <p style="margin:0 0 8px;color:#0f172a;font-size:15px;font-weight:800;">What happens next</p>
+                    <p style="margin:0;color:#334155;font-size:14px;line-height:1.7;">I will reply with either a direct answer, a few first fixes I noticed, or a simple next-step plan depending on what you sent in.</p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0;color:#334155;font-size:16px;line-height:1.7;">Thanks,<br><strong style="color:#0f172a;">Kade Stanford</strong><br>Stanford Development Solutions</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#071225;padding:18px 32px;text-align:center;">
+              <p style="margin:0;color:#ffffff;font-size:13px;font-weight:700;">Stanford Development Solutions</p>
+              <p style="margin:5px 0 0;color:#94a3b8;font-size:12px;">stanforddevcontact@gmail.com</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+
+
+<!-- ==============================
+     TEMPLATE 2: SDS FREE LOCAL AUDIT
+     Suggested subject: New free local audit request from {{from_name}}
+     ============================== -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background:#eef2f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#172033;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef2f7;padding:28px 14px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="660" cellpadding="0" cellspacing="0" style="width:100%;max-width:660px;background:#ffffff;border:1px solid #d9e2f1;border-radius:12px;overflow:hidden;box-shadow:0 14px 35px rgba(15,23,42,0.10);">
+          <tr>
+            <td style="background:#071225;padding:28px 32px 24px;">
+              <p style="margin:0 0 8px;color:#8db7ff;font-size:12px;line-height:1.4;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;">Stanford Development Solutions</p>
+              <h1 style="margin:0;color:#ffffff;font-size:26px;line-height:1.2;font-weight:800;">Free local audit request</h1>
+              <p style="margin:12px 0 0;color:#b9c7da;font-size:14px;line-height:1.6;">A local business asked you to review their online presence.</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="height:5px;background:linear-gradient(90deg,#2563eb,#38bdf8,#22c55e);font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 30px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:22px;">
+                <tr>
+                  <td style="background:#f8fafc;padding:14px 18px;border-bottom:1px solid #e2e8f0;">
+                    <span style="font-size:12px;color:#475569;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;">Lead Details</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 18px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding:7px 0;width:140px;color:#64748b;font-size:13px;vertical-align:top;">Name</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{from_name}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Email</td>
+                        <td style="padding:7px 0;font-size:15px;font-weight:700;"><a href="mailto:{{from_email}}" style="color:#2563eb;text-decoration:none;">{{from_email}}</a></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Phone</td>
+                        <td style="padding:7px 0;font-size:15px;font-weight:700;"><a href="tel:{{from_phone}}" style="color:#0f172a;text-decoration:none;">{{from_phone}}</a></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Company</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{company}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Current Website</td>
+                        <td style="padding:7px 0;font-size:15px;font-weight:700;"><a href="{{current_website}}" style="color:#2563eb;text-decoration:none;">{{current_website}}</a></td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Preferred Contact</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{preferred_contact}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:22px;">
+                <tr>
+                  <td style="background:#f8fafc;padding:14px 18px;border-bottom:1px solid #e2e8f0;">
+                    <span style="font-size:12px;color:#475569;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;">Project Snapshot</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 18px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding:7px 0;width:140px;color:#64748b;font-size:13px;vertical-align:top;">Request Type</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{service}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Project Type</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{project_type}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Budget</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{budget}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Timeline</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{timeline}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Pages</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:15px;font-weight:700;">{{pages}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:22px;">
+                <tr>
+                  <td style="background:#f8fafc;padding:14px 18px;border-bottom:1px solid #e2e8f0;">
+                    <span style="font-size:12px;color:#475569;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;">Notes</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:18px;background:#ffffff;">
+                    <p style="margin:0;color:#334155;font-size:15px;line-height:1.7;white-space:pre-wrap;">{{message}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+                <tr>
+                  <td style="background:#f8fafc;padding:14px 18px;border-bottom:1px solid #e2e8f0;">
+                    <span style="font-size:12px;color:#475569;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;">Research Details</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:16px 18px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="padding:7px 0;width:140px;color:#64748b;font-size:13px;vertical-align:top;">Inspiration</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:14px;line-height:1.6;">{{inspiration_links}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Competitors</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:14px;line-height:1.6;">{{competitor_links}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Extra Notes</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:14px;line-height:1.6;">{{inspiration_notes}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Ready Now</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:14px;line-height:1.6;">{{readiness}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:7px 0;color:#64748b;font-size:13px;vertical-align:top;">Colors</td>
+                        <td style="padding:7px 0;color:#0f172a;font-size:14px;line-height:1.6;">{{color_palette}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center">
+                    <a href="mailto:{{from_email}}" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;font-size:14px;font-weight:800;padding:13px 22px;border-radius:7px;margin:4px;">Reply by Email</a>
+                    <a href="tel:{{from_phone}}" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;font-size:14px;font-weight:800;padding:13px 22px;border-radius:7px;margin:4px;">Call Lead</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="background:#071225;padding:18px 32px;text-align:center;">
+              <p style="margin:0;color:#ffffff;font-size:13px;font-weight:700;">Stanford Development Solutions</p>
+              <p style="margin:5px 0 0;color:#94a3b8;font-size:12px;">Submitted through stanforddevsolutions.com</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

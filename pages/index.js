@@ -21,14 +21,6 @@ const StarBackground = dynamic(() => import("../components/StarBackground"), {
   ssr: false,
   loading: () => null,
 });
-const LiveAnalytics = dynamic(() => import("../components/LiveAnalytics"), {
-  ssr: false,
-  loading: () => null,
-});
-const GlobeSection = dynamic(() => import("../components/GlobeSection"), {
-  ssr: false,
-  loading: () => null,
-});
 
 export default function Home() {
   // Initialize Lenis Smooth Scroll
@@ -59,10 +51,12 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500 selection:text-white overflow-x-hidden relative">
       <Head>
-        <title>Stanford Development Solutions | Custom Web Development</title>
+        <title>
+          Stanford Development Solutions | Websites & Ads for Local Businesses
+        </title>
         <meta
           name="description"
-          content="Innovative web solutions for modern businesses."
+          content="Custom websites, local SEO, lead tracking, and practical ad setup for local small businesses built personally by Kade Stanford."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
@@ -99,17 +93,6 @@ export default function Home() {
         <ScrollReveal>
           <WhyUs />
         </ScrollReveal>
-
-        {/* Added Globe Section here */}
-        <ScrollReveal>
-          <GlobeSection />
-        </ScrollReveal>
-
-        <ScrollReveal>
-          <LiveAnalytics />
-        </ScrollReveal>
-
-        {/* Testimonials now appear under Featured Work in the Work section */}
 
         <ScrollReveal>
           <Contact />

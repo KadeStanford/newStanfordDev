@@ -20,28 +20,29 @@ export default function WhyUs() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Why Choose SDS?
+            Why Work With Me?
           </h2>
           <p className="text-slate-400">
-            The difference between a template and a tailored solution.
+            A practical website partner for local businesses that need trust,
+            speed, and clear communication.
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
           <FeatureCard
             icon={<Code size={32} className="text-blue-400" />}
-            title="Fully Custom Code"
-            description="Other companies charge a premium for generic templates. We write clean, custom code tailored specifically to your needs."
+            title="Built Around Your Business"
+            description="I do not hand you a generic template and disappear. I learn what you offer, where you work, and what a good lead looks like before building."
           />
           <FeatureCard
             icon={<Zap size={32} className="text-purple-400" />}
-            title="High Performance"
-            description="Bloated site builders slow you down. Our hand-coded sites are optimized for speed, SEO, and user experience."
+            title="Fast, Clear, Mobile First"
+            description="Most local customers are on their phone. Your site should load quickly, explain what you do, and make the next step obvious."
           />
           <FeatureCard
             icon={<Monitor size={32} className="text-green-400" />}
-            title="Device Agnostic"
-            description="Your site will look stunning on every screen size. Mobile-first design ensures you never miss a customer."
+            title="Easy To Reach"
+            description="Forms, phone links, email paths, and tracking are treated as core features because missed leads are expensive."
           />
         </div>
       </div>

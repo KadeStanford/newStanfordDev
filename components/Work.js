@@ -123,9 +123,18 @@ export default function Work() {
 
   const projects = [
     {
+      title: "Big Bass Tree Service",
+      desc: "A lead-focused website for a local tree service with service pages, town pages, tracking, and quote-ready calls to action.",
+      tags: ["Local SEO", "Lead Tracking", "Service Business"],
+      color: "green",
+      image: "bigbass.png",
+      demoLink: "https://bigbasstrees.com/",
+      repoLink: null,
+    },
+    {
       title: "Liberty House Specialties",
-      desc: "A fully responsive website featuring a menu display and more.",
-      tags: ["Next.js", "Tailwind", "Commercial"],
+      desc: "A responsive local shop website built to show the business clearly, guide visitors through offerings, and make contact easy.",
+      tags: ["Local Business", "Responsive", "Commercial"],
       color: "blue",
       image: "libertyHouse.png",
       demoLink: "https://libertyhousespecialties.com/",
@@ -173,7 +182,8 @@ export default function Work() {
               Featured Work
             </h2>
             <p className="text-slate-400">
-              A selection of projects crafted with precision.
+              Real examples of websites I have built for small businesses,
+              service providers, and product ideas.
             </p>
           </div>
 

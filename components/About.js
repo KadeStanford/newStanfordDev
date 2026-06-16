@@ -21,12 +21,12 @@ function AnnotationWrapper() {
       <p className="text-slate-300 leading-relaxed max-w-2xl text-lg">
         I build <span className="text-blue-400">fast</span>,{" "}
         <span className="text-purple-400">accessible</span>, and beautiful
-        websites for small businesses. I focus on{" "}
+        websites for local small businesses. I focus on{" "}
         <span className="bg-yellow-400/10 px-1 rounded text-yellow-300">
-          custom solutions
+          practical lead paths
         </span>{" "}
-        that convert visitors into customers while keeping maintenance simple
-        for non-technical owners.
+        that make it easier for customers to trust you, call you, and request a
+        quote.
       </p>
     );
   }
@@ -42,12 +42,12 @@ function AnnotationWrapper() {
         <RoughNotation type="underline" color="#8b5cf6">
           accessible
         </RoughNotation>
-        , and beautiful websites for small businesses. I focus on{" "}
+        , and beautiful websites for local small businesses. I focus on{" "}
         <RoughNotation type="highlight" color="#3b82f620" multiline>
-          custom solutions
+          practical lead paths
         </RoughNotation>{" "}
-        that convert visitors into customers while keeping maintenance simple
-        for non-technical owners.
+        that make it easier for customers to trust you, call you, and request a
+        quote.
       </p>
     </RoughNotationGroup>
   );
@@ -113,10 +113,10 @@ export default function About() {
           <div className="w-full md:w-2/3 space-y-8 text-center md:text-left">
             <div>
               <h2 className="text-3xl font-bold text-white mb-2">
-                Meet the Developer
+                Meet Your Developer
               </h2>
               <h3 className="text-2xl md:text-3xl text-blue-400 font-medium">
-                Kade Stanford — Full Stack Web Developer
+                Kade Stanford — local web developer
               </h3>
             </div>
 
@@ -131,7 +131,7 @@ export default function About() {
                 }
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold shadow-lg shadow-blue-600/20 transition-all hover:scale-105 active:scale-95"
               >
-                Start a Project
+                Start a Free Audit
               </button>
               <button
                 onClick={() =>
@@ -153,15 +153,15 @@ export default function About() {
                 <ul className="text-slate-300 space-y-2">
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>{" "}
-                    Custom marketing websites
+                    Local business websites
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>{" "}
-                    Performance & SEO improvements
+                    SEO and speed cleanup
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>{" "}
-                    E‑commerce and integrations
+                    Facebook / Google ad setup
                   </li>
                 </ul>
               </div>

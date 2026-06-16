@@ -263,7 +263,7 @@ export default function Navbar() {
                       : "bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/20"
                   }`}
                 >
-                  Get Estimate
+                  Free Audit
                 </button>
               </Magnetic>
               {user && (
@@ -384,7 +384,7 @@ export default function Navbar() {
                 className="w-full p-6 bg-blue-600 text-white rounded-2xl font-bold text-xl shadow-xl shadow-blue-600/20 flex justify-between items-center group"
                 whileTap={{ scale: 0.95 }}
               >
-                Get Estimate
+                Free Audit
                 <div className="bg-white/20 p-2 rounded-full group-hover:bg-white/30 transition-colors">
                   <ArrowRight size={24} />
                 </div>

@@ -23,6 +23,8 @@ const contactSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   name: z.string().optional(),
   email: z.string().email("Invalid email address"),
+  phone: z.string().optional().nullable(),
+  website: z.string().optional().nullable(),
   company: z.string().optional().nullable(),
   message: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
@@ -30,8 +32,18 @@ const contactSchema = z.object({
   formattedBudget: z.string().optional(),
   budget: z.any().optional(),
   timeline: z.string().optional(),
+  pages: z.any().optional(),
+  goals: z.array(z.any()).optional(),
   inspirationLinks: z.string().optional(),
+  inspirationNotes: z.string().optional(),
   competitorLinks: z.string().optional(),
+  hasBranding: z.boolean().optional(),
+  hasContent: z.boolean().optional(),
+  hasImages: z.boolean().optional(),
+  needsCMS: z.boolean().optional(),
+  hasDomain: z.boolean().optional(),
+  hasHosting: z.boolean().optional(),
+  preferredContact: z.string().optional(),
   colorPalette: z.array(z.string()).optional(),
   attachments: z.array(z.any()).optional(),
   recaptchaToken: z.string().optional(),
@@ -104,9 +116,13 @@ export default async function handler(req, res) {
     data.fullName || ""
   }\nEmail: ${data.email || ""}\nCompany: ${
     data.company || ""
+  }\nPhone: ${data.phone || ""}\nWebsite: ${
+    data.website || ""
   }\nProject Type: ${data.projectType || ""}\nBudget: ${
     data.formattedBudget || data.budget || ""
-  }\nTimeline: ${data.timeline || ""}\n\nMessage:\n${
+  }\nTimeline: ${data.timeline || ""}\nPages: ${
+    data.pages || ""
+  }\nPreferred Contact: ${data.preferredContact || ""}\n\nMessage:\n${
     data.message || data.notes || ""
   }`;
 
@@ -139,10 +155,11 @@ export default async function handler(req, res) {
         url: MAILGUN_BASE_URL,
       });
       const fromAddress =
-        MAILGUN_FROM || data.email || SMTP_USER || `no-reply@${MAILGUN_DOMAIN}`;
+        MAILGUN_FROM || SMTP_USER || `StanfordDev <no-reply@${MAILGUN_DOMAIN}>`;
       const message = {
         from: fromAddress,
         to: CONTACT_RECEIVER,
+        "h:Reply-To": data.email,
         subject:
           data.subject || `Website contact — ${data.type || "submission"}`,
         text,
@@ -184,10 +201,10 @@ export default async function handler(req, res) {
       auth: { user: SMTP_USER, pass: SMTP_PASS },
     });
 
-    const fromAddress = data.email ? `${data.email}` : SMTP_USER;
     await transporter.sendMail({
-      from: fromAddress,
+      from: SMTP_USER,
       to: CONTACT_RECEIVER,
+      replyTo: data.email,
       subject: data.subject || `Website contact — ${data.type || "submission"}`,
       html,
       text,
