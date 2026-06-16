@@ -11,8 +11,19 @@ export default function NetworkBackground() {
   const fgRef = useRef();
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [data, setData] = useState({ nodes: [], links: [] });
+  const [useCanvas, setUseCanvas] = useState(false);
 
   useEffect(() => {
+    const canUseCanvas =
+      typeof window !== "undefined" &&
+      window.matchMedia("(min-width: 768px)").matches &&
+      window.matchMedia("(pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!canUseCanvas) return undefined;
+
+    setUseCanvas(true);
+
     // 1. Measure the container to size the canvas correctly
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -45,6 +56,67 @@ export default function NetworkBackground() {
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
+
+  if (!useCanvas) {
+    return (
+      <div className="absolute inset-0 z-0 w-full h-full pointer-events-none overflow-hidden opacity-30">
+        <div className="absolute inset-0 mobile-network" />
+        <div className="absolute inset-0 mobile-network-pulse" />
+
+        <style jsx>{`
+          .mobile-network,
+          .mobile-network-pulse {
+            mask-image: linear-gradient(
+              to bottom,
+              transparent,
+              black 22%,
+              black 78%,
+              transparent
+            );
+          }
+
+          .mobile-network {
+            background-image:
+              radial-gradient(circle at 18% 24%, rgba(96, 165, 250, 0.26), transparent 24%),
+              radial-gradient(circle at 82% 32%, rgba(168, 85, 247, 0.22), transparent 27%),
+              linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+            animation: network-drift 42s linear infinite;
+          }
+
+          .mobile-network-pulse {
+            background-image:
+              radial-gradient(circle at 28% 34%, rgba(255, 255, 255, 0.34) 0 2px, transparent 3px),
+              radial-gradient(circle at 62% 24%, rgba(96, 165, 250, 0.46) 0 2px, transparent 3px),
+              radial-gradient(circle at 72% 68%, rgba(167, 139, 250, 0.42) 0 2px, transparent 3px),
+              linear-gradient(135deg, transparent 0 46%, rgba(167, 139, 250, 0.18) 47% 48%, transparent 49%),
+              linear-gradient(35deg, transparent 0 50%, rgba(96, 165, 250, 0.16) 51% 52%, transparent 53%);
+            background-size: 220px 220px, 260px 260px, 300px 300px, 180px 180px, 240px 240px;
+            animation: network-pulse 7s ease-in-out infinite;
+          }
+
+          @keyframes network-drift {
+            to {
+              transform: translate3d(-32px, 32px, 0);
+            }
+          }
+
+          @keyframes network-pulse {
+            0%,
+            100% {
+              opacity: 0.48;
+              transform: scale(1);
+            }
+            50% {
+              opacity: 0.82;
+              transform: scale(1.03);
+            }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Lenis from "lenis";
 import { Toaster } from "sonner";
@@ -23,8 +23,43 @@ const StarBackground = dynamic(() => import("../components/StarBackground"), {
 });
 
 export default function Home() {
+  const [visualEffects, setVisualEffects] = useState({
+    ready: false,
+    useWebGL: false,
+  });
+
+  useEffect(() => {
+    const canUseWebGL =
+      typeof window !== "undefined" &&
+      window.matchMedia("(min-width: 768px)").matches &&
+      window.matchMedia("(pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const showEffects = () => {
+      setVisualEffects({
+        ready: true,
+        useWebGL: canUseWebGL,
+      });
+    };
+
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(showEffects, { timeout: 1200 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timeoutId = window.setTimeout(showEffects, 450);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
   // Initialize Lenis Smooth Scroll
   useEffect(() => {
+    const canUseSmoothScroll =
+      typeof window !== "undefined" &&
+      window.matchMedia("(pointer: fine)").matches &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!canUseSmoothScroll) return undefined;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -61,8 +96,8 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      {/* 3D Star Background */}
-      <StarBackground />
+      {/* Animated Star Background */}
+      {visualEffects.ready && <StarBackground useWebGL={visualEffects.useWebGL} />}
 
       {/* Global Notifications */}
       <Toaster position="bottom-right" theme="dark" richColors />
