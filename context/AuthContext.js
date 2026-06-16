@@ -6,11 +6,19 @@ const AuthContext = createContext({});
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthContextProvider = ({ children }) => {
+export const AuthContextProvider = ({ children, enabled = false }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(Boolean(enabled));
 
   useEffect(() => {
+    if (!enabled) {
+      setUser(null);
+      setLoading(false);
+      return undefined;
+    }
+
+    setLoading(true);
+
     // Defer setting up the auth listener until after hydration
     let unsubscribe = () => {};
     let mounted = true;
@@ -78,7 +86,7 @@ export const AuthContextProvider = ({ children }) => {
       mounted = false;
       if (unsubscribe) unsubscribe();
     };
-  }, []);
+  }, [enabled]);
 
   const signUp = async (email, password) => {
     const [authMod, firestoreMod] = await Promise.all([

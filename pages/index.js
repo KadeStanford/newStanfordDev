@@ -8,9 +8,7 @@ import Hero from "../components/HeroAB";
 import About from "../components/About";
 import Services from "../components/Services";
 import Work from "../components/Work";
-import TestimonialsDisplay from "../components/TestimonialsDisplay";
 import WhyUs from "../components/WhyUs";
-import Contact from "../components/Contact";
 import Footer from "../components/Footer";
 import ScrollReveal from "../components/ScrollReveal";
 import dynamic from "next/dynamic";
@@ -20,6 +18,21 @@ import dynamic from "next/dynamic";
 const StarBackground = dynamic(() => import("../components/StarBackground"), {
   ssr: false,
   loading: () => null,
+});
+
+const TestimonialsDisplay = dynamic(
+  () => import("../components/TestimonialsDisplay"),
+  {
+    ssr: false,
+    loading: () => null,
+  }
+);
+
+const Contact = dynamic(() => import("../components/Contact"), {
+  ssr: false,
+  loading: () => (
+    <section id="contact" className="py-32 relative z-10 overflow-hidden" />
+  ),
 });
 
 export default function Home() {

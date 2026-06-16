@@ -5,10 +5,17 @@ import { DefaultSeo } from "next-seo";
 import siteSeoConfig from "../next-seo.config";
 import { useEffect } from "react";
 import Script from "next/script"; // Import Script component
+import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps }) {
   // Use environment variable for GA ID
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const router = useRouter();
+  const authEnabled =
+    router.pathname === "/login" ||
+    router.pathname === "/dashboard" ||
+    router.pathname === "/admin" ||
+    router.pathname.startsWith("/admin/");
 
   useEffect(() => {
     // Client-only PostHog init (optional). Requires NEXT_PUBLIC_POSTHOG_KEY.
@@ -29,7 +36,7 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
-    <AuthContextProvider>
+    <AuthContextProvider enabled={authEnabled}>
       {/* Google Analytics Setup using next/script */}
       {GA_MEASUREMENT_ID && (
         <>

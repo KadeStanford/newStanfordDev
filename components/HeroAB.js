@@ -9,6 +9,7 @@ export default function HeroAB() {
 
     element.scrollIntoView({ behavior: "smooth" });
     if (id === "contact") {
+      window.__openEstimateFormRequested = true;
       window.dispatchEvent(new Event("openEstimateForm"));
     }
   };
@@ -58,7 +59,7 @@ export default function HeroAB() {
           <div className="mt-8 md:hidden rounded-2xl border border-slate-800 bg-slate-900/70 p-2 shadow-2xl">
             <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-slate-950">
               <Image
-                src="/images/bigbass.png"
+                src="/images/bigbass-hero.webp"
                 alt="Big Bass Tree Service website designed by Stanford Development Solutions"
                 fill
                 className="object-cover"
@@ -104,7 +105,7 @@ export default function HeroAB() {
           <div className="absolute right-0 top-4 w-[58%] rounded-2xl border border-slate-700 bg-slate-900/70 p-2.5 shadow-xl">
             <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-950">
               <Image
-                src="/images/libertyHouse.png"
+                src="/images/libertyhouse-hero.webp"
                 alt="Liberty House Specialties website designed by Stanford Development Solutions"
                 fill
                 className="object-cover opacity-80"
@@ -121,12 +122,11 @@ export default function HeroAB() {
           <div className="absolute left-0 top-28 w-[92%] rounded-3xl border border-slate-700 bg-slate-900/90 p-3 shadow-2xl">
             <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-slate-950">
               <Image
-                src="/images/bigbass.png"
+                src="/images/bigbass-hero.webp"
                 alt="Big Bass Tree Service website designed by Stanford Development Solutions"
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 90vw, 620px"
-                priority
               />
             </div>
             <div className="flex items-center justify-between px-3 pt-3">

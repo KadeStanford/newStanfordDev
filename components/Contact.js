@@ -41,9 +41,13 @@ export default function Contact() {
   useEffect(() => {
     const handleEstimateRequest = () => {
       setContactMode("project");
+      window.__openEstimateFormRequested = false;
     };
 
     window.addEventListener("openEstimateForm", handleEstimateRequest);
+    if (window.__openEstimateFormRequested) {
+      handleEstimateRequest();
+    }
     return () =>
       window.removeEventListener("openEstimateForm", handleEstimateRequest);
   }, []);

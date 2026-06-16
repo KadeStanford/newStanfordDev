@@ -94,6 +94,7 @@ export default function Navbar() {
         // Auto-select "Free Estimate" logic
         if (id === "contact") {
           // Dispatch custom event to notify Contact component
+          window.__openEstimateFormRequested = true;
           window.dispatchEvent(new Event("openEstimateForm"));
 
           // Auto-focus logic
