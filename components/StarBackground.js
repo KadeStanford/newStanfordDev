@@ -1,94 +1,71 @@
-import dynamic from "next/dynamic";
+import React, { useRef, useState, Suspense } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Points, PointMaterial } from "@react-three/drei";
 
-const StarCanvas = dynamic(() => import("./StarCanvas"), {
-  ssr: false,
-  loading: () => <CssStarBackground />,
-});
+// Generate random points inside a sphere
+function generateStars(count = 5000, radius = 1.5) {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const r = radius; // Radius
+    const theta = 2 * Math.PI * Math.random();
+    const phi = Math.acos(2 * Math.random() - 1);
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.sin(phi) * Math.sin(theta);
+    const z = r * Math.cos(phi);
 
-function CssStarBackground() {
+    positions[i * 3] = x;
+    positions[i * 3 + 1] = y;
+    positions[i * 3 + 2] = z;
+  }
+  return positions;
+}
+
+function StarField({ count, size, radius = 1.5 }) {
+  const ref = useRef();
+  const [sphere] = useState(() => generateStars(count, radius));
+
+  useFrame((state, delta) => {
+    // Rotate the starfield
+    if (ref.current) {
+      // slowed rotation: larger divisors => slower movement
+      ref.current.rotation.x -= delta / 30;
+      ref.current.rotation.y -= delta / 45;
+    }
+  });
+
   return (
-    <div className="fixed inset-0 z-[0] pointer-events-none overflow-hidden">
-      <div className="absolute inset-0 star-layer star-layer-one" />
-      <div className="absolute inset-0 star-layer star-layer-two" />
-      <div className="absolute inset-0 star-layer star-layer-three" />
-
-      <style jsx>{`
-        .star-layer {
-          opacity: 0.78;
-          will-change: transform, opacity;
-          background-repeat: repeat;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-        }
-
-        .star-layer-one {
-          background-image:
-            radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 1px, transparent 1.4px),
-            radial-gradient(circle, rgba(96, 165, 250, 0.7) 0 1px, transparent 1.5px);
-          background-size: 92px 92px, 137px 137px;
-          background-position: 8px 18px, 42px 64px;
-          animation-name: drift-one;
-          animation-duration: 86s;
-        }
-
-        .star-layer-two {
-          background-image:
-            radial-gradient(circle, rgba(255, 255, 255, 0.85) 0 1.2px, transparent 1.8px),
-            radial-gradient(circle, rgba(167, 139, 250, 0.58) 0 1px, transparent 1.6px);
-          background-size: 168px 168px, 214px 214px;
-          background-position: 74px 32px, 19px 96px;
-          animation-name: drift-two;
-          animation-duration: 124s;
-        }
-
-        .star-layer-three {
-          opacity: 0.38;
-          background-image: radial-gradient(
-            circle,
-            rgba(255, 255, 255, 0.95) 0 1.6px,
-            transparent 2.2px
-          );
-          background-size: 260px 260px;
-          background-position: 118px 42px;
-          animation: drift-three 160s linear infinite, twinkle 5.6s ease-in-out infinite;
-        }
-
-        @keyframes drift-one {
-          to {
-            transform: translate3d(-92px, 92px, 0);
-          }
-        }
-
-        @keyframes drift-two {
-          to {
-            transform: translate3d(84px, 168px, 0);
-          }
-        }
-
-        @keyframes drift-three {
-          to {
-            transform: translate3d(-130px, 260px, 0);
-          }
-        }
-
-        @keyframes twinkle {
-          0%,
-          100% {
-            opacity: 0.32;
-          }
-          50% {
-            opacity: 0.58;
-          }
-        }
-      `}</style>
-    </div>
+    <group rotation={[0, 0, Math.PI / 4]}>
+      <Points ref={ref} positions={sphere} stride={3} frustumCulled={false}>
+        <PointMaterial
+          transparent
+          color="#fff"
+          size={size}
+          sizeAttenuation={true}
+          depthWrite={false}
+        />
+      </Points>
+    </group>
   );
 }
 
-export default function StarBackground({ useWebGL = true }) {
-  if (!useWebGL) {
-    return <CssStarBackground />;
-  }
+export default function StarBackground() {
+  return (
+    <div className="w-full h-auto fixed inset-0 z-[0] pointer-events-none">
+      <Canvas camera={{ position: [0, 0, 1] }}>
+        <Suspense fallback={null}>
+          {/* Layer 1: Deep Dust (Tiny, high count) */}
+          <StarField count={5000} size={0.0015} />
 
-  return <StarCanvas />;
+          {/* Layer 2: Standard Stars (Medium) */}
+          <StarField count={2000} size={0.003} />
+
+          {/* Layer 3: Bright Stars (Large, low count) */}
+          <StarField count={300} size={0.006} />
+
+          {/* Layer 4: Major Stars (Extra Large, very low count) */}
+          <StarField count={50} size={0.01} />
+        </Suspense>
+      </Canvas>
+    </div>
+  );
 }
