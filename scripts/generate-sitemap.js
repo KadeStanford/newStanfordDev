@@ -30,7 +30,8 @@ if (!process.env.NEXT_PUBLIC_SITE_URL) {
 }
 const fg = require("fast-glob");
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://example.com";
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://stanforddevsolutions.com";
 const outDir = path.join(process.cwd(), "public");
 if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
@@ -46,6 +47,9 @@ async function getPages() {
         "pages/**/[*].*",
         "pages/**/admin/**",
         "pages/admin.js",
+        "pages/dashboard.js",
+        "pages/demo-analytics.js",
+        "pages/login.js",
       ],
     }
   );

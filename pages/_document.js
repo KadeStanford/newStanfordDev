@@ -13,17 +13,6 @@ export default function Document() {
             __html: JSON.stringify(organizationSchema),
           }}
         />
-        {/* Preconnect to Google font resources and load fonts with font-display=swap */}
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="true"
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-          rel="stylesheet"
-        />
       </Head>
       <body>
         <Main />

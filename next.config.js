@@ -3,12 +3,6 @@
 const nextConfig = {
   reactStrictMode: true,
 
-  // Faster production builds: skip ESLint during `next build` unless explicitly enabled.
-  // Run `npm run lint` in CI or locally before merge. Set NEXT_ESLINT_DURING_BUILD=true to lint in build.
-  eslint: {
-    ignoreDuringBuilds: process.env.NEXT_ESLINT_DURING_BUILD !== "true",
-  },
-
   // Tree-shake heavy barrel imports → faster compile & smaller bundles (Next 14+).
   experimental: {
     optimizePackageImports: [
