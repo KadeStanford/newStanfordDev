@@ -297,6 +297,10 @@ Kade rejected the sculpture-led design and authorized the proposed opening-to-pr
 
 Checks for this slice: Next production build passed; desktop (1440 × 1000) and phone (390 × 844) screenshots inspected; project switching and expanded facts observed; no horizontal overflow at the checked phone width. Pointer-reactive movement, physical-device performance, and a complete keyboard audit remain unverified.
 
+## September 10 process explanation revision
+
+User approved the proposed “From first message to launch” copy. Replaced the stacked labels with three always-visible explanations, sourced from the updated Process section in COPY.md. Kept process left and graduation right on desktop; mobile stacks them. Removed rotated cards and hover effects from this reading-focused section. Visual acceptance of this implementation remains pending. Production build passed; 1070px and 390px rendered layouts inspected with no horizontal overflow. Physical-device and other-browser testing remain pending.
+
 ## September 10 layout and branding review (not approved)
 
 Removed the standalone opening text band; reused its explanation in pricing. Reorganized desktop About with the portrait aligned to its base, process left and graduation right. Contact now has a full-width form below its introduction on desktop. Restored repository-sourced GitHub and LinkedIn links. Header/footer share an SDS/name lockup and a seven-second slash-led reveal loop; reduced motion renders a static logo.

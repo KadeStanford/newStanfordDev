@@ -226,23 +226,19 @@ Pricing note:
 
 Section heading:
 
-> A clear process without expecting you to know all the answers first.
+> From first message to launch
 
-### 1. Tell me what is going on
+### You don’t need a finished plan.
 
-> Share what the business does, what you want to improve, and anything that is getting in the way. A sentence or two is enough to start.
+> Tell me what your business does and what you want to improve. I’ll help figure out a practical next step.
 
-### 2. I recommend a practical next step
+### Know what you’re agreeing to.
 
-> I will respond within 24 hours on weekdays. Depending on the question, that may be an email, phone call, short video, or another format that makes sense.
+> Before paid work starts, you’ll receive a written scope covering the work, price, payment schedule, and what I’ll need from you.
 
-### 3. You receive a written scope
+### Review it before it goes live.
 
-> Before paid work begins, I will outline the deliverables, price, payment schedule, client responsibilities, and anything that is not included.
-
-### 4. We build and review it
-
-> I complete the agreed work, ask for the information and approvals I need, and give you a chance to review it before launch.
+> I handle the build, ask for information and approvals along the way, and give you a chance to review it before launch.
 
 ## About
 
