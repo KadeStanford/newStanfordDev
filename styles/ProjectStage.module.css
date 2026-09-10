@@ -27,3 +27,14 @@
 @media(min-width:801px){.projectPlane{width:88%;top:26%;left:0}}
 @media(max-width:800px){.gallery{height:clamp(370px,calc(55vw + 180px),620px)}}
 @media(max-width:480px){.title{padding-top:2rem}.title h1{font-size:clamp(2.15rem,8.4vw,3rem);letter-spacing:-.055em}.gallery{margin-top:0}.overline{font-size:.75rem}}
+/* The project previews become portrait phone screens at the mobile breakpoint. */
+@media(max-width:800px){
+ .gallery{height:620px;margin-top:2rem}
+ .projectPlane{width:230px;max-width:58%;left:20%;top:10%;padding:7px;border:2px solid #748079;border-radius:32px;background:#101612;box-shadow:0 30px 55px #0009,inset 0 0 0 2px #080c0b}
+ .projectPlane picture{display:block;overflow:hidden;border-radius:23px}
+ .projectPlane img{aspect-ratio:390/844;width:100%;height:auto;object-fit:cover}
+ .projectPlane .frame,.projectPlane .caption{display:none}
+ .front{transform:translate3d(-15%,9%,30px) rotateY(-8deg) rotateZ(-8deg)}
+ .back{transform:translate3d(35%,-3%,-70px) rotateY(-15deg) rotateZ(9deg)}
+}
+@media(max-width:400px){.gallery{height:560px}.projectPlane{left:24%;max-width:54%}.back{transform:translate3d(20%,-3%,-70px) rotateY(-15deg) rotateZ(9deg)}}

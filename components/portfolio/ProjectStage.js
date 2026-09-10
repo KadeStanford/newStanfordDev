@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import AccessibilityTray from './AccessibilityTray';
 import ProjectGallery from './ProjectGallery';
 import styles from '../../styles/ProjectStage.module.css';
@@ -45,7 +44,10 @@ export default function ProjectStage({ copy }) {
         <div className={styles.planes}>
           {projects.map((item, i) => <button key={item.title} className={`${styles.projectPlane} ${selected === i ? styles.front : styles.back}`} onClick={() => { if (selected === i) setExpanded(v => !v); else setSelected(i); }} aria-label={selected === i ? `${expanded ? 'Close' : 'Explore'} ${item.title}` : `Select ${item.title}`} aria-expanded={selected === i ? expanded : undefined}>
             <span className={styles.frame}><span>0{i + 1} / {item.title}</span><span>↗</span></span>
-            <Image src={images[i]} alt={`${item.title} website`} width={1920} height={1080} unoptimized priority={i === 0} sizes="(max-width: 800px) 85vw, 52vw" />
+            <picture>
+              <source media="(max-width: 800px)" srcSet={`/images/projects/${i === 0 ? 'bigbass' : 'liberty'}-mobile.webp`} />
+              <img src={images[i]} alt={`${item.title} website`} width={1920} height={1080} loading={i === 0 ? 'eager' : 'lazy'} />
+            </picture>
             <span className={styles.caption}>{item.blocks[0].text}<span>{selected === i ? 'Explore project ↗' : 'View project ↗'}</span></span>
           </button>)}
         </div>

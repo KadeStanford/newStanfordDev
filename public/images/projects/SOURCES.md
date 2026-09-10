@@ -1,5 +1,7 @@
 # Project screenshot sources
 
+Mobile homepage captures: bigbass-mobile.webp and liberty-mobile.webp were captured from the same public homepage URLs at a 390 × 844 viewport for the responsive phone previews.
+
 Captured from the public client websites during the September 2026 portfolio revision, with permission to feature these projects recorded in BRIEF.md.
 
 - bigbass-home.webp: https://www.bigbasstrees.com/
