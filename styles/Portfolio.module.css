@@ -12,6 +12,7 @@
 /* Project-led visual system: shared with the spatial opening. */
 .page{--night:#080e12;--paper:#edf1ee;--ink:#edf1ee;--line:#c9d9d126;--accent:#c8f06b}
 .skip{color:#080e12!important}
+.menuToggle{display:none}
 .nav{padding-block:1.6rem;gap:2rem;background:#080e12}
 .brand{display:flex;align-items:center;gap:1.3rem;flex-shrink:0}
 .brand .monogram{position:relative;display:block;font-size:4.6rem;line-height:.8;font-weight:700;letter-spacing:-.115em;margin:0;padding-right:.25em}
@@ -21,12 +22,16 @@
 .nav nav{align-items:center;gap:1.8rem}
 .nav nav a:last-child{border:1px solid #c8f06b66;border-radius:2rem;padding:.7rem 1rem}
 @media(max-width:800px){
- .nav{display:block;padding:1.5rem 5vw 0}
- .brand{width:max-content;gap:1.2rem;margin-bottom:1.5rem}
- .brand .monogram{font-size:4.4rem}
+ .nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:1.2rem 5vw;gap:0}
+ .brand{width:max-content;gap:1.2rem;margin:0}
+ .brand .monogram{font-size:3.4rem}
  .brand .brandName{font-size:1.45rem}
- .nav nav{max-width:none;justify-content:space-between;flex-wrap:nowrap;gap:.6rem;padding:1rem 0;border-top:1px solid #c9d9d126;font-size:.8rem}
- .nav nav a:last-child{border:0;padding:0}
+ .menuToggle{display:flex;align-items:center;gap:1.5rem;border:1px solid #c8f06b66;border-radius:2rem;background:transparent;color:#c8f06b;padding:.6rem 1rem;cursor:pointer;font-size:.85rem}
+ .menuToggle span{font-size:1.3rem;line-height:1}
+ .nav nav{display:none;width:100%;max-width:none;flex-direction:column;align-items:stretch;gap:0;margin-top:1.2rem;padding:.5rem 0 0;border-top:1px solid #c9d9d126;font-size:1.1rem}
+ .nav nav[data-open=true]{display:flex}
+ .nav nav a{padding:.8rem 0}
+ .nav nav a:last-child{border:0;padding:.8rem 0}
 }
 .page a:focus-visible,.page button:focus-visible,.page summary:focus-visible{outline-color:var(--accent)}
 .nav nav a:last-child{color:var(--accent)}

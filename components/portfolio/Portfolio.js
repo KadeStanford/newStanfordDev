@@ -1,4 +1,5 @@
 import ProjectStage from './ProjectStage';
+import { useState } from 'react';
 import ProjectGallery from './ProjectGallery';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -8,11 +9,12 @@ import { siteUrl } from '../../next-seo.config';
 
 function Blocks({items}){return items.map((block,i)=>block.kind==='li'?<p className={styles.fact} key={i}>{block.text}</p>:<p key={i}>{block.text}</p>);}
 export default function Portfolio({copy}){
+ const [menuOpen,setMenuOpen]=useState(false);
  const projects=copy['Selected work'].entries;
  return <div className={styles.page}>
   <Head><title>{copy['Page metadata'].blocks[0].text}</title><meta name="description" content={copy['Page metadata'].blocks[1].text}/><link rel="canonical" href={siteUrl}/><meta property="og:url" content={siteUrl}/></Head>
   <a className={styles.skip} href="#work">Skip to work</a>
-  <header className={styles.nav}><a className={styles.brand} href="#top" aria-label="SDS — Stanford Development Solutions"><span className={styles.monogram} aria-hidden="true">SDS<i/></span></a><nav aria-label="Main navigation"><a href="#work">Work</a><a href="#pricing">Services &amp; Pricing</a><a href="#about">About</a><a href="#contact">Get in touch ↗</a></nav></header>
+  <header className={styles.nav} onKeyDown={event=>{if(event.key==='Escape'){setMenuOpen(false);event.currentTarget.querySelector('button')?.focus();}}}><a className={styles.brand} href="#top" aria-label="SDS — Stanford Development Solutions"><span className={styles.monogram} aria-hidden="true">SDS<i/></span></a><button className={styles.menuToggle} aria-expanded={menuOpen} aria-controls="main-navigation" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?'Close':'Menu'}<span aria-hidden="true">{menuOpen?'−':'+'}</span></button><nav id="main-navigation" data-open={menuOpen} aria-label="Main navigation" onClick={event=>{if(event.target.closest('a'))setMenuOpen(false);}}><a href="#work">Work</a><a href="#pricing">Services &amp; Pricing</a><a href="#about">About</a><a href="#contact">Get in touch ↗</a></nav></header>
   <main>
    <ProjectStage copy={copy}/>
    <section className={styles.introduction}><p>{copy.Opening.blocks[2].text}</p><span>{copy.Opening.blocks[5].text}</span></section>
