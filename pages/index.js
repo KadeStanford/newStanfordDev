@@ -4,21 +4,14 @@ import Lenis from "lenis";
 import { Toaster } from "sonner";
 
 import Navbar from "../components/Navbar";
-import Hero from "../components/HeroAB";
+import Hero from "../components/HeroRedesign";
 import About from "../components/About";
-import Services from "../components/Services";
+import Pricing from "../components/Pricing";
 import Work from "../components/Work";
-import WhyUs from "../components/WhyUs";
 import Footer from "../components/Footer";
 import ScrollReveal from "../components/ScrollReveal";
 import dynamic from "next/dynamic";
-
-// Lazy-load heavy/visual components to keep initial JS small and avoid
-// opening costly WebGL or polling work during the critical path.
-const StarBackground = dynamic(() => import("../components/StarBackground"), {
-  ssr: false,
-  loading: () => null,
-});
+import { siteUrl } from "../next-seo.config";
 
 const TestimonialsDisplay = dynamic(
   () => import("../components/TestimonialsDisplay"),
@@ -113,10 +106,9 @@ export default function Home() {
           content="Custom websites, local SEO, lead tracking, and practical ad setup for local small businesses built personally by Kade Stanford."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href={siteUrl} />
+        <meta property="og:url" content={siteUrl} />
       </Head>
-
-      {/* 3D Star Background */}
-      {!debugFlags.nostars && <StarBackground />}
 
       {/* Global Notifications */}
       <Toaster position="bottom-right" theme="dark" richColors />
@@ -130,15 +122,13 @@ export default function Home() {
         {/* Wrap other sections in ScrollReveal */}
         {reveal(<About />)}
 
-        {reveal(<Services disableNetwork={debugFlags.nograph} />, 0.2)}
+        {reveal(<Pricing />, 0.2)}
 
         {reveal(<Work />)}
 
         {!debugFlags.nodeferred && (
           reveal(<TestimonialsDisplay limit={3} />)
         )}
-
-        {reveal(<WhyUs />)}
 
         {!debugFlags.nodeferred && (
           reveal(<Contact />)

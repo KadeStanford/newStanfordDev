@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "../lib/firebase";
 import { toast } from "sonner";
 
 export default function TestimonialForm() {
@@ -19,16 +17,27 @@ export default function TestimonialForm() {
     }
     setSubmitting(true);
     try {
-      await addDoc(collection(db, "testimonials"), {
-        name: name.trim(),
-        company: company.trim() || null,
-        message: message.trim(),
-        rating: Number(rating) || null,
-        approved: false,
-        featured: false,
-        displayOrder: 0,
-        createdAt: serverTimestamp(),
+      const { getFirebaseAuth } = await import("../lib/firebase");
+      const auth = await getFirebaseAuth();
+      if (!auth?.currentUser) throw new Error("Please sign in again");
+      const idToken = await auth.currentUser.getIdToken();
+      const response = await fetch("/api/testimonials", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          company: company.trim() || null,
+          message: message.trim(),
+          rating: Number(rating) || 5,
+        }),
       });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to submit testimonial");
+      }
       toast.success("Thanks! Your testimonial was submitted for review.");
       setName("");
       setCompany("");
@@ -36,7 +45,7 @@ export default function TestimonialForm() {
       setRating(5);
     } catch (err) {
       console.error("Submit testimonial failed", err);
-      toast.error("Failed to submit testimonial.");
+      toast.error(err.message || "Failed to submit testimonial.");
     } finally {
       setSubmitting(false);
     }

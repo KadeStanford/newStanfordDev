@@ -2,25 +2,43 @@
 // write an aggregated document into Firestore at `analytics/{projectId}`.
 
 const { BetaAnalyticsDataClient } = require("@google-analytics/data");
+const { z } = require("zod");
 const { db, admin } = require("../../../lib/firebaseAdmin");
+const {
+  secretsMatch,
+  setPrivateResponseHeaders,
+} = require("../../../lib/apiSecurity");
 const {
   parseGaServiceAccountFromEnv,
   rangeToStartDate,
   fetchGaAnalyticsBundle,
 } = require("../../../lib/ga4ReportsCore");
 
-export default async function handler(req, res) {
-  const projectId =
-    req.method === "POST" ? req.body?.projectId : req.query?.projectId;
-  const range = req.query?.range || "7d";
+const reportSchema = z.object({
+  projectId: z.string().trim().min(1).max(128),
+  range: z.enum(["7d", "30d", "90d"]).default("7d"),
+});
 
-  if (!projectId) return res.status(400).json({ error: "Missing projectId" });
+export const config = { api: { bodyParser: { sizeLimit: "16kb" } } };
+
+export default async function handler(req, res) {
+  setPrivateResponseHeaders(res);
+  if (req.method !== "GET" && req.method !== "POST") {
+    res.setHeader("Allow", "GET, POST");
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const input = req.method === "POST" ? req.body || {} : req.query || {};
+  const parsed = reportSchema.safeParse(input);
+  if (!parsed.success)
+    return res.status(400).json({ error: "Invalid analytics report request" });
+  const { projectId, range } = parsed.data;
 
   const startDate = rangeToStartDate(range);
 
-  const secret = req.headers["x-api-key"] || req.query?.apiKey;
+  const secret = req.headers["x-api-key"];
   let authorized = false;
-  if (process.env.GA_API_SECRET && secret === process.env.GA_API_SECRET) {
+  if (process.env.GA_API_SECRET && secretsMatch(secret, process.env.GA_API_SECRET)) {
     authorized = true;
   }
 
@@ -35,7 +53,7 @@ export default async function handler(req, res) {
           authorized = true;
         }
       } catch (e) {
-        console.warn("ID token verification failed:", e);
+        console.warn("GA report authorization failed");
       }
     }
   }
@@ -43,7 +61,7 @@ export default async function handler(req, res) {
   if (!authorized) {
     return res
       .status(401)
-      .json({ error: "Unauthorized - missing or invalid api key or id token" });
+      .json({ error: "Unauthorized" });
   }
 
   const projectRef = db.collection("projects").doc(projectId);
@@ -96,8 +114,6 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error("GA fetch error:", err);
-    return res
-      .status(500)
-      .json({ error: "Failed to fetch GA data", details: String(err) });
+    return res.status(500).json({ error: "Failed to fetch GA data" });
   }
 }

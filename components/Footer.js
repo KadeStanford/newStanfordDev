@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { Terminal, Github, Linkedin, Mail } from "lucide-react";
 
 export default function Footer() {
@@ -54,18 +55,18 @@ export default function Footer() {
 
           {/* Policy Links */}
           <div className="flex gap-6 text-slate-400 text-sm">
-            <a
-              href="#"
+            <Link
+              href="/privacy"
               className="hover:text-white transition-colors cursor-pointer"
             >
               Privacy Policy
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href="/terms"
               className="hover:text-white transition-colors cursor-pointer"
             >
               Terms of Service
-            </a>
+            </Link>
           </div>
         </div>
       </div>

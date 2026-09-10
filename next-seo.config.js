@@ -1,16 +1,15 @@
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://stanforddevsolutions.com";
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.stanforddevsolutions.com"
+).replace(/\/+$/, "");
 
 const SEO = {
   title:
     "Stanford Development Solutions | Websites & Ads for Local Businesses",
   description:
     "Custom websites, local SEO, lead tracking, and practical ad setup for local small businesses built personally by Kade Stanford.",
-  canonical: siteUrl,
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteUrl,
     site_name: "Stanford Development Solutions",
     title:
       "Stanford Development Solutions | Websites & Ads for Local Businesses",

@@ -1,9 +1,7 @@
 const { BetaAnalyticsDataClient } = require("@google-analytics/data");
 const { db } = require("../../../lib/firebaseAdmin");
-const {
-  verifyAdminFromRequest,
-  verifyAdminToken,
-} = require("../../../lib/verifyAdminRequest");
+const { verifyAdminFromRequest } = require("../../../lib/verifyAdminRequest");
+const { setPrivateResponseHeaders } = require("../../../lib/apiSecurity");
 const { getStats } = require("../../../lib/analyticsStore");
 const {
   parseGaServiceAccountFromEnv,
@@ -41,12 +39,13 @@ function getPostJson(req) {
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: "512kb",
+      sizeLimit: "32kb",
     },
   },
 };
 
 export default async function handler(req, res) {
+  setPrivateResponseHeaders(res);
   if (req.method !== "GET" && req.method !== "POST") {
     res.setHeader("Allow", "GET, POST");
     return res.status(405).json({ error: "Method not allowed" });
@@ -58,23 +57,10 @@ export default async function handler(req, res) {
       ? post.range || "7d"
       : req.query?.range || "7d";
 
-  const idTokenFromBody =
-    req.method === "POST" && post.idToken
-      ? String(post.idToken)
-      : null;
-
   try {
-    if (idTokenFromBody) {
-      await verifyAdminToken(idTokenFromBody);
-    } else {
-      await verifyAdminFromRequest(req);
-    }
+    await verifyAdminFromRequest(req);
   } catch (e) {
-    return res.status(e.status || 401).json({
-      error: e.message || "Unauthorized",
-      code: e.code || "AUTH_ERROR",
-      firebaseCode: e.firebaseCode || undefined,
-    });
+    return res.status(e.status || 401).json({ error: "Unauthorized" });
   }
 
   const startDate = rangeToStartDate(range);

@@ -74,41 +74,31 @@ GOOGLE_SERVICE_ACCOUNT_JSON={"type":"service_account", ...}
 
 ## Option B — Built-in lightweight analytics (MVP)
 
-This project includes a simple `/api/track` endpoint that will store raw events under "analytics/{projectId}/events" in Firestore. A small dashboard in the Client Dashboard will show a 7-day sparkline and totals.
+This project includes a protected `/api/track` endpoint that stores minimized events under `analytics/{projectId}/events` in Firestore. A small dashboard in the Client Dashboard shows a 7-day sparkline and totals.
 
-Usage (client-side snippet to include on the live site):
+Usage (server-to-server only):
 
-```html
-<script>
-  (function () {
-    function sendTrack(path) {
-      try {
-        fetch("/api/track", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            projectId: "PROJECT_ID",
-            path: path || location.pathname,
-            referrer: document.referrer,
-            userAgent: navigator.userAgent,
-          }),
-        }).catch(() => {});
-      } catch (e) {}
-    }
-    // send initial page view
-    sendTrack();
-    // send on SPA navigation if applicable
-    window.addEventListener("popstate", () => sendTrack(location.pathname));
-  })();
-</script>
+```js
+await fetch("https://www.stanforddevsolutions.com/api/track", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": process.env.TRACK_API_SECRET,
+  },
+  body: JSON.stringify({
+    projectId: "PROJECT_ID",
+    path: "/requested-page",
+    referrer: "https://referring.example/path",
+  }),
+});
 ```
 
-Replace `PROJECT_ID` with the project document id (may be injected server-side when you deploy the site for the client).
+Set a long random `TRACK_API_SECRET` in the receiving site and the trusted server that sends events. Never expose it in browser JavaScript. The endpoint stores only the referring origin, not a full referral URL or user-agent string.
 
 Notes & limits
 
 - The built-in tracker is intentionally lightweight and not meant to replace GA for large sites.
-- Storing lots of raw events in Firestore can incur costs. Consider batching/aggregating events or forwarding to an analytics backend for large traffic.
+- Storing lots of events in Firestore can incur costs. Consider batching, aggregation, or a dedicated analytics backend for larger traffic.
 
 ## Recommendation
 

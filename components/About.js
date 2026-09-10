@@ -1,227 +1,204 @@
-import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { Github, Linkedin, Mail, ArrowUpRight } from "lucide-react";
-import Tilt from "react-parallax-tilt";
-import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Github,
+  GraduationCap,
+  Linkedin,
+  Mail,
+  MapPin,
+} from "lucide-react";
 
-// Render annotations only after a short mount delay so the library can
-// measure the DOM element sizes reliably. This prevents NaN coordinates
-// in generated SVG paths when measurements happen too early.
-function AnnotationWrapper() {
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setIsReady(true), 120);
-    return () => clearTimeout(t);
-  }, []);
-
-  if (!isReady) {
-    // Render plain text as a safe fallback while measurements stabilize.
-    return (
-      <p className="text-slate-300 leading-relaxed max-w-2xl text-lg">
-        I build <span className="text-blue-400">fast</span>,{" "}
-        <span className="text-purple-400">accessible</span>, and beautiful
-        websites for local small businesses. I focus on{" "}
-        <span className="bg-yellow-400/10 px-1 rounded text-yellow-300">
-          practical lead paths
-        </span>{" "}
-        that make it easier for customers to trust you, call you, and request a
-        quote.
-      </p>
-    );
-  }
-
-  return (
-    <RoughNotationGroup show={true}>
-      <p className="text-slate-300 leading-relaxed max-w-2xl text-lg">
-        I build{" "}
-        <RoughNotation type="underline" color="#3b82f6">
-          fast
-        </RoughNotation>
-        ,{" "}
-        <RoughNotation type="underline" color="#8b5cf6">
-          accessible
-        </RoughNotation>
-        , and beautiful websites for local small businesses. I focus on{" "}
-        <RoughNotation type="highlight" color="#3b82f620" multiline>
-          practical lead paths
-        </RoughNotation>{" "}
-        that make it easier for customers to trust you, call you, and request a
-        quote.
-      </p>
-    </RoughNotationGroup>
-  );
-}
+const processSteps = [
+  {
+    number: "01",
+    title: "Audit",
+    detail: "We identify the clearest opportunities to improve trust and lead flow.",
+  },
+  {
+    number: "02",
+    title: "Written scope",
+    detail: "You receive a defined plan, timeline, price, and list of deliverables.",
+  },
+  {
+    number: "03",
+    title: "Build & launch",
+    detail: "I handle the design, development, testing, and launch directly.",
+  },
+  {
+    number: "04",
+    title: "Care & growth",
+    detail: "Ongoing support and advertising are available when you need them.",
+  },
+];
 
 export default function About() {
   return (
-    <section id="about" className="py-36 md:py-44 relative z-10">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="bg-slate-900/40 backdrop-blur-md border border-slate-800 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row gap-12 items-center">
-          {/* Left Column: Image with Effects */}
-          <div className="w-full md:w-1/3">
-            <Tilt
-              tiltMaxAngleX={7}
-              tiltMaxAngleY={7}
-              scale={1.03}
-              transitionSpeed={1500}
-              perspective={1000}
-              className="group"
-            >
-              <div className="relative w-72 h-72 md:w-80 md:h-80 mx-auto md:mx-0">
-                <div
-                  className="absolute -inset-2 rounded-2xl overflow-hidden"
-                  aria-hidden="true"
-                >
-                  <div
-                    className="absolute inset-0 bg-gradient-to-tr from-blue-400 via-purple-500 to-pink-500 opacity-60 blur-2xl transform rotate-6 group-hover:rotate-0 transition-all duration-700 animate-gradient"
-                    style={{
-                      backgroundSize: "200% 200%",
-                      animationDuration: "10s",
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-indigo-400 to-blue-600 opacity-30 blur-3xl transform rotate-12 group-hover:rotate-0 transition-all duration-700 animate-gradient"
-                    style={{
-                      backgroundSize: "200% 200%",
-                      animationDuration: "14s",
-                      animationDelay: "4s",
-                    }}
-                  />
+    <section id="about" className="relative z-10 py-28 md:py-36">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/70">
+          <div className="grid lg:grid-cols-[0.82fr_1.18fr]">
+            <div className="relative min-h-[30rem] overflow-hidden border-b border-slate-800 bg-gradient-to-br from-blue-950/70 via-slate-950 to-slate-900 lg:border-b-0 lg:border-r">
+              <div
+                className="absolute inset-0 opacity-30"
+                aria-hidden="true"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(rgba(59,130,246,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,.18) 1px, transparent 1px)",
+                  backgroundSize: "36px 36px",
+                }}
+              />
+              <Image
+                src="/images/kadeCutout.png"
+                alt="Kade Stanford, web developer and digital marketer"
+                fill
+                className="object-contain object-bottom px-6 pt-10"
+                sizes="(max-width: 1024px) 100vw, 40vw"
+              />
+              <div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/10 bg-slate-950/85 p-5 backdrop-blur-md sm:inset-x-8 sm:bottom-8">
+                <p className="text-lg font-semibold text-white">Kade Stanford</p>
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-300">
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin size={15} className="text-blue-400" /> Louisiana based
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <GraduationCap size={16} className="text-blue-400" /> B.S. in
+                    Information Technology
+                  </span>
                 </div>
+              </div>
+            </div>
 
-                <div className="relative w-full h-full rounded-2xl border border-slate-700 overflow-hidden z-10 bg-slate-800/30 backdrop-blur-sm transform-gpu transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-105">
-                  <Image
-                    src="/images/kadeCutout.png"
-                    alt="Kade Stanford"
-                    fill
-                    className="object-contain drop-shadow-2xl transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-2"
-                    sizes="(max-width: 768px) 18rem, 20rem"
-                  />
-                  <div className="absolute bottom-4 left-4 bg-slate-900/80 backdrop-blur text-white px-3 py-1 rounded-full text-sm font-semibold border border-slate-700/50">
-                    Kade Stanford
-                  </div>
-                  <div className="absolute top-3 right-3 bg-white/10 backdrop-blur rounded-full w-10 h-10 flex items-center justify-center border border-white/10 text-blue-300">
-                    <ArrowUpRight size={20} />
+            <div className="p-7 sm:p-10 lg:p-14">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-400">
+                Founder led, start to finish
+              </p>
+              <h2 className="mt-4 max-w-2xl text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                You work directly with the person building it.
+              </h2>
+              <div className="mt-7 max-w-2xl space-y-5 text-base leading-7 text-slate-300 sm:text-lg">
+                <p>
+                  I&apos;m Kade, an independent web developer and digital marketer
+                  helping local service businesses turn their online presence into
+                  a clearer path to calls and quote requests.
+                </p>
+                <p>
+                  There is no account-manager handoff. I plan, design, build,
+                  launch, host, and maintain your website—and when growth is the
+                  next priority, I can manage Google and Meta advertising with the
+                  same hands-on approach.
+                </p>
+              </div>
+
+              <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                <div className="flex gap-3">
+                  <GraduationCap className="mt-0.5 shrink-0 text-blue-400" size={22} />
+                  <div>
+                    <p className="font-semibold text-white">
+                      Bachelor of Science in Information Technology
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-slate-400">
+                      Southeastern Louisiana University · December 2025
+                    </p>
                   </div>
                 </div>
               </div>
-            </Tilt>
+
+              <ul className="mt-8 grid gap-3 text-sm text-slate-300 sm:grid-cols-2">
+                {[
+                  "One direct point of contact",
+                  "A defined scope before work begins",
+                  "Responsive, mobile-first builds",
+                  "Support after the site launches",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <CheckCircle2
+                      size={18}
+                      className="mt-0.5 shrink-0 text-blue-400"
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <button
+                  onClick={() =>
+                    document
+                      .getElementById("contact")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-500"
+                >
+                  Start a free audit <ArrowRight size={18} />
+                </button>
+                <button
+                  onClick={() =>
+                    document
+                      .getElementById("work")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                  className="inline-flex items-center justify-center rounded-lg border border-slate-700 px-6 py-3 font-semibold text-slate-200 transition-colors hover:border-slate-500 hover:bg-slate-900"
+                >
+                  See my work
+                </button>
+              </div>
+
+              <div className="mt-8 flex items-center gap-3 border-t border-slate-800 pt-6">
+                {[
+                  {
+                    href: "https://github.com/KadeStanford",
+                    label: "Kade Stanford on GitHub",
+                    Icon: Github,
+                  },
+                  {
+                    href: "https://www.linkedin.com/in/kadestanford",
+                    label: "Kade Stanford on LinkedIn",
+                    Icon: Linkedin,
+                  },
+                  {
+                    href: "mailto:stanforddevcontact@gmail.com",
+                    label: "Email Kade Stanford",
+                    Icon: Mail,
+                  },
+                ].map(({ href, label, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target={href.startsWith("http") ? "_blank" : undefined}
+                    rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                    aria-label={label}
+                    className="rounded-lg border border-slate-800 bg-slate-900 p-2.5 text-slate-400 transition-colors hover:border-blue-500/60 hover:text-blue-300"
+                  >
+                    <Icon size={19} />
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* Right Column: Content */}
-          <div className="w-full md:w-2/3 space-y-8 text-center md:text-left">
-            <div>
-              <h2 className="text-3xl font-bold text-white mb-2">
-                Meet Your Developer
-              </h2>
-              <h3 className="text-2xl md:text-3xl text-blue-400 font-medium">
-                Kade Stanford — local web developer
+          <div className="border-t border-slate-800 bg-slate-900/30 px-7 py-9 sm:px-10 lg:px-14">
+            <div className="mb-7 max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">
+                What working together looks like
+              </p>
+              <h3 className="mt-2 text-2xl font-semibold text-white">
+                A straightforward process with no mystery in the middle.
               </h3>
             </div>
-
-            <AnnotationWrapper />
-
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mt-2 justify-center md:justify-start">
-              <button
-                onClick={() =>
-                  document
-                    .getElementById("contact")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-semibold shadow-lg shadow-blue-600/20 transition-all hover:scale-105 active:scale-95"
-              >
-                Start a Free Audit
-              </button>
-              <button
-                onClick={() =>
-                  document
-                    .getElementById("work")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-transparent border border-slate-600 text-slate-200 rounded-lg hover:bg-slate-800 hover:border-slate-500 transition-all hover:scale-105 active:scale-95"
-              >
-                View Portfolio
-              </button>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-6 pt-2">
-              <div className="space-y-3 text-left">
-                <h4 className="text-xs text-slate-500 uppercase tracking-widest font-bold">
-                  Core Services
-                </h4>
-                <ul className="text-slate-300 space-y-2">
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>{" "}
-                    Local business websites
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>{" "}
-                    SEO and speed cleanup
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>{" "}
-                    Facebook / Google ad setup
-                  </li>
-                </ul>
-              </div>
-              <div className="space-y-3 text-left">
-                <h4 className="text-xs text-slate-500 uppercase tracking-widest font-bold">
-                  Tech Stack
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    "Next.js",
-                    "React",
-                    "Tailwind",
-                    "Node",
-                    "Express",
-                    "SEO",
-                  ].map((s) => (
-                    <span
-                      key={s}
-                      className="text-xs bg-slate-800/50 px-2.5 py-1 rounded-md border border-slate-700 text-blue-200 font-mono hover:bg-slate-800 transition-colors cursor-default"
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-4 justify-center md:justify-start pt-4 border-t border-slate-800/50">
-              <a
-                href="https://github.com/KadeStanford"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 bg-slate-800 rounded-lg hover:bg-blue-600 hover:text-white transition-colors group"
-              >
-                <Github
-                  size={20}
-                  className="text-slate-400 group-hover:text-white transition-colors"
-                />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/kadestanford"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2.5 bg-slate-800 rounded-lg hover:bg-blue-600 hover:text-white transition-colors group"
-              >
-                <Linkedin
-                  size={20}
-                  className="text-slate-400 group-hover:text-white transition-colors"
-                />
-              </a>
-              <a
-                href="mailto:stanforddevcontact@gmail.com"
-                className="p-2.5 bg-slate-800 rounded-lg hover:bg-blue-600 hover:text-white transition-colors group"
-              >
-                <Mail
-                  size={20}
-                  className="text-slate-400 group-hover:text-white transition-colors"
-                />
-              </a>
-            </div>
+            <ol className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+              {processSteps.map((step) => (
+                <li key={step.number} className="border-l border-slate-700 pl-4">
+                  <span className="font-mono text-xs font-semibold text-blue-400">
+                    {step.number}
+                  </span>
+                  <p className="mt-2 font-semibold text-white">{step.title}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">
+                    {step.detail}
+                  </p>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </div>

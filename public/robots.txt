@@ -1,3 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /login
+Disallow: /demo-analytics
+Disallow: /ios-next-test
 Sitemap: https://stanforddevsolutions.com/sitemap.xml

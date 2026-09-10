@@ -1323,10 +1323,19 @@ export default function AdminDashboard() {
                       <button
                         onClick={async () => {
                           try {
+                            const { getFirebaseAuth } = await import(
+                              "../lib/firebase"
+                            );
+                            const auth = await getFirebaseAuth();
+                            if (!auth?.currentUser) {
+                              throw new Error("Administrator sign-in required");
+                            }
+                            const idToken = await auth.currentUser.getIdToken();
                             const res = await fetch("/api/mail/reminder", {
                               method: "POST",
                               headers: {
                                 "Content-Type": "application/json",
+                                Authorization: `Bearer ${idToken}`,
                               },
                               body: JSON.stringify({ invoiceId: inv.id }),
                             });

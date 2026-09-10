@@ -1,53 +1,59 @@
-// Enhanced contact API: validation (zod), simple IP rate limiter, reCAPTCHA verification,
+// Enhanced contact API: validation, durable abuse controls, reCAPTCHA verification,
 // and Handlebars email templating.
 const { z } = require("zod");
 const { renderContactEmail } = require("../../lib/emailTemplates");
+const { sendMail } = require("../../lib/mail/sendMail");
+const { db } = require("../../lib/firebaseAdmin");
+const {
+  consumeRateLimit,
+  setPrivateResponseHeaders,
+} = require("../../lib/apiSecurity");
 
-// Simple in-memory rate limiter (per-IP). For production use Redis or other durable store.
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
-const RATE_LIMIT_MAX = parseInt(process.env.CONTACT_RATE_LIMIT || "5", 10); // default 5 per window
-const ipMap = new Map();
+const RATE_LIMIT_MAX = Math.max(
+  1,
+  Math.min(25, parseInt(process.env.CONTACT_RATE_LIMIT || "5", 10) || 5)
+);
 
-function isRateLimited(ip) {
-  const now = Date.now();
-  const entry = ipMap.get(ip) || [];
-  // keep only timestamps within window
-  const recent = entry.filter((t) => now - t < RATE_LIMIT_WINDOW_MS);
-  recent.push(now);
-  ipMap.set(ip, recent);
-  return recent.length > RATE_LIMIT_MAX;
-}
+const optionalText = (max) => z.string().trim().max(max).optional().nullable();
 
 const contactSchema = z.object({
   type: z.enum(["general", "project"]).optional(),
-  fullName: z.string().min(1, "Full name is required"),
-  name: z.string().optional(),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().optional().nullable(),
-  website: z.string().optional().nullable(),
-  company: z.string().optional().nullable(),
-  message: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
-  projectType: z.string().optional(),
-  formattedBudget: z.string().optional(),
-  budget: z.any().optional(),
-  timeline: z.string().optional(),
-  pages: z.any().optional(),
-  goals: z.array(z.any()).optional(),
-  inspirationLinks: z.string().optional(),
-  inspirationNotes: z.string().optional(),
-  competitorLinks: z.string().optional(),
+  fullName: z.string().trim().min(1, "Full name is required").max(120),
+  name: optionalText(120),
+  email: z
+    .union([z.literal(""), z.string().trim().email("Invalid email address").max(320)])
+    .optional(),
+  phone: optionalText(50),
+  website: optionalText(2048),
+  company: optionalText(160),
+  message: z.string().trim().min(1, "Message is required").max(5000),
+  notes: optionalText(5000),
+  projectType: optionalText(80),
+  formattedBudget: optionalText(80),
+  budget: z.union([z.string().max(80), z.number().finite()]).optional(),
+  timeline: optionalText(160),
+  pages: z.union([z.string().max(40), z.number().int().min(0).max(1000)]).optional(),
+  goals: z.array(z.string().max(160)).max(20).optional(),
+  inspirationLinks: optionalText(5000),
+  inspirationNotes: optionalText(5000),
+  competitorLinks: optionalText(5000),
   hasBranding: z.boolean().optional(),
   hasContent: z.boolean().optional(),
   hasImages: z.boolean().optional(),
   needsCMS: z.boolean().optional(),
   hasDomain: z.boolean().optional(),
   hasHosting: z.boolean().optional(),
-  preferredContact: z.string().optional(),
-  colorPalette: z.array(z.string()).optional(),
-  attachments: z.array(z.any()).optional(),
-  recaptchaToken: z.string().optional(),
+  preferredContact: z.enum(["email", "phone"]).optional(),
+  colorPalette: z.array(z.string().regex(/^#[0-9a-fA-F]{6}$/)).max(12).optional(),
+  attachments: z.array(z.object({ name: z.string().max(255) }).passthrough()).max(5).optional(),
+  recaptchaToken: z.string().max(4096).optional(),
+}).refine((data) => Boolean(data.email || data.phone), {
+  message: "Email or phone is required",
+  path: ["email"],
 });
+
+export const config = { api: { bodyParser: { sizeLimit: "64kb" } } };
 
 async function verifyRecaptcha(token) {
   const secret = process.env.RECAPTCHA_SECRET;
@@ -74,18 +80,19 @@ async function verifyRecaptcha(token) {
   }
 }
 
+function isLocalDevelopmentRequest(req) {
+  if (process.env.NODE_ENV !== "development") return false;
+  const hostname = String(req.headers.host || "")
+    .split(":")[0]
+    .toLowerCase();
+  return hostname === "localhost" || hostname === "127.0.0.1";
+}
+
 export default async function handler(req, res) {
+  setPrivateResponseHeaders(res);
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ message: "Method Not Allowed" });
-  }
-
-  const ip =
-    req.headers["x-forwarded-for"] || req.connection.remoteAddress || "unknown";
-  if (isRateLimited(ip)) {
-    return res
-      .status(429)
-      .json({ message: "Too many requests. Try again later." });
   }
 
   const raw = req.body || {};
@@ -100,8 +107,29 @@ export default async function handler(req, res) {
 
   const data = parsed.data;
 
+  if (!isLocalDevelopmentRequest(req)) {
+    try {
+      const limit = await consumeRateLimit({
+        db,
+        req,
+        scope: "contact",
+        max: RATE_LIMIT_MAX,
+        windowMs: RATE_LIMIT_WINDOW_MS,
+      });
+      if (!limit.allowed) {
+        res.setHeader("Retry-After", String(limit.retryAfterSeconds));
+        return res
+          .status(429)
+          .json({ message: "Too many requests. Try again later." });
+      }
+    } catch (error) {
+      console.error("Contact rate limit error:", error?.message || error);
+      return res.status(503).json({ message: "Contact service unavailable" });
+    }
+  }
+
   // Verify reCAPTCHA if token is provided (recommended)
-  if (process.env.RECAPTCHA_SECRET) {
+  if (process.env.RECAPTCHA_SECRET && !isLocalDevelopmentRequest(req)) {
     const ok = await verifyRecaptcha(data.recaptchaToken);
     if (!ok) {
       return res.status(400).json({ message: "reCAPTCHA verification failed" });
@@ -126,103 +154,20 @@ export default async function handler(req, res) {
     data.message || data.notes || ""
   }`;
 
-  // Email configuration
-  const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY;
-  const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
-  const MAILGUN_BASE_URL =
-    process.env.MAILGUN_BASE_URL || "https://api.mailgun.net";
-  const MAILGUN_FROM = process.env.MAILGUN_FROM;
-
-  const SMTP_HOST = process.env.SMTP_HOST;
-  const SMTP_PORT = process.env.SMTP_PORT
-    ? parseInt(process.env.SMTP_PORT, 10)
-    : undefined;
-  const SMTP_SECURE = process.env.SMTP_SECURE === "true";
-  const SMTP_USER = process.env.SMTP_USER;
-  const SMTP_PASS = process.env.SMTP_PASS;
   const CONTACT_RECEIVER =
     process.env.CONTACT_RECEIVER || "stanforddevcontact@gmail.com";
 
-  // Prefer Mailgun if configured
-  if (MAILGUN_API_KEY && MAILGUN_DOMAIN) {
-    try {
-      const FormData = require("form-data");
-      const Mailgun = require("mailgun.js");
-      const mailgun = new Mailgun(FormData);
-      const mg = mailgun.client({
-        username: "api",
-        key: MAILGUN_API_KEY,
-        url: MAILGUN_BASE_URL,
-      });
-      const fromAddress =
-        MAILGUN_FROM || SMTP_USER || `StanfordDev <no-reply@${MAILGUN_DOMAIN}>`;
-      const message = {
-        from: fromAddress,
-        to: CONTACT_RECEIVER,
-        "h:Reply-To": data.email,
-        subject:
-          data.subject || `Website contact — ${data.type || "submission"}`,
-        text,
-        html,
-      };
-      await mg.messages.create(MAILGUN_DOMAIN, message);
-      return res
-        .status(200)
-        .json({ message: "Message sent successfully (Mailgun)" });
-    } catch (err) {
-      console.error("Mailgun error:", err && err.message ? err.message : err);
-      const debug = process.env.DEBUG_EMAIL === "true";
-      return res.status(500).json({
-        message: "Failed to send message (Mailgun)",
-        ...(debug
-          ? { error: err && err.message ? String(err.message) : String(err) }
-          : {}),
-      });
-    }
-  }
-
-  // Fallback to SMTP
-  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
-    console.error(
-      "Missing Mailgun and SMTP configuration in environment variables."
-    );
-    return res.status(500).json({
-      message:
-        "Email server is not configured. Configure MAILGUN_API_KEY & MAILGUN_DOMAIN or SMTP_* vars.",
-    });
-  }
-
   try {
-    const nodemailer = require("nodemailer");
-    const transporter = nodemailer.createTransport({
-      host: SMTP_HOST,
-      port: SMTP_PORT,
-      secure: SMTP_SECURE,
-      auth: { user: SMTP_USER, pass: SMTP_PASS },
-    });
-
-    await transporter.sendMail({
-      from: SMTP_USER,
+    await sendMail({
       to: CONTACT_RECEIVER,
-      replyTo: data.email,
-      subject: data.subject || `Website contact — ${data.type || "submission"}`,
+      replyTo: data.email || undefined,
+      subject: `Website contact — ${data.type || "submission"}`,
       html,
       text,
     });
-    return res
-      .status(200)
-      .json({ message: "Message sent successfully (SMTP)" });
+    return res.status(200).json({ message: "Message sent successfully" });
   } catch (err) {
-    console.error(
-      "Error sending email (SMTP):",
-      err && err.message ? err.message : err
-    );
-    const debug = process.env.DEBUG_EMAIL === "true";
-    return res.status(500).json({
-      message: "Failed to send message (SMTP)",
-      ...(debug
-        ? { error: err && err.message ? String(err.message) : String(err) }
-        : {}),
-    });
+    console.error("Mailgun error:", err?.cause || err?.message || err);
+    return res.status(500).json({ message: "Failed to send message" });
   }
 }

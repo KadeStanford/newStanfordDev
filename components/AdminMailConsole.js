@@ -17,9 +17,16 @@ export default function AdminMailConsole() {
     setSending(true);
     setStatus("Sending...");
     try {
+      const { getFirebaseAuth } = await import("../lib/firebase");
+      const auth = await getFirebaseAuth();
+      if (!auth?.currentUser) throw new Error("Administrator sign-in required");
+      const idToken = await auth.currentUser.getIdToken();
       const res = await fetch("/api/mail/broadcast", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
         body: JSON.stringify({ subject, html }),
       });
       const data = await res.json();

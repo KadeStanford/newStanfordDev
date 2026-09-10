@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 const TESTS = [
   { label: "Baseline", query: "iosdebug=1" },
@@ -39,6 +40,7 @@ function readTimings() {
 }
 
 export default function PerfDiagnostics({ flags }) {
+  const router = useRouter();
   const [timings, setTimings] = useState(null);
 
   useEffect(() => {
@@ -128,7 +130,7 @@ export default function PerfDiagnostics({ flags }) {
             type="button"
             className="rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-left text-slate-300"
             onClick={() => {
-              window.location.href = `/?${test.query}`;
+              router.push(`/?${test.query}`);
             }}
           >
             {test.label}

@@ -69,11 +69,13 @@ export default function AdminAnalyticsTab() {
         return;
       }
       const idToken = await auth.currentUser.getIdToken(true);
-      // POST keeps the token in the body so CDNs/proxies cannot strip Authorization on GET.
       const res = await fetch("/api/admin/analytics-overview", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ range, idToken }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({ range }),
       });
       const data = await res.json();
       if (!res.ok) {

@@ -1,10 +1,18 @@
 import { getStats } from "../../lib/analyticsStore";
+const { verifyAdminFromRequest } = require("../../lib/verifyAdminRequest");
+const { setPrivateResponseHeaders } = require("../../lib/apiSecurity");
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
+  setPrivateResponseHeaders(res);
   if (req.method !== "GET")
     return res.status(405).json({ message: "Method not allowed" });
 
-  // In future: if POSTHOG_API_KEY is provided, proxy query to PostHog and merge results
-  const stats = getStats();
-  return res.status(200).json(stats);
+  try {
+    await verifyAdminFromRequest(req);
+    return res.status(200).json(getStats());
+  } catch (error) {
+    return res
+      .status(error?.status || 401)
+      .json({ error: error?.message || "Unauthorized" });
+  }
 }

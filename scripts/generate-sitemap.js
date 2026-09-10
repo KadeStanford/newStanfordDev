@@ -30,8 +30,9 @@ if (!process.env.NEXT_PUBLIC_SITE_URL) {
 }
 const fg = require("fast-glob");
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://stanforddevsolutions.com";
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.stanforddevsolutions.com"
+).replace(/\/+$/, "");
 const outDir = path.join(process.cwd(), "public");
 if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
@@ -59,6 +60,7 @@ async function getPages() {
     pages
       .map((p) => p.replace("pages", ""))
       .map((p) => p.replace(/\.js$|\.jsx$|\.tsx$|\.ts$/i, ""))
+      .filter((p) => !p.includes("[") && !p.includes("]"))
       // normalize nested index files: /blog/index -> /blog, and top-level /index -> /
       .map((p) => p.replace(/\/index$/, ""))
       .map((p) => (p === "" ? "/" : p))
@@ -80,7 +82,9 @@ async function generate() {
   const pages = await getPages();
   const posts = await getPosts();
 
-  const urls = [...pages, ...posts];
+  const urls = [...new Set([...pages, ...posts])].filter(
+    (url) => url !== "/blog" || posts.length > 0
+  );
 
   const sitemap =
     `<?xml version="1.0" encoding="UTF-8"?>\n` +
@@ -93,7 +97,7 @@ async function generate() {
   fs.writeFileSync(path.join(outDir, "sitemap.xml"), sitemap);
   console.log("sitemap.xml written with", urls.length, "entries");
 
-  const robots = `User-agent: *\nAllow: /\nSitemap: ${siteUrl}/sitemap.xml\n`;
+  const robots = `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /admin\nDisallow: /dashboard\nDisallow: /login\nDisallow: /demo-analytics\nDisallow: /ios-next-test\nSitemap: ${siteUrl}/sitemap.xml\n`;
   fs.writeFileSync(path.join(outDir, "robots.txt"), robots);
   console.log("robots.txt written");
 }

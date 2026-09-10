@@ -7,12 +7,9 @@
     <loc>https://stanforddevsolutions.com/</loc>
   </url>
   <url>
-    <loc>https://stanforddevsolutions.com/blog</loc>
+    <loc>https://stanforddevsolutions.com/privacy</loc>
   </url>
   <url>
-    <loc>https://stanforddevsolutions.com/blog/[slug]</loc>
-  </url>
-  <url>
-    <loc>https://stanforddevsolutions.com/blog/example</loc>
+    <loc>https://stanforddevsolutions.com/terms</loc>
   </url>
 </urlset>

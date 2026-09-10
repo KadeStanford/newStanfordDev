@@ -122,7 +122,13 @@ export default function LiveAnalytics() {
 
     const fetchStats = async () => {
       try {
-        const res = await fetch("/api/analytics");
+        const { getFirebaseAuth } = await import("../lib/firebase");
+        const auth = await getFirebaseAuth();
+        if (!auth?.currentUser) return;
+        const idToken = await auth.currentUser.getIdToken();
+        const res = await fetch("/api/analytics", {
+          headers: { Authorization: `Bearer ${idToken}` },
+        });
         if (!res.ok) return;
         const json = await res.json();
         if (!mounted.current) return;

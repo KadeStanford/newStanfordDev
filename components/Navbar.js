@@ -91,7 +91,7 @@ export default function Navbar() {
       setTimeout(() => {
         element.scrollIntoView({ behavior: "smooth" });
 
-        // Auto-select "Free Estimate" logic
+        // Focus the free-audit form after scrolling.
         if (id === "contact") {
           // Dispatch custom event to notify Contact component
           window.__openEstimateFormRequested = true;
@@ -110,10 +110,9 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { name: "About", id: "about" },
-    { name: "Services", id: "services" },
     { name: "Work", id: "work" },
-    { name: "Why SDS", id: "why-us" },
+    { name: "Pricing", id: "pricing" },
+    { name: "About", id: "about" },
   ];
 
   // --- OPTIMIZED FLUID ANIMATIONS ---

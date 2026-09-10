@@ -1,5 +1,15 @@
 const { db } = require("../../../lib/firebaseAdmin");
 const { sendMail } = require("../../../lib/mail/sendMail");
+const { z } = require("zod");
+const { verifyAdminFromRequest } = require("../../../lib/verifyAdminRequest");
+const { setPrivateResponseHeaders } = require("../../../lib/apiSecurity");
+
+const broadcastSchema = z.object({
+  subject: z.string().trim().min(1).max(200),
+  html: z.string().trim().min(1).max(200_000),
+});
+
+export const config = { api: { bodyParser: { sizeLimit: "256kb" } } };
 
 function chunkArray(arr, size) {
   const out = [];
@@ -8,13 +18,22 @@ function chunkArray(arr, size) {
 }
 
 export default async function handler(req, res) {
+  setPrivateResponseHeaders(res);
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 
   try {
-    const { subject, html } = req.body;
-    if (!subject || !html)
-      return res.status(400).json({ error: "Missing subject or html body" });
+    await verifyAdminFromRequest(req);
+    if (process.env.ENABLE_ADMIN_BROADCASTS !== "true") {
+      return res.status(503).json({
+        error:
+          "Broadcast email is disabled until consent and unsubscribe handling are configured",
+      });
+    }
+    const parsed = broadcastSchema.safeParse(req.body || {});
+    if (!parsed.success)
+      return res.status(400).json({ error: "Invalid broadcast request" });
+    const { subject, html } = parsed.data;
 
     // Fetch all users ordered by email (similar to admin UI fetch)
     const snap = await db.collection("users").orderBy("email").get();
@@ -64,7 +83,9 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ ok: true, sent, failed });
   } catch (err) {
-    console.error("Broadcast error:", err);
-    return res.status(500).json({ error: err.message || String(err) });
+    if (err?.status)
+      return res.status(err.status).json({ error: err.message });
+    console.error("Broadcast error:", err?.message || err);
+    return res.status(500).json({ error: "Unable to send broadcast" });
   }
 }

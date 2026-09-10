@@ -93,23 +93,9 @@ service cloud.firestore {
 
     // --- Testimonials (public submit; public read approved+featured; admin moderates) ---
     match /testimonials/{id} {
-      allow create: if request.resource.data.approved == false
-        && request.resource.data.featured == false
-        && request.resource.data.displayOrder == 0
-        && request.resource.data.rating is number
-        && request.resource.data.rating >= 1
-        && request.resource.data.rating <= 5
-        && request.resource.data.name is string
-        && request.resource.data.name.size() > 0
-        && request.resource.data.name.size() <= 120
-        && request.resource.data.message is string
-        && request.resource.data.message.size() > 0
-        && request.resource.data.message.size() <= 4000
-        && (
-          !request.resource.data.keys().hasAny(['company'])
-          || request.resource.data.company == null
-          || (request.resource.data.company is string && request.resource.data.company.size() <= 120)
-        );
+      // Submissions go through /api/testimonials, which verifies Firebase Auth,
+      // validates the payload, rate limits the user, and writes with Admin SDK.
+      allow create: if false;
 
       allow read: if (
           resource.data.approved == true && resource.data.featured == true
