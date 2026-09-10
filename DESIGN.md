@@ -271,6 +271,12 @@ Visual acceptance is pending Kade's review. See REDESIGN_QA.md for performed che
 
 ## Project-led opening revision
 
+### Lower-page continuation — September 10, 2026
+
+Kade requested extending the redesigned hero's structure and visual language through the remaining homepage. Implemented dark ink surfaces, lime accents, thin dividers, restrained typography, rounded outlined actions, and framed imagery throughout Work, Services/Pricing, About, contact, navigation, and footer. Work now pairs project details with a single interactive gallery rather than repeating the homepage screenshot. Phone layouts put the gallery ahead of supporting details. Existing copy, prices, form logic, and hero interactions remain unchanged. This is local implementation for review, not visual acceptance or deployment approval.
+
+Verification: direct Next production build passed (the system npm launcher was broken, so Next's installed CLI was used). Inspected screenshots of Work, Pricing, About, and contact at 1440px and 390px; neither viewport had horizontal document overflow. Gallery selection and dialog opening, Escape dismissal, and empty-form name validation were exercised without sending email. Physical-device testing and a full accessibility audit remain pending.
+
 Kade rejected the sculpture-led design and authorized the proposed opening-to-project revision. The homepage now uses two genuine project screenshots as selectable perspective layers, with pointer-reactive depth and an expandable project-focus panel. It uses CSS 3D transforms rather than a WebGL sculpture. The sculpture component and earlier commits remain available for rollback. No approved business copy, dependencies, or backend workflows were changed. This is the first opening-to-project slice; the lower sections retain their previous layout pending review of this direction. Visual acceptance remains pending.
 
 Checks for this slice: Next production build passed; desktop (1440 × 1000) and phone (390 × 844) screenshots inspected; project switching and expanded facts observed; no horizontal overflow at the checked phone width. Pointer-reactive movement, physical-device performance, and a complete keyboard audit remain unverified.

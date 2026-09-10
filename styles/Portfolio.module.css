@@ -9,3 +9,70 @@
 @media(max-width:800px){.nav{padding:1rem 5vw;align-items:start;gap:1rem}.brand{font-size:1rem}.brand span{font-size:.65rem}.nav nav{gap:.6rem 1rem;justify-content:flex-end;flex-wrap:wrap;max-width:14rem;font-size:.75rem}.hero{min-height:740px;height:auto}.heroMeta{font-size:.65rem;top:1.5rem;gap:1rem}.heroMeta span:first-child{max-width:17ch}.art{inset:3rem -10% 9rem 0;opacity:.85;touch-action:pan-y}.heroTitle{bottom:12rem;left:5vw;right:5vw}.heroTitle h1{font-size:clamp(2.5rem,9vw,4rem);max-width:17ch}.heroTitle p{max-width:26ch;font-size:.65rem;margin-bottom:1rem}.artTools{right:5vw;bottom:6.6rem;max-width:13rem}.shapeControls{left:5vw;bottom:2rem;gap:1rem}.shapeControls button{font-size:.8rem}.shapeControls span{display:none}.workLink{right:5vw;bottom:2rem;gap:1rem;font-size:.85rem}.workLink span{font-size:1.2rem}.introduction{grid-template-columns:1fr;gap:1.5rem;padding:2rem 5vw}.introduction>span{justify-self:start;max-width:none}.introduction p{font-size:1rem}.sectionHeader{grid-template-columns:1fr;gap:1.5rem}.sectionIntro{margin:1.5rem 0 2rem!important}.work,.services{padding:4rem 5vw}.project{margin-top:2rem}.projectHeading{gap:.8rem;flex-wrap:wrap}.projectHeading h3{font-size:1.8rem}.projectHeading>a{margin:0 0 0 auto}.projectDetails{grid-template-columns:1fr;gap:1rem}.priceIntro,.prices{grid-template-columns:1fr;gap:1rem}.serviceList details>div{margin-left:0}.about{grid-template-columns:1fr;gap:2rem;padding:4rem 5vw}.portrait{height:400px;width:85%}.footer{grid-template-columns:1fr;padding:2rem 5vw}.still{padding:0 7% 15rem 0;font-size:2rem}.contactWrap>section{padding:3rem 0!important}}
 @media(prefers-reduced-motion:reduce){.page *{scroll-behavior:auto!important;transition:none!important}}
 .pricingNote{margin-top:2rem!important;color:#b2c9d0;font-size:.875rem;max-width:95ch}
+/* Project-led visual system: shared with the spatial opening. */
+.page{--night:#080e12;--paper:#edf1ee;--ink:#edf1ee;--line:#c9d9d126;--accent:#c8f06b}
+.skip{color:#080e12!important}
+.page a:focus-visible,.page button:focus-visible,.page summary:focus-visible{outline-color:var(--accent)}
+.nav nav a:last-child{color:var(--accent)}
+.nav nav a{transition:color .2s}.nav nav a:hover{color:var(--accent)}
+.introduction{border-bottom:1px solid var(--line);padding-block:3rem}
+.introduction>span{color:#aeb9b7}
+.work,.services,.about{background:var(--night);color:var(--paper);padding:5rem 4vw;border-bottom:1px solid var(--line)}
+.sectionHeader>span,.about>div>span{color:var(--accent)}
+.sectionHeader h2{font-size:clamp(2.2rem,3.8vw,4.3rem);max-width:24ch}
+.sectionIntro,.services .sectionIntro{color:#aeb9b7}
+.project{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);column-gap:5vw;align-items:start;padding:3rem 0 1rem;border-color:var(--line)}
+.projectHeading{grid-column:1/-1;margin-bottom:2.5rem}
+.projectHeading>span{color:var(--accent);font-variant-numeric:tabular-nums}
+.projectHeading>a{border:1px solid #c8f06b66;border-radius:2rem;padding:.7rem 1.1rem;color:var(--accent);white-space:nowrap}
+.projectHeading h3{font-size:clamp(1.8rem,3vw,3rem)}
+.projectDetails{display:block;padding:0;color:#aeb9b7}
+.projectDetails>p{margin-bottom:2rem}
+.projectDetails summary{color:var(--paper)}
+.project>div:last-child{grid-column:2;margin-top:0}
+.page details{border-color:var(--line)}
+.page summary{transition:color .2s,background .2s}
+.page summary:hover,.page details[open]>summary{color:var(--accent)}
+.page summary b,.page summary>span:last-child{transition:transform .25s}
+.fact{border-color:#c8f06b55}
+.services{background:#0d161a}
+.serviceList{margin:3rem 0 4rem}
+.serviceList summary{padding:1.5rem .5rem;gap:2rem}
+.serviceList summary>span{color:var(--accent)}
+.serviceList details[open]{background:#152021;border-radius:0 0 16px 16px}
+.serviceList details>div{color:#b8c4c0;padding-right:2rem}
+.priceIntro{border-top:1px solid var(--line);padding-top:3rem;margin-top:3rem}
+.priceIntro h3{font-size:clamp(1.8rem,2.7vw,3rem)}
+.priceIntro p,.prices p,.pricingNote{color:#aeb9b7}
+.prices{gap:0 3rem}
+.prices summary{min-height:88px;align-items:center;line-height:1.5}
+.prices b{color:var(--accent);font-size:1.4rem}
+.about{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:9vw;align-items:center;padding:6rem 8vw}
+.portrait{height:510px;border:1px solid #92a59b66;border-radius:18px;padding:8px;background:#17211f;transform:rotate(-3deg);box-shadow:18px 20px 0 #172124,0 30px 60px #0006}
+.portrait img{border-radius:11px}
+.about h2{font-size:clamp(2.5rem,4.3vw,4.7rem)}
+.about p{color:#aeb9b7}
+.contactWrap{border-bottom:1px solid var(--line)}
+.contactWrap :global(.rounded-3xl){border-radius:20px;background:#121d20;border-color:#75877955;box-shadow:0 24px 60px #0003}
+.contactWrap h2{font-family:Instrument,Arial,sans-serif;font-style:normal;letter-spacing:-.06em;color:var(--paper)}
+.contactWrap input,.contactWrap select,.contactWrap textarea{border-radius:10px!important;background:#080e12!important;border-color:#75877966!important}
+.contactWrap input:focus,.contactWrap select:focus,.contactWrap textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 2px #c8f06b22!important}
+.contactWrap button[type=submit]{background:var(--accent)!important;color:#101810!important;border-radius:30px!important;font-weight:500}
+.contactWrap :global(.text-blue-300),.contactWrap :global(.text-blue-400){color:var(--accent)}
+.contactWrap :global(.text-slate-500){color:#9aa9a5}
+.footer{padding:2.5rem 4vw;background:#080e12}.footer>a{font-size:1.3rem;letter-spacing:-.04em}.footer>div a:hover{color:var(--accent)}
+@media(max-width:800px){
+ .work,.services,.about{padding:3.5rem 5vw}
+ .project{grid-template-columns:1fr;padding-top:2rem;gap:1.5rem}
+ .projectHeading{margin-bottom:0;grid-column:1;gap:1rem}
+ .projectHeading h3{flex:1;font-size:1.65rem}
+ .projectHeading>a{margin-left:0;font-size:.8rem}
+ .project>div:last-child{grid-column:1;grid-row:2}
+ .projectDetails{grid-row:3}
+ .projectDetails>p{margin-bottom:1rem}
+ .about{grid-template-columns:1fr;gap:3rem}
+ .portrait{width:75%;height:360px;margin:0 auto}
+ .serviceList summary{gap:1rem;font-size:1.6rem}
+ .prices summary{min-height:76px}
+ .contactWrap :global(.rounded-3xl){padding:1.25rem}
+}
