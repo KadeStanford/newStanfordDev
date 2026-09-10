@@ -1,5 +1,11 @@
 # Stanford Development Solutions — Design Exploration
 
+## Connected business implementation — review pending
+
+User authorized building the larger miniature-business concept. BusinessLab replaces the small demo, which remains in the repository for rollback. React Three Fiber/Three.js render the phone, storefront and calendar; GSAP moves the camera between workspaces. HTML controls provide the customer request, editable scope, estimate, simulated acceptance/day selection, and unsent invoice. No real business data or network submission is used. Scene motion can be paused and respects system reduced motion; errors fall back to the usable HTML workflow. Demo copy is proposed, not marked approved.
+
+Verified: Next production build; desktop 1440px and mobile 390px screenshots with rendered WebGL; no document overflow; complete request-to-invoice button sequence and reset. No browser page errors observed in that run. Physical-device performance, reduced-motion behavior, and exhaustive keyboard audit remain pending. No deployment performed.
+
 ## Workflow lab addition — pending visual review
 
 User authorized replacing duplicate lower Work section with an interactive demonstration. Added Framer Motion spring transitions, horizontal drag-to-advance, explicit stage buttons, and a live sample-scope slider. Uses existing JS stack and TypeScript-compatible library; no new dependencies. Request → estimate → unsent invoice is an illustrative local simulation, not a real billing integration. Hero retains both projects and galleries; Work links now target the hero previews. New demo microcopy is a proposal for review, not previously approved business copy. Example $40/hour garden work is explicitly illustrative, not SDS pricing or a client fact.

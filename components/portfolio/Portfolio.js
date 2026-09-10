@@ -1,6 +1,6 @@
 import ProjectStage from './ProjectStage';
 import { useState } from 'react';
-import WorkflowLab from './WorkflowLab';
+import WorkflowLab from './BusinessLab';
 import Head from 'next/head';
 import Image from 'next/image';
 import Contact from '../Contact';
