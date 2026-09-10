@@ -21,6 +21,8 @@ The site should lead with Hammond, Tangipahoa Parish, and Southeast Louisiana fo
 
 ## Services
 
+September 10 clarification from Kade: website care, updates, and hosting are offered for websites he builds, not as a standalone service for third-party sites. Present care as an optional website-package add-on.
+
 ### Primary services
 
 - Website design and development

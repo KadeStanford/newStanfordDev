@@ -6,6 +6,8 @@ Source of truth: `BRIEF.md`
 
 ## Voice decisions
 
+Pending review after September 10 feedback: homepage About heading now proposes “I’m Kade.”; homepage contact introduction proposes “What would you like to improve? I’ll reply within 24 hours on weekdays.” These revisions are not marked approved. Care is now shown as an optional $175/month add-on to website packages only, reflecting the user's clarified eligibility; scope and monthly limits remain unchanged.
+
 - Use first person because clients work directly with Kade.
 - Use “Stanford Development Solutions” as the business name in navigation, metadata, formal references, and the footer—not as a third-person narrator.
 - Sound straightforward, capable, and helpful. Avoid agency language, startup jargon, exaggerated confidence, and forced humor.

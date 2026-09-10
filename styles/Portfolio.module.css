@@ -111,3 +111,4 @@
  .prices summary{min-height:76px}
  .contactWrap :global(.rounded-3xl){padding:1.25rem}
 }
+.about .portrait{transform:none;background:radial-gradient(ellipse at bottom,#324333,transparent 70%);border:0;box-shadow:none;padding:0;border-radius:0}.contactWrap h2{margin-bottom:1.4rem}.contactWrap>section{padding-top:4rem!important;padding-bottom:4rem!important}

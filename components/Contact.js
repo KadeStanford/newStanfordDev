@@ -14,7 +14,7 @@ const initialForm = {
 
 const isLocalDevelopment = () => process.env.NODE_ENV === "development";
 
-export default function Contact() {
+export default function Contact({portfolio = false}) {
   const [form, setForm] = useState(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -195,10 +195,10 @@ export default function Contact() {
             How can I help?
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-slate-400">
-            You do not need a finished brief or a technical plan. Tell me what you want to improve, what is not working, or what you wish were easier. I will reply within 24 hours on weekdays with a useful next step.
+            {portfolio ? 'What would you like to improve? I’ll reply within 24 hours on weekdays.' : 'You do not need a finished brief or a technical plan. Tell me what you want to improve, what is not working, or what you wish were easier. I will reply within 24 hours on weekdays with a useful next step.'}
           </p>
 
-          <div className="mt-8 space-y-4 text-slate-300">
+          {!portfolio && <div className="mt-8 space-y-4 text-slate-300">
             <div className="flex gap-3">
               <CheckCircle2 className="mt-0.5 shrink-0 text-blue-400" size={20} />
               <p>No obligation</p>
@@ -213,6 +213,7 @@ export default function Contact() {
             </div>
           </div>
 
+          }
           <div className="mt-9 flex flex-col gap-3 text-sm text-slate-400">
             <a
               href="mailto:stanforddevcontact@gmail.com"
@@ -221,10 +222,10 @@ export default function Contact() {
               <Mail size={17} aria-hidden="true" />
               stanforddevcontact@gmail.com
             </a>
-            <p className="inline-flex items-center gap-2">
+            {!portfolio && <p className="inline-flex items-center gap-2">
               <Phone size={17} aria-hidden="true" />
               Choose phone below if that is easier
-            </p>
+            </p>}
           </div>
         </div>
 
