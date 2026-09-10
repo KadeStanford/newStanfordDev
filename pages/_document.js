@@ -1,16 +1,16 @@
 import { Html, Head, Main, NextScript } from "next/document";
 
-const { organizationSchema } = require("../next-seo.config.js");
+const { structuredData } = require("../next-seo.config.js");
 
 export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* Organization JSON-LD for improved SEO and knowledge graph */}
+        {/* Public site and founder facts for search engines */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema),
+            __html: JSON.stringify(structuredData),
           }}
         />
       </Head>
