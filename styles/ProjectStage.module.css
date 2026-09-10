@@ -50,3 +50,4 @@
 .experience[data-animate-swaps=true] .focus{opacity:1;transform:translateY(0);transition:opacity .3s ease,transform .3s ease,display .3s allow-discrete}
 .experience[data-animate-swaps=true] .focus[hidden]{opacity:0;transform:translateY(12px)}
 @starting-style{.experience[data-animate-swaps=true] .focus:not([hidden]){opacity:0;transform:translateY(12px)}}
+.experience .gallery[data-swapping=true] .projectPlane{transition:none!important}
