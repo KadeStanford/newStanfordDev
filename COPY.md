@@ -10,14 +10,14 @@ Source of truth: `BRIEF.md`
 - Use “Stanford Development Solutions” as the business name in navigation, metadata, formal references, and the footer—not as a third-person narrator.
 - Sound straightforward, capable, and helpful. Avoid agency language, startup jargon, exaggerated confidence, and forced humor.
 - Explain services through business problems and recognizable outcomes rather than technical terminology.
-- Use “Start a conversation” as the primary call to action because visitors may not know what kind of project or solution they need yet.
+- Use “Get in touch” as the primary call to action because it is familiar, personal, and does not assume visitors already know what kind of project or solution they need.
 
 ## Navigation
 
 - Work
 - Services & Pricing
 - About
-- Start a conversation
+- Get in touch
 
 ## Opening
 
@@ -35,7 +35,7 @@ Body:
 
 Primary action:
 
-> Start a conversation
+> Get in touch
 
 Secondary action:
 
@@ -262,11 +262,11 @@ Supporting line:
 
 Eyebrow:
 
-> Start a conversation
+> Get in touch
 
 Heading:
 
-> What can I help you with?
+> How can I help?
 
 Body:
 
@@ -305,7 +305,7 @@ Message placeholder:
 
 Submit button:
 
-> Send my message
+> Send message
 
 Success heading:
 
