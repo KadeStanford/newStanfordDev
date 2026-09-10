@@ -51,3 +51,9 @@
 .experience[data-animate-swaps=true] .focus[hidden]{opacity:0;transform:translateY(12px)}
 @starting-style{.experience[data-animate-swaps=true] .focus:not([hidden]){opacity:0;transform:translateY(12px)}}
 .experience .gallery[data-swapping=true] .projectPlane{transition:none!important}
+.browserChrome{display:block;background:#1c2827;border-bottom:1px solid #91a49244;color:#c8d3cf;text-align:left}
+.tabRow{display:flex;align-items:center;gap:14px;padding:10px 14px 0;background:#111b1b}
+.windowDots{display:flex;gap:5px;padding-bottom:8px}.windowDots i{width:7px;height:7px;border-radius:50%;background:#71847b}.windowDots i:first-child{background:#b77c71}.windowDots i:nth-child(2){background:#b5aa72}.windowDots i:last-child{background:#85a276}
+.browserTab{display:flex;align-items:center;gap:8px;background:#1c2827;border-radius:8px 8px 0 0;padding:8px 12px;font-size:10px;max-width:65%;white-space:nowrap;overflow:hidden}.browserTab>span:last-child{margin-left:15px;color:#9caea4}.favicon{display:grid;place-items:center;background:#c8f06b;color:#142018;border-radius:3px;width:14px;height:14px;font-size:9px;flex-shrink:0}.newTab{font-size:15px;align-self:center;margin-bottom:6px}.addressRow{display:flex;gap:12px;align-items:center;padding:8px 14px;font-size:11px}.browserArrows{white-space:nowrap;color:#91a398}.address{flex:1;padding:5px 10px;border:1px solid #91a49222;background:#0d1717;border-radius:20px;font-size:10px;color:#b1c3b8;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+@media(min-width:801px){.projectPlane{border-radius:13px;border:1px solid #8ba59566;box-shadow:0 35px 65px #0009,inset 0 0 0 1px #8ba59511}.caption{font-size:.65rem;padding:.6rem .9rem}}
+@media(max-width:800px){.browserChrome{display:none}}

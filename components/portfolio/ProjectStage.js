@@ -74,7 +74,10 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
         <span className={styles.index} aria-hidden="true">0{selected + 1}</span>
         <div className={styles.planes}>
           {projects.map((item, i) => <button key={item.title} className={`${styles.projectPlane} ${selected === i ? styles.front : styles.back}`} onClick={() => { if(swapping.current)return; if (selected === i) setExpanded(v => !v); else selectProject(i); }} aria-label={selected === i ? `${expanded ? 'Close' : 'Explore'} ${item.title}` : `Select ${item.title}`} aria-expanded={selected === i ? expanded : undefined}>
-            <span className={styles.frame}><span>0{i + 1} / {item.title}</span><span>↗</span></span>
+            <span className={styles.browserChrome} aria-hidden="true">
+              <span className={styles.tabRow}><span className={styles.windowDots}><i/><i/><i/></span><span className={styles.browserTab}><span className={styles.favicon}>{i===0?'B':'L'}</span>{item.title}<span>×</span></span><span className={styles.newTab}>+</span></span>
+              <span className={styles.addressRow}><span className={styles.browserArrows}>← &nbsp; → &nbsp; ↻</span><span className={styles.address}>⌁ &nbsp; {i===0?'bigbasstrees.com':'libertyhousespecialties.com'}</span><span>···</span></span>
+            </span>
             <picture>
               <source media="(max-width: 800px)" srcSet={`/images/projects/${i === 0 ? 'bigbass' : 'liberty'}-mobile.webp`} />
               <img src={images[i]} alt={`${item.title} website`} width={1920} height={1080} loading={i === 0 ? 'eager' : 'lazy'} />
