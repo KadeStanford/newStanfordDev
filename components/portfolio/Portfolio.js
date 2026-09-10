@@ -1,4 +1,5 @@
 import ProjectStage from './ProjectStage';
+import PricingSelector from './PricingSelector';
 import { useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -17,9 +18,7 @@ export default function Portfolio({copy}){
   <main>
    <ProjectStage copy={copy}/>
    <section className={styles.introduction}><p>{copy.Opening.blocks[2].text}</p><span>{copy.Opening.blocks[5].text}</span></section>
-   <section className={styles.services} id="pricing"><div className={styles.sectionHeader}><span>02 / Services &amp; Pricing</span><h2>{copy.Services.blocks[0].text}</h2></div><p className={styles.sectionIntro}>{copy.Services.blocks[1].text}</p><div className={styles.serviceList}>{copy.Services.entries.map((service,i)=><details key={service.title}><summary><span>0{i+1}</span>{service.title}<b>+</b></summary><div><Blocks items={service.blocks}/></div></details>)}</div>
-    <div className={styles.priceIntro}><h3>{copy.Pricing.blocks[0].text}</h3><p>{copy.Pricing.blocks[1].text}</p></div><div className={styles.prices}>{copy.Pricing.entries.map((price,i)=>{const [name,amount]=price.title.split(' — ');return <details key={price.title}><summary><span className={styles.priceNumber}>{String(i+1).padStart(2,'0')}</span><span className={styles.priceName}>{name}</span><span className={styles.priceAmount}>{amount}</span><b aria-hidden="true">+</b></summary><div className={styles.priceScope}><Blocks items={price.blocks}/></div></details>;})}</div><p className={styles.pricingNote}>{copy.Pricing.note}</p>
-   </section>
+   <PricingSelector copy={copy}/>
    <section className={styles.about} id="about"><div className={styles.portrait}><Image src="/images/kadeProfile.jpg" alt="Kade Stanford" width={800} height={1000} sizes="(max-width:800px) 75vw, 35vw" style={{width:'100%',height:'100%',objectFit:'cover'}}/></div><div><span>03 / About</span><h2>{copy.About.blocks[0].text}</h2><Blocks items={copy.About.blocks.slice(1)}/><details className={styles.process}><summary>Working together <b>+</b></summary>{copy.Process.entries.map(entry=><div key={entry.title}><h3>{entry.title}</h3><Blocks items={entry.blocks}/></div>)}</details></div></section>
    <div className={styles.contactWrap}><Contact portfolio/></div>
   </main>
