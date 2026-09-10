@@ -127,7 +127,7 @@
   .scene { opacity: .8; }
 }
 
-/* Tidal Glass, second study: a continuous surface and an oversized typographic plane. */
+/* Tidal Glass: interactive material study. */
 .page { background:#030a12; --muted:#adc0ca; }
 .nav { position:absolute; padding:1.6rem 3vw; background:transparent; backdrop-filter:none; border:0; }
 .wordmark { max-width:15rem; font-size:.875rem; letter-spacing:0; }
@@ -172,6 +172,31 @@
 .form { border:0; border-radius:0; box-shadow:none; background:transparent; padding:0; backdrop-filter:none; }
 .form input,.form select,.form textarea { border-radius:.35rem; background:#f5ffff45; }
 .page :focus-visible { outline:2px solid #78dff9; outline-offset:5px; }
+.hero { min-height:1150px; padding-top:9rem; }
+.heroCopy { display:grid; grid-template-columns:1fr 1fr; }
+.heroCopy .eyebrow { grid-column:1/-1; text-align:center; }
+.hero h1 { grid-column:1/-1; width:100%; text-align:center; font-size:clamp(3rem,6.6vw,7.7rem); line-height:.96; }
+.hero h1 br { display:none; }
+.hero h1 { max-width:17ch; justify-self:center; }
+.hero h1 em { display:block; font-size:1.4em; }
+.scene { width:100%; height:850px; top:170px; right:0; mask-image:linear-gradient(0deg,transparent,#000 18%,#000 85%,transparent); }
+.heroCopy .lede { grid-column:1; margin-top:20rem; max-width:25rem; background:#030a1277; }
+.heroCopy .actions { grid-column:2; grid-row:3; justify-self:end; align-self:end; flex-direction:column; }
+.availability { grid-column:1/-1; max-width:none; margin-top:2rem; }
+.sceneControls { right:5vw; top:36rem; bottom:auto; flex-direction:column; align-items:flex-end; }
+.serviceRail button { font-size:clamp(1rem,2.3vw,2rem); font-weight:400; letter-spacing:-.04em; }
+.serviceRail button span { margin-right:1rem; }
+.work { border-radius:4rem 4rem 0 0; margin-top:-2rem; z-index:5; position:relative; background:#c8e2e2; color:#09212a; }
+.work .eyebrow,.work .sectionIndex,.workCopy > a { color:#245a67; }
+.workCopy > p:not(.eyebrow),.workCopy ul { color:#244653; }
+.workCopy h2 { font-family:Georgia,serif; font-weight:400; font-style:italic; }
+.lensStage { border-radius:.5rem; }
+.contact { background:#07121b; color:#dff4f3; }
+.contact .eyebrow,.contactIntro > p:not(.eyebrow),.contactIntro ul { color:#aac6ce; }
+.contact .form { color:#dff4f3; }
+.contact .form input,.contact .form select,.contact .form textarea { color:#dff4f3; background:#132632; border-color:#45606b; }
+.contact .form label span,.contact .contactFields legend span,.contact .privacy { color:#afc4cc; }
+.contact .form button { background:#c8e9e8; color:#09212a; }
 @media(max-width:900px){
  .nav { padding:1.2rem; }
  .wordmark { font-size:.75rem; max-width:13rem; }
@@ -195,4 +220,13 @@
  .contact { padding:4rem 1.3rem; }
  .contactIntro h2 { font-size:4rem; }
  .actions { flex-direction:row; align-items:center; }
+ .heroCopy { display:block; }
+ .heroCopy .eyebrow { text-align:left; }
+ .hero h1 { max-width:100%; text-align:left; font-size:clamp(2.5rem,10.5vw,4.6rem); }
+ .hero h1 em { display:inline; font-size:1em; }
+ .scene { top:18rem; right:0; width:100%; height:28rem; opacity:1; }
+ .heroCopy .lede { margin-top:25rem; max-width:none; }
+ .heroCopy .actions { flex-direction:row; }
+ .sceneControls { top:auto; align-items:flex-start; gap:.7rem; }
+ .work { border-radius:2rem 2rem 0 0; margin-top:0; }
 }

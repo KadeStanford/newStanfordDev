@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import PrototypeContactForm from "../../components/prototypes/PrototypeContactForm";
 import styles from "../../styles/prototypes/TidalGlass.module.css";
@@ -30,11 +30,14 @@ const services = [
 export default function TidalGlassPrototype() {
   const [activeService, setActiveService] = useState(0);
   const [portalVisible, setPortalVisible] = useState(false);
-  const [paused, setPaused] = useState(false);
+  const [motionOverride, setMotionOverride] = useState(null);
   const reducedMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const paused = motionOverride === null ? (!mounted || !!reducedMotion) : !motionOverride;
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} data-service={activeService}>
       <Head>
         <title>Tidal Glass Prototype | Stanford Development Solutions</title>
         <meta name="robots" content="noindex, nofollow, noarchive" />
@@ -60,7 +63,7 @@ export default function TidalGlassPrototype() {
           <div className={styles.heroGlow} />
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>Websites and practical digital tools for small businesses</p>
-            <motion.h1 initial={false} animate={{opacity:1}} id="tidal-heading">A better website<br />should make running<br />your business <em>easier.</em></motion.h1>
+            <motion.h1 initial={false} animate={{opacity:1}} id="tidal-heading">A better website should make running your business <em>easier.</em></motion.h1>
             <p className={styles.lede}>
               I design and build websites for contractors, restaurants, and other small businesses. That can mean a clear place for customers to find you, a stronger way to bring in inquiries, or a custom tool that cuts down on paperwork behind the scenes.
             </p>
@@ -74,9 +77,9 @@ export default function TidalGlassPrototype() {
           </div>
 
           <div className={styles.scene} aria-hidden="true">
-            <TidalScene activeIndex={activeService} paused={paused || reducedMotion} />
+            <TidalScene activeIndex={activeService} paused={paused} />
           </div>
-          <div className={styles.sceneControls}><span>Move to disturb the surface</span><button type="button" aria-pressed={paused} onClick={()=>setPaused(value=>!value)}>{paused ? "Resume motion" : "Pause motion"}</button></div>
+          <div className={styles.sceneControls}><span>Move across the glass · Choose a shape below</span><button type="button" aria-pressed={!paused} onClick={()=>setMotionOverride(paused)}>{paused ? "Enable motion" : "Pause motion"}</button></div>
 
           <div className={styles.serviceRail}>
             {services.map((service, index) => (

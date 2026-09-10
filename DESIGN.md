@@ -245,6 +245,8 @@ The prototypes will use approved copy and existing project evidence. Services, f
 
 ### Tidal Glass revision — September 10, 2026
 
+Further revision requested after the second study: central interactive glass composition, three interpolated silhouettes controlled by service selection, faster visible deformation, and an explicit motion override. Fixed the previous control logic which could never resume animation when reduced motion was enabled. The default still respects that preference, while Enable motion allows deliberate opt-in. Desktop and mobile rendered previews and service selection were checked. Production direction remains unapproved.
+
 Kade requested a more advanced revision of theme 1 only; this is authorized prototype work, not production approval. Replaced the tube meshes with a custom GLSL surface rendered through React Three Fiber and Three.js: animated surface normals, chromatic refraction, Fresnel reflection, and pointer distortion. Typography now overlaps the visual field; the Big Bass image occupies a full-width project stage. Added a motion pause control and reduced-motion support. Business-tool details are explanatory text, not a screenshot of the actual private portal. Themes 2 and 3 remain unchanged.
 
 The three approved, isolated prototypes are available at:

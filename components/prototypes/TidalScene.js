@@ -9,7 +9,7 @@ varying vec2 vUv;
 uniform float uTime,uAspect,uMode;
 uniform vec2 uPointer;
 float surface(vec2 p){
- float t=uTime*.17;
+ float t=uTime*.4;
  float r=length(p-uPointer);
  return sin(p.x*2.2+p.y*1.5+t)*.24+sin(p.x*3.1-p.y*2.2-t*.7)*.12+sin(p.y*1.2+t)*.35+sin(r*9.-uTime)*exp(-r*1.4)*.07;
 }
@@ -24,14 +24,21 @@ vec3 studio(vec3 ray){
 }
 void main(){
  vec2 p=(vUv-.5)*vec2(uAspect,1.)*3.4;
- float t=uTime*.17;
- float center=sin(p.y*1.3+t)*.43+sin(p.y*2.4-t)*.11;
+ float t=uTime*.4;
+ p+=uPointer*.22;
+ float angle=atan(p.y,p.x)+t*.25;
+ float radius=length(p);
+ float center=sin(p.y*1.3+t)*.43;
  float width=.68+.2*cos(p.y*1.1+t*.5);
- float d=abs(p.x-center)-width;
+ float ring=abs(radius-(.86+.15*sin(angle*3.+t)))-.23;
+ float folded=abs(p.x-center)-width;
+ float bloom=radius-(1.05+.22*cos(angle*5.-t));
+ float d=mix(ring,folded,clamp(uMode,0.,1.));
+ d=mix(d,bloom,clamp(uMode-1.,0.,1.));
  float mask=1.-smoothstep(-.015,.025,d);
  float h=surface(p),e=.008;
  vec2 grad=vec2(surface(p+vec2(e,0.))-h,surface(p+vec2(0.,e))-h)/e;
- float edge=pow(clamp(abs(p.x-center)/width,0.,1.),7.);
+ float edge=exp(-abs(d)*12.);
  vec3 n=normalize(vec3(-grad.x+(p.x-center)*edge*3.,-grad.y,.55-edge*.4));
  vec3 view=normalize(vec3(p*.16,1.));
  vec3 reflected=studio(reflect(-view,n));
