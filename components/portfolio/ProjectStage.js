@@ -32,10 +32,8 @@ export default function ProjectStage({ copy }) {
   }
 
   return <section id="top" className={styles.experience} data-animate-swaps={animateSwaps} aria-labelledby="opening">
-    <div className={styles.overline}><span>Independent web design & development</span><span>Hammond, Louisiana</span></div>
     <div className={styles.composition}>
       <div className={styles.title}>
-        <p>{copy.Opening.blocks[0].text}</p>
         <h1 id="opening">A better website<br/>should make running<br/>your business <em>easier.</em></h1>
         <a href="#contact">Get in touch <span>↗</span></a>
       </div>

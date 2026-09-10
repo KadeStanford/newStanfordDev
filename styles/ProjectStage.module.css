@@ -44,5 +44,6 @@
 @media(max-width:800px){
  .overline{justify-content:flex-start;flex-wrap:wrap;gap:.35rem 1.5rem;padding:1rem 5vw 0;font-size:.65rem;letter-spacing:.06em;line-height:1.5}
  .overline span{max-width:none}
- .title{padding-top:1.5rem}
+ .title{padding-top:2rem}
+ .gallery{margin-top:0}
 }
