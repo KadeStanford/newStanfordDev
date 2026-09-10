@@ -34,7 +34,10 @@
  .projectPlane picture{display:block;overflow:hidden;border-radius:23px}
  .projectPlane img{aspect-ratio:390/844;width:100%;height:auto;object-fit:cover}
  .projectPlane .frame,.projectPlane .caption{display:none}
- .front{transform:translate3d(-15%,9%,30px) rotateY(-8deg) rotateZ(-8deg)}
- .back{transform:translate3d(35%,-3%,-70px) rotateY(-15deg) rotateZ(9deg)}
+ .planes{transform:none;transform-style:flat}
+ .projectPlane{will-change:auto;filter:none}
+ .back:hover{filter:none}
+ .front{transform:translate(-15%,9%) rotate(-8deg)}
+ .back{transform:translate(35%,-3%) rotate(9deg)}
 }
-@media(max-width:400px){.gallery{height:560px}.projectPlane{left:24%;max-width:54%}.back{transform:translate3d(20%,-3%,-70px) rotateY(-15deg) rotateZ(9deg)}}
+@media(max-width:400px){.gallery{height:560px}.projectPlane{left:24%;max-width:54%}.back{transform:translate(20%,-3%) rotate(9deg)}}
