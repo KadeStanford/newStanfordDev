@@ -14,6 +14,10 @@
 .front{z-index:2;transform:translate3d(-5%,8%,70px) rotateY(-13deg) rotateZ(-5deg)}
 .back{z-index:1;transform:translate3d(14%,-43%,-170px) rotateY(-22deg) rotateZ(9deg);filter:brightness(.65)}
 .back:hover{filter:brightness(.95)}
+.experience .projectPlane{transition:transform 850ms cubic-bezier(.45,0,.2,1),filter 850ms ease,z-index 0s 425ms!important}
+.experience[data-animate-swaps=false] .projectPlane{transition:none!important}
+.selection>.motionControl{display:grid;gap:.2rem;font-size:.75rem;color:#9aa9a5}
+.selection>.motionControl button{font-size:.75rem;padding:.4rem 0;width:max-content}
 .frame,.caption{display:flex;justify-content:space-between;gap:1rem;padding:.85rem 1rem;font-size:.75rem}.frame{background:#16201d}.caption{color:#c5d3c9}.caption>span{color:var(--accent);white-space:nowrap}
 .selection{display:grid;grid-template-columns:1fr 2.6fr auto;align-items:center;gap:3rem;padding:1.5rem 4vw 2rem;border-top:1px solid #c9d9d126;position:relative;z-index:4;background:#080e12}
 .selection>span{font-size:.75rem;color:#9aa9a5;text-transform:uppercase;letter-spacing:.08em}.selection>div{display:flex;gap:2.5rem}.selection button{background:none;color:#9aa9a5;border:0;cursor:pointer;padding:.9rem 0;display:flex;align-items:center;gap:1rem;text-align:left;font:inherit;font-size:.875rem;border-bottom:1px solid transparent}.selection button[aria-pressed=true]{color:#eff6ef;border-color:var(--accent)}.selection button span:first-child{color:var(--accent);font-size:.75rem}.selection .explore{color:var(--accent);gap:1.5rem}

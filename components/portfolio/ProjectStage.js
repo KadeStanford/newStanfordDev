@@ -8,6 +8,7 @@ const urls = ['https://bigbasstreeservice.com/', 'https://libertyhousespecialtie
 export default function ProjectStage({ copy }) {
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
+  const [animateSwaps, setAnimateSwaps] = useState(true);
   const stage = useRef(null);
   const projects = copy['Selected work'].entries;
   const project = projects[selected];
@@ -29,7 +30,7 @@ export default function ProjectStage({ copy }) {
     stage.current.style.setProperty('--ry', '0deg');
   }
 
-  return <section id="top" className={styles.experience} aria-labelledby="opening">
+  return <section id="top" className={styles.experience} data-animate-swaps={animateSwaps} aria-labelledby="opening">
     <div className={styles.overline}><span>Independent web design & development</span><span>Hammond, Louisiana</span></div>
     <div className={styles.composition}>
       <div className={styles.title}>
@@ -49,7 +50,7 @@ export default function ProjectStage({ copy }) {
       </div>
     </div>
     <div className={styles.selection}>
-      <span>Selected work / 01—02</span>
+      <div className={styles.motionControl}><span>Selected work / 01—02</span><button onClick={() => setAnimateSwaps(value => !value)} aria-pressed={animateSwaps}>Card motion: {animateSwaps ? 'on' : 'off'}</button></div>
       <div aria-label="Choose a project">{projects.map((item, i) => <button key={item.title} aria-pressed={selected === i} onClick={() => setSelected(i)}><span>0{i + 1}</span>{item.title}<span>↗</span></button>)}</div>
       <button className={styles.explore} aria-expanded={expanded} aria-controls="project-focus" onClick={() => setExpanded(v => !v)}>{expanded ? 'Close project' : 'Explore project'} <span>{expanded ? '−' : '+'}</span></button>
     </div>
