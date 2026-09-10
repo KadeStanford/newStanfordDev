@@ -22,7 +22,8 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
 
   async function selectProject(index){
     if(index===selected||swapping.current)return;
-    if(!animateSwaps||!window.matchMedia('(max-width:800px)').matches){setSelected(index);return;}
+    if(!animateSwaps){setSelected(index);return;}
+    const mobile=window.matchMedia('(max-width:800px)').matches;
     const cards=[...stage.current.querySelectorAll('button')];
     swapping.current=true;
     stage.current.dataset.swapping='true';
@@ -33,7 +34,12 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
     const scale=Math.min(.88,(width*.43)/cardWidth);
     const xLeft=width*.25-left-cardWidth/2;
     const xRight=width*.75-left-cardWidth/2;
-    const separated=cards.map((_,i)=>`translate(${i===selected?xLeft:xRight}px, ${i===selected?65:10}px) rotate(${i===selected?-12:12}deg) scale(${scale})`);
+    const height=stage.current.clientHeight;
+    const cardHeight=cards[0].offsetHeight;
+    const desktopScale=Math.min(.78,height*.36/cardHeight);
+    const separated=cards.map((card,i)=>mobile
+      ? `translate(${i===selected?xLeft:xRight}px, ${i===selected?65:10}px) rotate(${i===selected?-12:12}deg) scale(${scale})`
+      : `translate(${width*.52-left-cardWidth/2}px, ${height*(i===selected?.76:.24)-card.offsetTop-cardHeight/2}px) rotate(${i===selected?-5:5}deg) scale(${desktopScale})`);
     try{
       animations.current=cards.map((card,i)=>card.animate([{transform:getComputedStyle(card).transform},{transform:separated[i]}],{duration:380,easing:'cubic-bezier(.2,.7,.2,1)',fill:'forwards'}));
       await Promise.all(animations.current.map(a=>a.finished));
@@ -53,7 +59,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   }, [expanded,animateSwaps]);
 
   function move(event) {
-    if (!animateSwaps || event.pointerType !== 'mouse') return;
+    if (!animateSwaps || swapping.current || event.pointerType !== 'mouse') return;
     const box = event.currentTarget.getBoundingClientRect();
     stage.current.style.setProperty('--rx', `${((event.clientY - box.top) / box.height - .5) * -7}deg`);
     stage.current.style.setProperty('--ry', `${((event.clientX - box.left) / box.width - .5) * 10}deg`);
