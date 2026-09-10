@@ -1,6 +1,6 @@
 # Stanford Development Solutions — Website Copy
 
-Status: Draft for Kade Stanford's review. Not approved for implementation.
+Status: Approved by Kade Stanford on September 10, 2026. Do not rewrite during design or implementation without renewed approval.
 
 Source of truth: `BRIEF.md`
 
