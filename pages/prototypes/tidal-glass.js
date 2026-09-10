@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import PrototypeContactForm from "../../components/prototypes/PrototypeContactForm";
 import styles from "../../styles/prototypes/TidalGlass.module.css";
 
@@ -29,6 +30,8 @@ const services = [
 export default function TidalGlassPrototype() {
   const [activeService, setActiveService] = useState(0);
   const [portalVisible, setPortalVisible] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const reducedMotion = useReducedMotion();
 
   return (
     <div className={styles.page}>
@@ -57,7 +60,7 @@ export default function TidalGlassPrototype() {
           <div className={styles.heroGlow} />
           <div className={styles.heroCopy}>
             <p className={styles.eyebrow}>Websites and practical digital tools for small businesses</p>
-            <h1 id="tidal-heading">A better website should make running your business easier.</h1>
+            <motion.h1 initial={false} animate={{opacity:1}} id="tidal-heading">A better website<br />should make running<br />your business <em>easier.</em></motion.h1>
             <p className={styles.lede}>
               I design and build websites for contractors, restaurants, and other small businesses. That can mean a clear place for customers to find you, a stronger way to bring in inquiries, or a custom tool that cuts down on paperwork behind the scenes.
             </p>
@@ -71,8 +74,9 @@ export default function TidalGlassPrototype() {
           </div>
 
           <div className={styles.scene} aria-hidden="true">
-            <TidalScene activeIndex={activeService} onActivate={setActiveService} />
+            <TidalScene activeIndex={activeService} paused={paused || reducedMotion} />
           </div>
+          <div className={styles.sceneControls}><span>Move to disturb the surface</span><button type="button" aria-pressed={paused} onClick={()=>setPaused(value=>!value)}>{paused ? "Resume motion" : "Pause motion"}</button></div>
 
           <div className={styles.serviceRail}>
             {services.map((service, index) => (
@@ -83,15 +87,16 @@ export default function TidalGlassPrototype() {
                 onMouseEnter={() => setActiveService(index)}
                 onFocus={() => setActiveService(index)}
                 onClick={() => setActiveService(index)}
+                aria-pressed={index === activeService}
               >
                 <span>0{index + 1}</span>
                 {service.label}
               </button>
             ))}
           </div>
-          <p className={styles.serviceCopy} aria-live="polite">
+          <motion.p key={activeService} initial={false} animate={{opacity:1,y:0}} transition={{duration:reducedMotion?0:.4}} className={styles.serviceCopy} aria-live="polite">
             {services[activeService].copy}
-          </p>
+          </motion.p>
         </section>
 
         <section className={styles.work} id="work" aria-labelledby="tidal-work-heading">
@@ -122,14 +127,13 @@ export default function TidalGlassPrototype() {
             />
             <div className={`${styles.portalLayer} ${portalVisible ? styles.portalOpen : ""}`}>
               <div>
-                <span>Working portal</span>
-                <strong>Contracts</strong>
-                <strong>Invoices</strong>
-                <strong>Client records</strong>
+                <span>Behind the website</span>
+                <strong>Custom contract-signing workflow</strong>
+                <strong>Invoice creation inside the admin portal</strong>
               </div>
             </div>
             <button type="button" onClick={() => setPortalVisible((current) => !current)}>
-              {portalVisible ? "Show public site" : "Reveal business portal"}
+              {portalVisible ? "Show public site" : "Explore the business tools"}
             </button>
           </div>
         </section>
