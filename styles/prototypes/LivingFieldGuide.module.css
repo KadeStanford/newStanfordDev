@@ -103,7 +103,7 @@
   .nav { grid-template-columns: 1fr auto; }
   .wordmark span, .nav nav { display: none; }
   .copyBlock { width: 100%; text-align: left; }
-  .copyBlock h1 { margin-left: 0; font-size: clamp(3.8rem, 17vw, 6rem); }
+  .copyBlock h1 { margin-left: 0; font-size: clamp(3rem, 12.8vw, 5rem); line-height: .84; }
   .lede { margin-left: 0; }
   .actions { justify-content: flex-start; }
   .availability { margin-left: 0; }

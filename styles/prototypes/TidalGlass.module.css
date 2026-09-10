@@ -48,7 +48,7 @@
 }
 
 .heroGlow { position: absolute; z-index: -1; inset: 12% -10% auto auto; width: 60vw; height: 60vw; border-radius: 50%; background: radial-gradient(circle, rgba(59, 131, 157, .18), transparent 62%); filter: blur(20px); }
-.heroCopy { position: relative; z-index: 3; max-width: 760px; }
+.heroCopy { position: relative; z-index: 3; width: 100%; min-width: 0; max-width: 760px; }
 .eyebrow { margin: 0 0 1.4rem; color: var(--cyan); font: 600 .72rem/1.4 ui-monospace, monospace; letter-spacing: .18em; text-transform: uppercase; }
 .hero h1 { max-width: 12ch; margin: 0; font-size: clamp(3.3rem, 7vw, 7.7rem); font-weight: 520; letter-spacing: -.07em; line-height: .9; text-wrap: balance; }
 .lede { max-width: 660px; margin: 2rem 0 0; color: var(--muted); font-size: clamp(1rem, 1.3vw, 1.2rem); line-height: 1.75; }
@@ -104,7 +104,7 @@
   .wordmark span { font-size: .78rem; }
   .nav nav { display: none; }
   .hero { grid-template-columns: 1fr; align-items: start; padding: 7.5rem 1.2rem 4rem; }
-  .hero h1 { font-size: clamp(3.2rem, 14vw, 5.5rem); }
+  .hero h1 { font-size: clamp(2.8rem, 12.5vw, 4.8rem); }
   .scene { position: relative; top: auto; right: auto; width: calc(100% + 2.4rem); height: 44vh; min-height: 330px; margin: .5rem -1.2rem 0; }
   .serviceRail { position: relative; right: auto; bottom: auto; display: grid; grid-template-columns: 1fr; margin-top: -2rem; }
   .serviceRail button { width: 100%; justify-content: flex-start; }

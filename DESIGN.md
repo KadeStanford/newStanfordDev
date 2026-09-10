@@ -1,6 +1,6 @@
 # Stanford Development Solutions — Design Exploration
 
-Status: Three proposed directions for review. No direction or prototype is approved yet.
+Status: Prototype exploration approved by Kade Stanford on September 10, 2026. No production direction is approved yet.
 
 Sources of truth: `BRIEF.md` and `COPY.md`
 
@@ -240,3 +240,13 @@ After Kade selects one or more directions to prototype, each approved prototype 
 - Desktop and mobile behavior
 
 The prototypes will use approved copy and existing project evidence. Services, full pricing, About, legal pages, admin features, and production integration remain outside the prototype boundary.
+
+## Review prototypes
+
+The three approved, isolated prototypes are available at:
+
+- `/prototypes/tidal-glass`
+- `/prototypes/alpine-editorial`
+- `/prototypes/living-field-guide`
+
+These routes are design studies only. Approval to prototype does not approve any direction for production implementation.
