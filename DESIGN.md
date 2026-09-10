@@ -1,5 +1,11 @@
 # Stanford Development Solutions — Design Exploration
 
+## Workflow lab addition — pending visual review
+
+User authorized replacing duplicate lower Work section with an interactive demonstration. Added Framer Motion spring transitions, horizontal drag-to-advance, explicit stage buttons, and a live sample-scope slider. Uses existing JS stack and TypeScript-compatible library; no new dependencies. Request → estimate → unsent invoice is an illustrative local simulation, not a real billing integration. Hero retains both projects and galleries; Work links now target the hero previews. New demo microcopy is a proposal for review, not previously approved business copy. Example $40/hour garden work is explicitly illustrative, not SDS pricing or a client fact.
+
+Checks performed: production build; 390px and 1440px rendered screenshots; no horizontal document overflow at those widths; estimate/invoice button progression and reset. Drag gestures, physical devices, and full accessibility review remain unverified. No messages or invoices sent.
+
 Status: Prototype exploration approved by Kade Stanford on September 10, 2026. No production direction is approved yet.
 
 Sources of truth: `BRIEF.md` and `COPY.md`

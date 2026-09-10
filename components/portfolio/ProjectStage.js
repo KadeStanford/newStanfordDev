@@ -37,7 +37,7 @@ export default function ProjectStage({ copy }) {
         <h1 id="opening">A better website<br/>should make running<br/>your business <em>easier.</em></h1>
         <a href="#contact">Get in touch <span>↗</span></a>
       </div>
-      <div className={styles.gallery} onPointerMove={move} onPointerLeave={reset} ref={stage}>
+      <div id="work" className={styles.gallery} onPointerMove={move} onPointerLeave={reset} ref={stage}>
         <span className={styles.index} aria-hidden="true">0{selected + 1}</span>
         <div className={styles.planes}>
           {projects.map((item, i) => <button key={item.title} className={`${styles.projectPlane} ${selected === i ? styles.front : styles.back}`} onClick={() => { if (selected === i) setExpanded(v => !v); else setSelected(i); }} aria-label={selected === i ? `${expanded ? 'Close' : 'Explore'} ${item.title}` : `Select ${item.title}`} aria-expanded={selected === i ? expanded : undefined}>
