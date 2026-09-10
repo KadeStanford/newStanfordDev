@@ -41,3 +41,8 @@
  .back{transform:translate(35%,-3%) rotate(9deg)}
 }
 @media(max-width:400px){.gallery{height:560px}.projectPlane{left:24%;max-width:54%}.back{transform:translate(20%,-3%) rotate(9deg)}}
+@media(max-width:800px){
+ .overline{justify-content:flex-start;flex-wrap:wrap;gap:.35rem 1.5rem;padding:1rem 5vw 0;font-size:.65rem;letter-spacing:.06em;line-height:1.5}
+ .overline span{max-width:none}
+ .title{padding-top:1.5rem}
+}
