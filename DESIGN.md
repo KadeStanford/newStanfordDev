@@ -268,3 +268,9 @@ The public homepage now includes the approved opening, both real projects, expan
 Visual rules: dark blue-green opening and service surfaces, pale project and About surfaces, oversized restrained typography, genuine project screenshots, and compact native disclosures rather than repeated marketing cards. Primary navigation and contact remain ordinary accessible HTML outside the canvas. No essential content requires WebGL.
 
 Visual acceptance is pending Kade's review. See REDESIGN_QA.md for performed checks and remaining verification.
+
+## Project-led opening revision
+
+Kade rejected the sculpture-led design and authorized the proposed opening-to-project revision. The homepage now uses two genuine project screenshots as selectable perspective layers, with pointer-reactive depth and an expandable project-focus panel. It uses CSS 3D transforms rather than a WebGL sculpture. The sculpture component and earlier commits remain available for rollback. No approved business copy, dependencies, or backend workflows were changed. This is the first opening-to-project slice; the lower sections retain their previous layout pending review of this direction. Visual acceptance remains pending.
+
+Checks for this slice: Next production build passed; desktop (1440 × 1000) and phone (390 × 844) screenshots inspected; project switching and expanded facts observed; no horizontal overflow at the checked phone width. Pointer-reactive movement, physical-device performance, and a complete keyboard audit remain unverified.
