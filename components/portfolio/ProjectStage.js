@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import AccessibilityTray from './AccessibilityTray';
+import ProjectGallery from './ProjectGallery';
 import styles from '../../styles/ProjectStage.module.css';
 
-const images = ['/images/bigbass-hero.webp', '/images/libertyhouse-hero.webp'];
-const urls = ['https://bigbasstreeservice.com/', 'https://libertyhousespecialties.com/'];
+const images = ['/images/projects/bigbass-home.webp', '/images/projects/liberty-home.webp'];
+const urls = ['https://www.bigbasstrees.com/', 'https://libertyhousespecialties.com/'];
 
 export default function ProjectStage({ copy }) {
   const [selected, setSelected] = useState(0);
@@ -44,7 +45,7 @@ export default function ProjectStage({ copy }) {
         <div className={styles.planes}>
           {projects.map((item, i) => <button key={item.title} className={`${styles.projectPlane} ${selected === i ? styles.front : styles.back}`} onClick={() => { if (selected === i) setExpanded(v => !v); else setSelected(i); }} aria-label={selected === i ? `${expanded ? 'Close' : 'Explore'} ${item.title}` : `Select ${item.title}`} aria-expanded={selected === i ? expanded : undefined}>
             <span className={styles.frame}><span>0{i + 1} / {item.title}</span><span>↗</span></span>
-            <Image src={images[i]} alt={`${item.title} website`} width={1600} height={900} priority={i === 0} sizes="(max-width: 800px) 85vw, 52vw" />
+            <Image src={images[i]} alt={`${item.title} website`} width={1920} height={1080} unoptimized priority={i === 0} sizes="(max-width: 800px) 85vw, 52vw" />
             <span className={styles.caption}>{item.blocks[0].text}<span>{selected === i ? 'Explore project ↗' : 'View project ↗'}</span></span>
           </button>)}
         </div>
@@ -59,6 +60,7 @@ export default function ProjectStage({ copy }) {
     <div id="project-focus" ref={focus} hidden={!expanded} className={styles.focus}>
       <div aria-live="polite"><span>0{selected + 1} / {project.blocks[0].text}</span><h2>{project.title}</h2><p>{project.blocks[1].text}</p><a href={urls[selected]} target="_blank" rel="noreferrer">{project.blocks.at(-1).text} ↗</a></div>
       <div><h3>What I built</h3><p>{project.blocks[2].text}</p><ul>{project.blocks.filter(item => item.kind === 'li').map(item => <li key={item.text}>{item.text}</li>)}</ul></div>
+      {expanded && <ProjectGallery key={selected} projectIndex={selected} title={project.title} />}
     </div>
   </section>;
 }
