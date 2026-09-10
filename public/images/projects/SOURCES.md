@@ -1,6 +1,6 @@
 # Project screenshot sources
 
-Mobile homepage captures: bigbass-mobile.webp and liberty-mobile.webp were captured from the same public homepage URLs at a 390 × 844 viewport for the responsive phone previews.
+Mobile homepage captures: bigbass-mobile.webp and liberty-mobile.webp were replaced on September 10, 2026 with fresh Chromium captures at a 390 × 844 CSS viewport and 3× device pixel ratio (1170 × 2532 pixels each). PNG captures were encoded as lossless WebP, without a JPEG intermediate or upscaling. Fonts were loaded before capture; the Big Bass slideshow was paused and the page returned to the top after dismissing its cookie notice. Public homepage sources are listed below. Both replacement files were visually inspected.
 
 Captured from the public client websites during the September 2026 portfolio revision, with permission to feature these projects recorded in BRIEF.md.
 
