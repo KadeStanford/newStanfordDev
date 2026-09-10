@@ -186,8 +186,8 @@ export default function Contact({portfolio = false}) {
   return (
     <section id="contact" className="relative z-10 overflow-hidden py-28 md:py-36">
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/10 to-blue-950/30" />
-      <div className="relative mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-        <div className="lg:sticky lg:top-32">
+      <div data-contact-layout className="relative mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+        <div data-contact-intro className="lg:sticky lg:top-32">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-300">
             Get in touch
           </p>

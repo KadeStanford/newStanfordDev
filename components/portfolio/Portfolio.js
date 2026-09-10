@@ -1,4 +1,5 @@
 import ProjectStage from './ProjectStage';
+import Brand from './Brand';
 import PageMotion from './PageMotion';
 import Education from './Education';
 import PricingSelector from './PricingSelector';
@@ -22,14 +23,13 @@ export default function Portfolio({copy}){
   <PageMotion/>
   <Head><title>{copy['Page metadata'].blocks[0].text}</title><meta name="description" content={copy['Page metadata'].blocks[1].text}/><link rel="canonical" href={siteUrl}/><meta property="og:url" content={siteUrl}/></Head>
   <a className={styles.skip} href="#work">Skip to work</a>
-  <header className={styles.nav} onKeyDown={event=>{if(event.key==='Escape'){setMenuOpen(false);event.currentTarget.querySelector('button')?.focus();}}}><a className={styles.brand} href="#top" aria-label="SDS — Stanford Development Solutions"><span className={styles.monogram} aria-hidden="true">SDS<i/></span></a><button className={styles.menuToggle} aria-expanded={menuOpen} aria-controls="main-navigation" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?'Close':'Menu'}<span aria-hidden="true">{menuOpen?'−':'+'}</span></button><nav id="main-navigation" data-open={menuOpen} aria-label="Main navigation" onClick={event=>{if(event.target.closest('a'))setMenuOpen(false);}}><a href="#work">Work</a><a href="#pricing">Services &amp; Pricing</a><a href="#about">About</a><a href="#contact">Get in touch ↗</a></nav></header>
+  <header className={styles.nav} onKeyDown={event=>{if(event.key==='Escape'){setMenuOpen(false);event.currentTarget.querySelector('button')?.focus();}}}><Brand/><button className={styles.menuToggle} aria-expanded={menuOpen} aria-controls="main-navigation" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?'Close':'Menu'}<span aria-hidden="true">{menuOpen?'−':'+'}</span></button><nav id="main-navigation" data-open={menuOpen} aria-label="Main navigation" onClick={event=>{if(event.target.closest('a'))setMenuOpen(false);}}><a href="#work">Work</a><a href="#pricing">Services &amp; Pricing</a><a href="#about">About</a><a href="#contact">Get in touch ↗</a></nav></header>
   <main>
    <ProjectStage copy={copy} motionEnabled={motionEnabled} motionMode={motionMode} onMotionChange={changeMotion}/>
-   <section className={styles.introduction}><p>{copy.Opening.blocks[2].text}</p><span>{copy.Opening.blocks[5].text}</span></section>
    <PricingSelector copy={copy}/>
-   <section className={styles.about} id="about"><div className={styles.portrait}><Image src="/images/kadeCutout.png" alt="Kade Stanford" width={800} height={1000} sizes="(max-width:800px) 75vw, 35vw" style={{width:'100%',height:'100%',objectFit:'contain'}}/></div><div><h2>About me</h2><Blocks items={copy.About.blocks.slice(1)}/><Education/><details className={styles.process}><summary>Working together <b>+</b></summary>{copy.Process.entries.map(entry=><div key={entry.title}><h3>{entry.title}</h3><Blocks items={entry.blocks}/></div>)}</details></div></section>
+   <section className={styles.about} id="about"><div className={styles.portrait}><Image src="/images/kadeCutout.png" alt="Kade Stanford" width={800} height={1000} sizes="(max-width:800px) 75vw, 35vw" style={{width:'100%',height:'100%',objectFit:'contain'}}/></div><div><h2>About me</h2><Blocks items={copy.About.blocks.slice(1)}/><section className={styles.process} aria-labelledby="process-title"><h3 id="process-title">How it <em>works.</em></h3><ol>{copy.Process.entries.map(entry=><li key={entry.title}><span>{entry.title.replace(/^\d+\.\s*/, '')}</span></li>)}</ol></section><Education/></div></section>
    <div className={styles.contactWrap}><Contact portfolio/></div>
   </main>
-  <footer className={styles.footer}><a href="#top">Stanford Development Solutions ↑</a><p>{copy.Footer.blocks[1].text}</p><div><a href="/privacy">Privacy Policy</a><a href="/terms">Terms</a><a href="mailto:stanforddevcontact@gmail.com">Email ↗</a></div></footer>
+  <footer className={styles.footer}><Brand/><p>{copy.Footer.blocks[1].text}</p><div><a href="https://github.com/KadeStanford" target="_blank" rel="noreferrer">GitHub ↗</a><a href="https://www.linkedin.com/in/kadestanford" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="mailto:stanforddevcontact@gmail.com">Email ↗</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms</a></div></footer>
  </div>;
 }

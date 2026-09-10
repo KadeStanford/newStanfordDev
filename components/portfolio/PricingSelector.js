@@ -17,6 +17,6 @@ export default function PricingSelector({copy}){
    </article>
   </div>
   <p className={styles.note}>{copy.Pricing.note}</p>
-  <div className={styles.serviceContext}><h3>{copy.Services.blocks[0].text}</h3><p>{copy.Services.blocks[1].text}</p></div>
+  <div className={styles.serviceContext}><h3>{copy.Services.blocks[0].text}</h3><p>{copy.Opening.blocks[2].text}</p></div>
  </section>;
 }

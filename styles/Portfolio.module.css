@@ -137,3 +137,44 @@
  .page[data-motion=true] details::details-content{height:0;opacity:0;overflow:clip;transition:height .35s ease,opacity .25s ease,content-visibility .35s;transition-behavior:allow-discrete}
  .page[data-motion=true] details[open]::details-content{height:auto;opacity:1}
 }
+.brand .lockupName{margin:0;font-size:.95rem;font-weight:400;line-height:1.3;letter-spacing:-.025em;color:#d5ded7}
+.footer .brand{gap:1.3rem}.footer .monogram{font-size:3.6rem}.footer>div{flex-wrap:wrap;gap:1rem 2rem}.footer .lockupName{font-size:1.1rem}
+@media(min-width:801px){
+ .about{grid-template-columns:minmax(0,.85fr) minmax(0,1.3fr);gap:0 5vw;align-items:start;padding:5rem 6vw}
+ .about>div:last-child{display:contents}
+ .about .portrait{grid-column:1;grid-row:1/5;height:410px;width:100%;align-self:end;background:radial-gradient(ellipse at bottom,#324333,transparent 75%);border-bottom:1px solid var(--line)}
+ .about .portrait img{object-position:center bottom}
+ .about h2{grid-column:2;grid-row:1;margin:0 0 1.5rem}
+ .about>div>p{grid-column:2}
+ .about>div>p:nth-of-type(1){grid-row:2}.about>div>p:nth-of-type(2){grid-row:3}.about>div>p:nth-of-type(3){grid-row:4}
+ .about figure{grid-column:2;grid-row:5;margin:2.5rem 0 0;grid-template-columns:1.1fr 1fr;gap:0;align-self:stretch}
+ .about figure>div{height:100%;min-height:300px}.about figure figcaption{padding:1.3rem}
+ .about .process{grid-column:1;grid-row:5;margin-top:2.5rem}
+ .contactWrap [data-contact-layout]{max-width:1200px;grid-template-columns:1fr;gap:2rem;padding-inline:4vw}
+ .contactWrap [data-contact-intro]{position:static;display:grid;grid-template-columns:1fr 1fr;gap:0 4rem;align-items:start}
+ .contactWrap [data-contact-intro]>p:first-child{grid-column:1/-1;margin-bottom:1rem}
+ .contactWrap [data-contact-intro] h2{grid-column:1;grid-row:2/4;margin:0;font-size:clamp(3.5rem,6vw,6rem)!important}
+ .contactWrap [data-contact-intro]>p:nth-of-type(2){grid-column:2;grid-row:2;margin:0}
+ .contactWrap [data-contact-intro]>div:last-child{grid-column:2;grid-row:3;margin-top:1rem}
+ .contactWrap :global(.rounded-3xl){padding:2rem 2.5rem}
+}
+@media(min-width:801px) and (max-width:1150px){.nav .brand .monogram{font-size:3.4rem}.nav nav{gap:1.1rem;font-size:.8rem}.brand{gap:.8rem}.brand .lockupName{font-size:.8rem}}
+@media(max-width:800px){.brand .lockupName{font-size:.75rem}.brand{gap:.75rem}.nav .brand .monogram{font-size:3rem}.footer .brand .monogram{font-size:3.3rem}.footer .lockupName{font-size:.9rem}}
+@media(max-width:370px){.nav .brand .lockupName{font-size:.65rem}.nav .brand .monogram{font-size:2.5rem}.menuToggle{gap:.5rem;padding:.6rem .7rem}}
+.about .process{position:relative;padding:1.5rem 0 0;border:0;border-radius:0;background:none;color:#eaf0eb;overflow:visible}
+.about .process h3{margin:0 0 1.5rem;font-size:2.1rem;font-weight:400;letter-spacing:-.055em;line-height:1.1}
+.process h3 em{font-family:Georgia,serif;font-weight:400;color:#c8f06b}
+.process ol{position:relative;list-style:none;padding:0 8px 12px;margin:0;display:grid;gap:0;isolation:isolate}
+.process li{position:relative;width:92%;min-height:83px;padding:1.1rem 1.2rem;display:flex;align-items:center;border:1px solid #81978866;border-radius:5px 20px 5px 5px;background:#24392f;color:#edf0e7;font-size:1.1rem;letter-spacing:-.025em;line-height:1.25;box-shadow:0 8px 18px #0004;transform:rotate(-3deg);z-index:1}
+.process li+li{margin-top:-6px}
+.process li:nth-child(2){justify-self:end;transform:rotate(3deg);background:#dce6cc;color:#17251d;z-index:2}
+.process li:nth-child(3){transform:rotate(-2deg);background:#344b3e;z-index:3}
+.process li:nth-child(4){justify-self:end;transform:rotate(2deg);background:#c8f06b;color:#132118;z-index:4}
+.process li span{max-width:22ch}
+@media(hover:hover){.page[data-motion=true] .process li{transition:transform .4s,box-shadow .4s}.page[data-motion=true] .process li:hover{transform:rotate(0) translateY(-5px);box-shadow:0 14px 24px #0005;z-index:5}}
+@media(max-width:800px){.about .process{margin:0 0 1.5rem}}
+.brand .monogram .logoLetters{font:inherit;letter-spacing:inherit;line-height:inherit;margin:0;display:block;padding-right:.08em}
+.page[data-motion=true] .logoLetters{animation:sdsReveal 7s cubic-bezier(.65,0,.25,1) infinite}
+.page[data-motion=true] .monogram i{animation:sdsSlash 7s cubic-bezier(.65,0,.25,1) infinite;transition:none}
+@keyframes sdsReveal{0%,8%{clip-path:inset(-20% 100% -20% -10%)}30%,83%{clip-path:inset(-20% -10% -20% -10%)}98%,100%{clip-path:inset(-20% 100% -20% -10%)}}
+@keyframes sdsSlash{0%,8%,98%,100%{right:calc(100% - .1em);transform:skew(-18deg)}30%,83%{right:0;transform:skew(-18deg)}}

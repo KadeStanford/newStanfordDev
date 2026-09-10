@@ -296,3 +296,11 @@ Verification: direct Next production build passed (the system npm launcher was b
 Kade rejected the sculpture-led design and authorized the proposed opening-to-project revision. The homepage now uses two genuine project screenshots as selectable perspective layers, with pointer-reactive depth and an expandable project-focus panel. It uses CSS 3D transforms rather than a WebGL sculpture. The sculpture component and earlier commits remain available for rollback. No approved business copy, dependencies, or backend workflows were changed. This is the first opening-to-project slice; the lower sections retain their previous layout pending review of this direction. Visual acceptance remains pending.
 
 Checks for this slice: Next production build passed; desktop (1440 × 1000) and phone (390 × 844) screenshots inspected; project switching and expanded facts observed; no horizontal overflow at the checked phone width. Pointer-reactive movement, physical-device performance, and a complete keyboard audit remain unverified.
+
+## September 10 layout and branding review (not approved)
+
+Removed the standalone opening text band; reused its explanation in pricing. Reorganized desktop About with the portrait aligned to its base, process left and graduation right. Contact now has a full-width form below its introduction on desktop. Restored repository-sourced GitHub and LinkedIn links. Header/footer share an SDS/name lockup and a seven-second slash-led reveal loop; reduced motion renders a static logo.
+
+The process list and its successive graphic treatments were rejected: the user clarified that the explanation lacks substance, not merely visual complexity. The current layered treatment is a review checkpoint, not an approved direction. Propose fuller client-oriented explanation before implementing another version.
+
+Verification: Next production build passed. Rendered desktop 1070px and phone 390px layouts inspected; no horizontal overflow at either width. Logo reveal inspected at three animation times, with two footer animations under full motion and zero under reduced motion. Social hrefs checked against the repository. Physical devices, other browser engines, live contact delivery, and complete accessibility testing remain unverified.
