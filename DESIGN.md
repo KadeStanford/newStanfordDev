@@ -1,0 +1,242 @@
+# Stanford Development Solutions — Design Exploration
+
+Status: Three proposed directions for review. No direction or prototype is approved yet.
+
+Sources of truth: `BRIEF.md` and `COPY.md`
+
+## Mood-board reading
+
+The supplied mood board contains a consistent visual language even though it does not depict websites:
+
+- Deep navy, cobalt, cyan, teal, ice blue, lavender, and occasional coral or warm light
+- Large areas of negative space with one strong focal object
+- Natural scale and texture: mountains, ice, water, the moon, and fish
+- Synthetic surfaces: glass, chrome, corrugated metal, translucent folds, and luminous ribbons
+- Curved layers and diagonal movement rather than boxes arranged on a grid
+- A quiet, slightly surreal atmosphere rather than a loud “tech” aesthetic
+- Contrast between something monumental and something small or human
+- Soft grain, diffusion, refraction, and imperfect texture
+
+These qualities should shape composition, motion, material, scale, and pacing. The site should not reproduce any photographed subject as a brand symbol or copy the composition of an individual image.
+
+One file, `mike-hindle-C6AUqGSAsmg-unsplash.jpg`, could not be rendered by the available image viewer. It is not treated as inspected source material in these proposals.
+
+## Shared rules for every direction
+
+- Keep all approved copy from `COPY.md`; visual exploration is not permission to rewrite it.
+- Do not use a standard hero followed by a stack of interchangeable rounded cards.
+- Keep the site shorter by allowing visitors to reveal detail instead of displaying every detail at once.
+- Keep Work, Services & Pricing, About, and Get in touch directly reachable.
+- Use the Big Bass project as the single example in each prototype because it demonstrates both a public site and a working business portal.
+- Preserve the contact form's practical purpose and required fields.
+- Make the first viewport legible before any interaction begins.
+- Motion must have a purpose, work with keyboard and touch input, and respect reduced-motion preferences.
+- Mobile is a designed version of the direction, not a collapsed desktop afterthought.
+- Avoid fake metrics, decorative dashboards, code-editor windows, generic glowing orbs, and effects that obscure the actual work.
+- Use project screenshots as evidence. Use no more than a few mood-setting image assets in the eventual site.
+
+## Technical recommendation
+
+Keep the existing Next.js application and its current architecture. A framework replacement would add migration risk without making the design more original.
+
+The repository already includes enough creative capability:
+
+- React Three Fiber, Three.js, and Drei for one carefully bounded interactive three-dimensional scene
+- GSAP for choreographed scroll or mask transitions
+- Framer Motion for interface motion and direct manipulation
+- Lenis for the existing smooth-scroll behavior
+- Embla for a touch-friendly project or pricing rail if the chosen direction needs one
+
+Each direction should use only the smallest useful subset. Combining every animation library would make the site heavier and less coherent.
+
+## Direction 1 — Tidal Glass
+
+### Thesis
+
+A calm, dark digital environment built around one responsive glass form. The interface feels submerged, refracted, and alive without resembling a conventional “futuristic agency” site.
+
+### Mood-board principles to borrow
+
+- The translucent curves and cyan highlights of the glass and ice images
+- The deep-water negative space around the fish
+- The restrained coral glow seen in the moon and water reflection
+- Slow, continuous movement rather than many unrelated entrance animations
+
+### What not to borrow
+
+- No literal fish, mountain, moon, or glacier as a logo
+- No full-screen stock-photo slideshow
+- No glassmorphism cards layered everywhere
+- No generic glowing sphere in the middle of the hero
+
+### Desktop opening
+
+The approved headline sits in a quiet left-hand field with generous space. On the right, a single translucent ribbon-like form responds subtly to pointer movement. The form bends light from a cool cyan field toward a small coral highlight. “Get in touch” remains a solid, unmistakable action rather than becoming part of the artwork.
+
+The form is not merely decorative: as the visitor moves across three labeled edges—Website, Business tools, and Advertising—the object changes its internal structure and reveals one short, approved service explanation.
+
+### Mobile opening
+
+The headline and actions appear first. A smaller touch-responsive form sits below them and can be swiped between the three service states. Reduced-motion mode shows a still rendered image with the same labels and information.
+
+### Big Bass project
+
+The project appears through a large “lens” in the dark field. Dragging the lens across a project screenshot reveals the public website on one side and the working portal on the other. Text and project facts remain visible beside the interaction, so dragging is optional.
+
+On mobile, the comparison becomes an accessible two-position slider with explicit Public site and Business portal labels.
+
+### Contact
+
+The glass form gradually flattens into a bright, readable contact surface. The transition connects the playful object to a practical action; the form itself remains visually simple and easy to complete.
+
+### Likely implementation tools
+
+- React Three Fiber, Three.js, and Drei for the single glass form
+- Framer Motion for labels, navigation, and the project comparison
+- Lenis for restrained page movement
+
+### Strengths
+
+- Most directly expresses the material quality of the mood board
+- Gives visitors something memorable to explore immediately
+- Demonstrates technical ability without showing fake code or dashboards
+
+### Risks to control
+
+- WebGL performance on lower-powered phones
+- Too much refraction can reduce legibility
+- Must provide a strong static and reduced-motion version
+
+## Direction 2 — Alpine Editorial
+
+### Thesis
+
+A cinematic digital field journal: monumental imagery, unusually large spacing, sharp typography, and precise editorial pacing. It feels authored and artistic through composition rather than through a constant special effect.
+
+### Mood-board principles to borrow
+
+- A small human-scale element against a very large landscape
+- Cold blue tonal ranges with rare warm interruptions
+- Hard mountain diagonals paired with broad, empty sky
+- Grain and imperfect printed texture from the cyanotype image
+
+### What not to borrow
+
+- No outdoor-adventure positioning or claims
+- No mountain used as a metaphor in the written copy
+- No portfolio-template masonry grid
+- No ornamental magazine labels that add no meaning
+
+### Desktop opening
+
+The first screen uses an asymmetric editorial spread. The headline occupies a large field of open color. A narrow vertical strip contains location, availability, and navigation. One art-directed image or generated texture interrupts the field near an edge rather than sitting in a standard hero rectangle.
+
+Scrolling behaves like moving through a short visual essay. Content changes scale and alignment from chapter to chapter, but each chapter stays calm and readable.
+
+### Mobile opening
+
+The editorial hierarchy becomes a sequence of strong full-width planes: headline, availability, actions, and image. The narrow desktop index becomes a sticky bottom index with four direct destinations.
+
+### Big Bass project
+
+The project is treated as a feature story rather than a card. One large site image establishes the work. A short vertical sequence then moves from the client's need to the public lead path and finally the working portal. Visitors can open a compact annotated view showing contract signing and invoicing without leaving the page.
+
+### Contact
+
+The final page plane becomes warmer and more personal. “How can I help?” sits beside a clean form with no theatrical interaction competing for attention.
+
+### Likely implementation tools
+
+- CSS layout and typography for most of the experience
+- GSAP for a small number of image-mask and chapter transitions
+- Lenis for controlled pacing
+
+### Strengths
+
+- Fastest and most resilient direction
+- Feels designed without depending on a visual gimmick
+- Makes the real client work the main spectacle
+- Easiest direction to keep excellent on mobile
+
+### Risks to control
+
+- Requires exceptional typography and image art direction to avoid feeling merely minimal
+- Less overtly playful than the other directions
+
+## Direction 3 — The Living Field Guide
+
+### Thesis
+
+The site behaves like an explorable collection of layered specimens. Visitors move through bands, fragments, and translucent materials to discover services and project evidence. It combines the mood board's cyanotype tactility with the movement of its luminous ribbons.
+
+### Mood-board principles to borrow
+
+- Layered paper, cyanotype marks, folded material, and irregular edges
+- Repeated ribbons that create rhythm without becoming a grid
+- Singular colored objects floating in deep negative space
+- The tension between organic texture and clean digital interaction
+
+### What not to borrow
+
+- No scrapbook decorations, tape, stickers, or fake handwritten notes
+- No chaotic infinite canvas that hides navigation
+- No draggable interaction required to read essential information
+- No imitation of museum or archival websites
+
+### Desktop opening
+
+The approved opening copy is anchored in a clear center field. Around it are three slow-moving material bands labeled Website, Business tools, and Advertising. Hovering or dragging a band brings its label forward and exposes a short service excerpt; letting go returns the composition to a calm resting state.
+
+A fixed index keeps Work, Services & Pricing, About, and Get in touch visible while the visual field changes underneath it.
+
+### Mobile opening
+
+The bands become a vertical stack of touchable strips beneath the opening copy. Tapping one expands it in place. The fixed index becomes a compact thumb-reachable menu.
+
+### Big Bass project
+
+The project is a layered specimen: public-site screenshot, portal screenshot, and four factual annotations. Visitors can peel or slide the top layer to reveal the portal, then tap annotations for the approved supporting facts. A conventional “Visit Big Bass Tree Service” link remains present.
+
+### Contact
+
+Selecting Get in touch gathers the scattered material bands into a single quiet column around the form, visually turning exploration into a decision without changing the form's behavior.
+
+### Likely implementation tools
+
+- Framer Motion for drag, spring, and layout-state transitions
+- GSAP only if the layered scroll sequence needs tighter choreography
+- Existing project images plus one original texture or material asset if later approved
+
+### Strengths
+
+- Most playful and least like a conventional service-business website
+- Turns the variety of services into an understandable exploration
+- Can feel handcrafted without pretending to be analog
+
+### Risks to control
+
+- The playful surface cannot delay access to services, pricing, or contact
+- Requires careful touch behavior and strong focus states
+- Too many layers would recreate the clutter the redesign is meant to remove
+
+## Recommendation
+
+Direction 1, Tidal Glass, is the strongest direct translation of the mood board and the clearest demonstration of technical craft. Direction 3, The Living Field Guide, is the more unusual interaction concept and may better satisfy the desire for visitors to explore and play. Direction 2, Alpine Editorial, is the safest balance of artistry, credibility, performance, and clarity.
+
+The decision should be based on which quality matters most:
+
+- Tidal Glass: immersive material and technical presence
+- Alpine Editorial: cinematic restraint and focus on the work
+- The Living Field Guide: tactile exploration and playful discovery
+
+## Prototype boundary
+
+After Kade selects one or more directions to prototype, each approved prototype will contain only:
+
+- Navigation
+- The opening
+- The Big Bass project example
+- The contact section
+- Desktop and mobile behavior
+
+The prototypes will use approved copy and existing project evidence. Services, full pricing, About, legal pages, admin features, and production integration remain outside the prototype boundary.
