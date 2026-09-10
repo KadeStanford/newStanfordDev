@@ -6,21 +6,21 @@ import styles from '../../styles/ProjectStage.module.css';
 const images = ['/images/projects/bigbass-home.webp', '/images/projects/liberty-home.webp'];
 const urls = ['https://www.bigbasstrees.com/', 'https://libertyhousespecialties.com/'];
 
-export default function ProjectStage({ copy, onMotionChange }) {
+export default function ProjectStage({ copy, motionEnabled=true, motionMode='system', onMotionChange }) {
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
-  const [animateSwaps, setAnimateSwaps] = useState(true);
+  const animateSwaps=motionEnabled;
   const stage = useRef(null);
   const projects = copy['Selected work'].entries;
   const project = projects[selected];
   const focus = useRef(null);
 
   useEffect(() => {
-    if (expanded) focus.current?.scrollIntoView({ block: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
-  }, [expanded]);
+    if (expanded) focus.current?.scrollIntoView({ block: 'nearest', behavior: animateSwaps ? 'smooth' : 'instant' });
+  }, [expanded,animateSwaps]);
 
   function move(event) {
-    if (!animateSwaps || event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!animateSwaps || event.pointerType !== 'mouse') return;
     const box = event.currentTarget.getBoundingClientRect();
     stage.current.style.setProperty('--rx', `${((event.clientY - box.top) / box.height - .5) * -7}deg`);
     stage.current.style.setProperty('--ry', `${((event.clientX - box.left) / box.width - .5) * 10}deg`);
@@ -56,7 +56,7 @@ export default function ProjectStage({ copy, onMotionChange }) {
       <div aria-label="Choose a project">{projects.map((item, i) => <button key={item.title} aria-pressed={selected === i} onClick={() => setSelected(i)}><span>0{i + 1}</span>{item.title}<span>↗</span></button>)}</div>
       <button className={styles.explore} aria-expanded={expanded} aria-controls="project-focus" onClick={() => setExpanded(v => !v)}>{expanded ? 'Close project' : 'Explore project'} <span>{expanded ? '−' : '+'}</span></button>
     </div>
-    <AccessibilityTray motion={animateSwaps} onMotionChange={value => { setAnimateSwaps(value); onMotionChange?.(value); reset(); }} />
+    <AccessibilityTray motionMode={motionMode} onMotionChange={value => { onMotionChange?.(value); reset(); }} />
     <div id="project-focus" ref={focus} hidden={!expanded} className={styles.focus}>
       <div aria-live="polite"><span>0{selected + 1} / {project.blocks[0].text}</span><h2>{project.title}</h2><p>{project.blocks[1].text}</p><a href={urls[selected]} target="_blank" rel="noreferrer">{project.blocks.at(-1).text} ↗</a></div>
       <div><h3>What I built</h3><p>{project.blocks[2].text}</p><ul>{project.blocks.filter(item => item.kind === 'li').map(item => <li key={item.text}>{item.text}</li>)}</ul></div>

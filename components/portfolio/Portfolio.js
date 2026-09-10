@@ -2,7 +2,7 @@ import ProjectStage from './ProjectStage';
 import PageMotion from './PageMotion';
 import Education from './Education';
 import PricingSelector from './PricingSelector';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Contact from '../Contact';
@@ -12,7 +12,11 @@ import { siteUrl } from '../../next-seo.config';
 function Blocks({items}){return items.map((block,i)=>block.kind==='li'?<p className={styles.fact} key={i}>{block.text}</p>:<p key={i}>{block.text}</p>);}
 export default function Portfolio({copy}){
  const [menuOpen,setMenuOpen]=useState(false);
- const [motionEnabled,setMotionEnabled]=useState(true);
+ const [motionMode,setMotionMode]=useState('system');
+ const [systemReduced,setSystemReduced]=useState(true);
+ useEffect(()=>{const media=window.matchMedia('(prefers-reduced-motion: reduce)');const update=()=>setSystemReduced(media.matches);update();media.addEventListener('change',update);try{const saved=localStorage.getItem('sds-motion');if(['system','full','reduced'].includes(saved))setMotionMode(saved);}catch{}return()=>media.removeEventListener('change',update);},[]);
+ const motionEnabled=motionMode==='full'||(motionMode==='system'&&!systemReduced);
+ function changeMotion(mode){setMotionMode(mode);try{localStorage.setItem('sds-motion',mode);}catch{}}
 
  return <div className={styles.page} data-portfolio data-motion={motionEnabled}>
   <PageMotion/>
@@ -20,7 +24,7 @@ export default function Portfolio({copy}){
   <a className={styles.skip} href="#work">Skip to work</a>
   <header className={styles.nav} onKeyDown={event=>{if(event.key==='Escape'){setMenuOpen(false);event.currentTarget.querySelector('button')?.focus();}}}><a className={styles.brand} href="#top" aria-label="SDS — Stanford Development Solutions"><span className={styles.monogram} aria-hidden="true">SDS<i/></span></a><button className={styles.menuToggle} aria-expanded={menuOpen} aria-controls="main-navigation" onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?'Close':'Menu'}<span aria-hidden="true">{menuOpen?'−':'+'}</span></button><nav id="main-navigation" data-open={menuOpen} aria-label="Main navigation" onClick={event=>{if(event.target.closest('a'))setMenuOpen(false);}}><a href="#work">Work</a><a href="#pricing">Services &amp; Pricing</a><a href="#about">About</a><a href="#contact">Get in touch ↗</a></nav></header>
   <main>
-   <ProjectStage copy={copy} onMotionChange={setMotionEnabled}/>
+   <ProjectStage copy={copy} motionEnabled={motionEnabled} motionMode={motionMode} onMotionChange={changeMotion}/>
    <section className={styles.introduction}><p>{copy.Opening.blocks[2].text}</p><span>{copy.Opening.blocks[5].text}</span></section>
    <PricingSelector copy={copy}/>
    <section className={styles.about} id="about"><div className={styles.portrait}><Image src="/images/kadeCutout.png" alt="Kade Stanford" width={800} height={1000} sizes="(max-width:800px) 75vw, 35vw" style={{width:'100%',height:'100%',objectFit:'contain'}}/></div><div><h2>About me</h2><Blocks items={copy.About.blocks.slice(1)}/><Education/><details className={styles.process}><summary>Working together <b>+</b></summary>{copy.Process.entries.map(entry=><div key={entry.title}><h3>{entry.title}</h3><Blocks items={entry.blocks}/></div>)}</details></div></section>
