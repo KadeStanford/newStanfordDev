@@ -1,6 +1,5 @@
 import ProjectStage from './ProjectStage';
 import { useState } from 'react';
-import WorkflowLab from './BusinessLab';
 import Head from 'next/head';
 import Image from 'next/image';
 import Contact from '../Contact';
@@ -18,7 +17,6 @@ export default function Portfolio({copy}){
   <main>
    <ProjectStage copy={copy}/>
    <section className={styles.introduction}><p>{copy.Opening.blocks[2].text}</p><span>{copy.Opening.blocks[5].text}</span></section>
-   <WorkflowLab/>
    <section className={styles.services} id="pricing"><div className={styles.sectionHeader}><span>02 / Services &amp; Pricing</span><h2>{copy.Services.blocks[0].text}</h2></div><p className={styles.sectionIntro}>{copy.Services.blocks[1].text}</p><div className={styles.serviceList}>{copy.Services.entries.map((service,i)=><details key={service.title}><summary><span>0{i+1}</span>{service.title}<b>+</b></summary><div><Blocks items={service.blocks}/></div></details>)}</div>
     <div className={styles.priceIntro}><h3>{copy.Pricing.blocks[0].text}</h3><p>{copy.Pricing.blocks[1].text}</p></div><div className={styles.prices}>{copy.Pricing.entries.map((price)=><details key={price.title}><summary>{price.title}<b>+</b></summary><Blocks items={price.blocks}/></details>)}</div><p className={styles.pricingNote}>{copy.Pricing.note}</p>
    </section>
