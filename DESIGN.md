@@ -1,5 +1,9 @@
 # Stanford Development Solutions — Design Exploration
 
+## Decorative motion pass
+
+Added progressive-enhancement scroll reveals, package-change entrance motion, and fine-pointer hover movement for the SDS slash, portrait, graduation photo, and contact action. Accessibility toggle now controls homepage decorative motion as well as project cards. Reduced-motion CSS disables new effects and fixes the previous project transition specificity conflict. Copy and pricing unchanged. Verified production build, phone pricing render, package animation CSS, toggle state, and zero-duration card transitions with motion disabled/reduced motion. Physical devices and comprehensive animation/performance testing remain pending.
+
 ## Connected business implementation — review pending
 
 User authorized building the larger miniature-business concept. BusinessLab replaces the small demo, which remains in the repository for rollback. React Three Fiber/Three.js render the phone, storefront and calendar; GSAP moves the camera between workspaces. HTML controls provide the customer request, editable scope, estimate, simulated acceptance/day selection, and unsent invoice. No real business data or network submission is used. Scene motion can be paused and respects system reduced motion; errors fall back to the usable HTML workflow. Demo copy is proposed, not marked approved.

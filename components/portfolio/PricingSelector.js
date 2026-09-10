@@ -10,7 +10,7 @@ export default function PricingSelector({copy}){
   <div className={styles.categories} role="group" aria-label="Service category">{groups.map((item,i)=><button key={item.name} aria-pressed={group===i} onClick={()=>{setGroup(i);setSelected(item.items[0]);}}>{item.name}</button>)}</div>
   <div className={styles.display}>
    <div className={styles.rail} role="group" aria-label="Choose a package">{groups[group].items.map(i=><button key={i} aria-pressed={selected===i} onClick={()=>setSelected(i)}><span>{copy.Pricing.entries[i].title.split(' — ')[0]}</span><b aria-hidden="true">↗</b></button>)}<p>Select a package to see its scope.</p></div>
-   <article className={styles.package} aria-label="Selected package" aria-live="polite">
+   <article key={selected} className={styles.package} aria-label="Selected package" aria-live="polite">
     <div className={styles.offer}><h3>{name}</h3><p className={styles.price}>{price}</p><a href="#contact">Get in touch <span>↗</span></a></div>
     <div className={styles.scope}>{entry.blocks.map((block,i)=>block.kind==='li'?<p className={styles.item} key={i}><span aria-hidden="true">↳</span>{block.text}</p>:<p key={i}>{block.text}</p>)}</div>
     {group===0&&<aside className={styles.care}><h4>Optional care &amp; hosting <span>$175 per month</span></h4><p>Available for websites I build, not as a standalone service for existing sites.</p>{copy.Pricing.entries[3].blocks.map((block,i)=><p key={i}>{block.text}</p>)}</aside>}

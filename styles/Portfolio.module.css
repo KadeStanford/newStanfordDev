@@ -124,3 +124,5 @@
  .about>div>p:first-of-type{border-top:1px solid var(--line);padding-top:1.5rem}
 }
 @media(max-width:450px){.about .portrait{height:205px}.about h2{font-size:2.4rem;margin-bottom:1.5rem}}
+@media(prefers-reduced-motion:no-preference) and (hover:hover){.page[data-motion=true] .monogram i{transition:transform .3s}.page[data-motion=true] .brand:hover .monogram i{transform:skew(-18deg) translateX(4px)}.page[data-motion=true] .portrait img{transition:transform .6s cubic-bezier(.2,.7,.2,1)}.page[data-motion=true] .portrait:hover img{transform:translateY(-5px)}.page[data-motion=true] .contactWrap button[type=submit]{transition:transform .2s,filter .2s}.page[data-motion=true] .contactWrap button[type=submit]:hover{transform:translateY(-2px);filter:brightness(1.07)}}
+.page[data-motion=false] *{animation:none!important;transition:none!important}

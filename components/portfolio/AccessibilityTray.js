@@ -9,8 +9,8 @@ export default function AccessibilityTray({ motion, onMotionChange }) {
       <Dialog.Overlay className={styles.overlay} />
       <Dialog.Content className={styles.tray}>
         <Dialog.Title className={styles.title}>Accessibility settings</Dialog.Title>
-        <Dialog.Description className={styles.description}>Adjust motion in the project gallery.</Dialog.Description>
-        <label className={styles.setting}><span>Animate project cards<small>Card swaps and pointer movement</small></span><input type="checkbox" checked={motion} onChange={event => onMotionChange(event.target.checked)} /></label>
+        <Dialog.Description className={styles.description}>Adjust decorative motion throughout the page.</Dialog.Description>
+        <label className={styles.setting}><span>Enable visual motion<small>Project cards, section reveals, and hover effects. System reduced-motion preferences are respected.</small></span><input type="checkbox" checked={motion} onChange={event => onMotionChange(event.target.checked)} /></label>
         <Dialog.Close asChild><button className={styles.close} aria-label="Close accessibility settings"><X size={22} aria-hidden="true" /></button></Dialog.Close>
       </Dialog.Content>
     </Dialog.Portal>
