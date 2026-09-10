@@ -256,3 +256,15 @@ The three approved, isolated prototypes are available at:
 - `/prototypes/living-field-guide`
 
 These routes are design studies only. Approval to prototype does not approve any direction for production implementation.
+
+## Full local redesign — September 10, 2026
+
+The subsequent request, “run the dev server in the background while you work and begin on that, do not stop until you complete the full redesign,” authorizes full local implementation beyond the earlier static-study boundary. It does not constitute visual acceptance of the result or permission to deploy. The previous prototypes are preserved.
+
+Implemented direction: a full-viewport, draggable folded-glass composition built with the existing React Three Fiber, Drei, and Three.js dependencies. Fold, Unfold, and Fan controls change its composition; arrow controls provide an alternative to dragging. The scene rotates slowly, stops rendering offscreen, and has an explicit effects toggle. Reduced-motion and coarse-pointer devices start with a static alternative and can opt into 3D.
+
+The public homepage now includes the approved opening, both real projects, expandable services and pricing, About, process, and contact. Contact has a matching standalone page. COPY.md remains the build-time source for the portfolio copy; BRIEF.md remains authoritative for business facts. Mood images are not presented as client work. Existing API, legal, admin, analytics, and email infrastructure are retained.
+
+Visual rules: dark blue-green opening and service surfaces, pale project and About surfaces, oversized restrained typography, genuine project screenshots, and compact native disclosures rather than repeated marketing cards. Primary navigation and contact remain ordinary accessible HTML outside the canvas. No essential content requires WebGL.
+
+Visual acceptance is pending Kade's review. See REDESIGN_QA.md for performed checks and remaining verification.

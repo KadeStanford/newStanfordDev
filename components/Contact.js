@@ -189,29 +189,27 @@ export default function Contact() {
       <div className="relative mx-auto grid max-w-6xl gap-12 px-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
         <div className="lg:sticky lg:top-32">
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-300">
-            Free local audit
+            Get in touch
           </p>
           <h2 className="mt-4 text-4xl font-bold text-white md:text-5xl">
-            Tell me where your next lead should come from
+            How can I help?
           </h2>
           <p className="mt-6 text-lg leading-relaxed text-slate-400">
-            Share the basics and I will review your website, lead path, and
-            advertising opportunity. You do not need a finished brief or a
-            technical plan.
+            You do not need a finished brief or a technical plan. Tell me what you want to improve, what is not working, or what you wish were easier. I will reply within 24 hours on weekdays with a useful next step.
           </p>
 
           <div className="mt-8 space-y-4 text-slate-300">
             <div className="flex gap-3">
               <CheckCircle2 className="mt-0.5 shrink-0 text-blue-400" size={20} />
-              <p>No obligation and no automated sales sequence.</p>
+              <p>No obligation</p>
             </div>
             <div className="flex gap-3">
               <CheckCircle2 className="mt-0.5 shrink-0 text-blue-400" size={20} />
-              <p>You receive a clear recommendation before a proposal.</p>
+              <p>No automated sales sequence</p>
             </div>
             <div className="flex gap-3">
               <CheckCircle2 className="mt-0.5 shrink-0 text-blue-400" size={20} />
-              <p>Any paid work is scoped and priced in writing first.</p>
+              <p>Paid work is scoped and priced in writing first</p>
             </div>
           </div>
 
@@ -237,11 +235,10 @@ export default function Contact() {
                 <CheckCircle2 size={34} aria-hidden="true" />
               </div>
               <h3 className="mt-6 text-2xl font-bold text-white">
-                Your request is in
+                Your message is in.
               </h3>
               <p className="mt-3 max-w-md leading-relaxed text-slate-400">
-                I will review what you shared and contact you personally with a
-                useful next step.
+                Thanks for telling me about your project. I will review what you shared and reply within 24 hours on weekdays.
               </p>
               <button
                 type="button"
@@ -358,11 +355,13 @@ export default function Contact() {
                     required
                   >
                     <option value="website">A new or redesigned website</option>
+                    <option value="business-tool">A custom business tool or portal</option>
                     <option value="google-ads">Google Ads</option>
                     <option value="meta-ads">Facebook or Instagram Ads</option>
                     <option value="website-and-ads">Website and advertising</option>
                     <option value="care">Website care or improvements</option>
                     <option value="other">Something else</option>
+                    <option value="unsure">I am not sure yet</option>
                   </select>
                 </label>
 
@@ -376,7 +375,7 @@ export default function Contact() {
                     value={form.message}
                     onChange={updateField}
                     className={`${fieldClass} min-h-32 resize-y`}
-                    placeholder="A sentence or two is enough."
+                    placeholder="A sentence or two is enough. You can describe the problem even if you do not know the solution."
                     required
                     aria-invalid={Boolean(errors.message)}
                   />
@@ -411,7 +410,7 @@ export default function Contact() {
                 disabled={submitting || (captchaRequired && !recaptchaReady)}
                 className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {submitting ? "Sending..." : "Request my free audit"}
+                {submitting ? "Sending..." : "Send message"}
                 {!submitting && <ArrowRight size={18} aria-hidden="true" />}
               </button>
               <p className="mt-4 text-center text-sm text-slate-500">

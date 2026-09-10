@@ -1,26 +1,10 @@
-import Head from "next/head";
-import Navbar from "../components/Navbar";
-import ContactSection from "../components/Contact";
-import Footer from "../components/Footer";
-import { siteUrl } from "../next-seo.config";
-
-export default function ContactPage() {
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-blue-500 selection:text-white overflow-x-hidden relative">
-      <Head>
-        <title>Free Local Audit | Stanford Development Solutions</title>
-        <meta
-          name="description"
-          content="Request a free local business website and ads audit from Kade Stanford at Stanford Development Solutions."
-        />
-        <link rel="canonical" href={`${siteUrl}/contact`} />
-        <meta property="og:url" content={`${siteUrl}/contact`} />
-      </Head>
-      <Navbar />
-      <main className="relative z-10 pt-20">
-        <ContactSection />
-      </main>
-      <Footer />
-    </div>
-  );
-}
+import Head from 'next/head';
+import Contact from '../components/Contact';
+import styles from '../styles/Portfolio.module.css';
+import { siteUrl } from '../next-seo.config';
+export default function ContactPage(){return <div className={styles.page}>
+ <Head><title>Get in touch | Stanford Development Solutions</title><meta name="description" content="Get in touch with Kade Stanford about your website, business tools, or advertising."/><link rel="canonical" href={`${siteUrl}/contact`}/></Head>
+ <header className={styles.nav}><a className={styles.brand} href="/">Stanford<span>Development Solutions</span></a><nav aria-label="Main navigation"><a href="/#work">Work</a><a href="/#pricing">Services &amp; Pricing</a><a href="/#about">About</a></nav></header>
+ <main className={styles.contactWrap}><Contact/></main>
+ <footer className={styles.footer}><a href="/">Stanford Development Solutions</a><div><a href="/privacy">Privacy Policy</a><a href="/terms">Terms</a></div></footer>
+</div>;}
