@@ -11,7 +11,7 @@ function loadFont(id){
  return fontPromises.get(id);
 }
 
-export default function CurvedType3D({ onReady, preset='bungee-monoton' }) {
+export default function CurvedType3D({ onReady, preset='russo-monoton' }) {
  const [fonts,setFonts]=useState(null);
  useEffect(()=>{
   let active=true;

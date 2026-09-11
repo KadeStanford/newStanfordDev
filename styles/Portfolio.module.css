@@ -218,3 +218,19 @@
 .footer>div a:hover{color:#182a20;border-color:#466b26}
 .footer a:focus-visible{outline-color:#264622}
 @media(max-width:800px){.about h2{font-size:clamp(2.4rem,7vw,4rem);line-height:1.1}.about h2 em{display:block}.about .process{padding:1.3rem}.contactWrap [data-contact-layout]{padding-inline:5vw}.footer{padding:2.5rem 5vw}.footer .brand{gap:1rem}.footer .lockupName{max-width:21ch}}
+
+.about h2 em{display:inline;white-space:nowrap}
+@media(max-width:800px){.about h2{font-size:clamp(2rem,5.4vw,3.2rem);min-width:0;max-width:100%}}
+/* Warm paper form with restrained ink fields, rather than nested dark boxes. */
+.contactWrap :global(.rounded-3xl){background:#f0eee5;color:#26322d;border:1px solid #d5d8ca;border-radius:10px;box-shadow:0 18px 50px #0003;padding:clamp(1.2rem,3vw,2.5rem)}
+.contactWrap :global(.rounded-3xl) label,.contactWrap :global(.rounded-3xl) legend{color:#27362f!important}
+.contactWrap :global(.rounded-3xl) :global(.text-blue-300),.contactWrap :global(.rounded-3xl) :global(.text-slate-500),.contactWrap :global(.rounded-3xl) :global(.text-slate-400){color:#53634e!important}
+.contactWrap :global(.rounded-3xl) :global(.text-red-300){color:#a32525!important}
+.contactWrap :global(.rounded-3xl) :global(.text-amber-200),.contactWrap :global(.rounded-3xl) :global(.text-amber-300){color:#795711!important}
+.contactWrap input,.contactWrap select,.contactWrap textarea{background:#fffefa!important;color:#23372d!important;border:1px solid #a2afa0!important;border-radius:4px!important;box-shadow:none!important;font-size:1rem!important}
+.contactWrap input::placeholder,.contactWrap textarea::placeholder{color:#657365!important;opacity:1}
+.contactWrap input:focus,.contactWrap select:focus,.contactWrap textarea:focus{outline:2px solid #4e713e!important;outline-offset:2px;border-color:#4e713e!important;box-shadow:none!important}
+.contactWrap input[aria-invalid=true],.contactWrap textarea[aria-invalid=true]{border-color:#a32525!important}
+.contactWrap fieldset{padding-block:1rem;border-block:1px solid #b5bfae88}
+.contactWrap button[type=submit]{background:#234d38!important;color:#f3f6e9!important;border-radius:5px!important;font-family:Instrument,Arial,sans-serif;font-weight:600}
+.contactWrap :global(.rounded-3xl) h3{color:#243a2b}

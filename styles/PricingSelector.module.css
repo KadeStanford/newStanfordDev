@@ -23,4 +23,15 @@
 .serviceContext{padding:2rem;border:1px solid #a3bd9444;border-radius:4px;background:#111e18;margin-top:2rem}
 .serviceContext h3{font-family:var(--display-font);font-weight:400;font-size:clamp(1.4rem,2vw,2rem);line-height:1.3}
 @media(max-width:800px){.section{padding-block:3.5rem}.categories button{padding:1rem .4rem}.package{grid-template-columns:1fr}.offer{padding:1.5rem}.offer h3{max-width:none}.scope{padding:1.5rem}.serviceContext{padding:1.3rem}.rail button{min-width:100px}}
+
+.offer .price{font-family:Instrument,Arial,sans-serif;font-weight:650;font-style:normal;font-variant-numeric:tabular-nums;font-size:clamp(1.6rem,2.7vw,2.5rem);letter-spacing:-.04em;color:#243f2c;margin-bottom:1rem!important}
+.offerSummary{font-size:.85rem;line-height:1.7!important;color:#344c36;margin-bottom:1.3rem!important;max-width:48ch}
+.offer a{margin-top:auto}
+.rail{display:flex;flex-direction:column;gap:.6rem;padding-top:0}
+.rail button{align-items:center;border:1px solid #758d7255;border-radius:8px;background:#17231e;padding:1rem;min-height:64px;color:#d9e2d6;line-height:1.35;font-size:.85rem}
+.rail button[aria-pressed=true]{border-color:#c9e694;background:#293c28;color:#e3f4bb;box-shadow:inset 3px 0 #c8f06b}
+.rail b{display:grid;place-items:center;border-radius:50%;border:1px solid #a1b88e55;width:24px;height:24px;flex-shrink:0;font-size:.85rem}
+.rail button[aria-pressed=true] b{background:#c8f06b;color:#18351e;border-color:transparent}
+@media(max-width:800px){.rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}.rail button{min-width:0;gap:.4rem;padding:.85rem .7rem;flex-direction:column;align-items:flex-start;font-size:.75rem}.rail b{align-self:flex-end}.offer{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8rem 1rem;align-items:start}.offer h3{margin:0;font-size:clamp(1.4rem,3.6vw,2rem)}.offer .price{margin:0!important;font-size:clamp(1.35rem,3vw,1.9rem);text-align:right}.offerSummary{grid-column:1/-1;margin:0!important}.offer a{grid-column:1/-1;margin:0;max-width:none;width:100%}}
+@media(max-width:400px){.offer{grid-template-columns:1fr;gap:.6rem}.offer .price{text-align:left}.rail button{padding:.7rem .5rem;font-size:.7rem}}
 @media all{:global([data-motion=true]) .package{animation:packageArrival .35s ease-out}:global([data-motion=true]) .categories button,:global([data-motion=true]) .rail button{transition:color .2s,background .2s,border-color .2s}:global([data-motion=true]) .offer a span{transition:transform .25s}:global([data-motion=true]) .offer a:hover span{transform:translate(3px,-3px)}}
