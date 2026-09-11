@@ -14,7 +14,10 @@ export default function CurvedType3D({ onReady }) {
   try{
    renderer=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'low-power'});
    renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
-   renderer.setClearColor(0x000000,0);node.appendChild(renderer.domElement);
+   renderer.setClearColor(0x000000,0);
+   // Drawing-buffer resolution must not enlarge the canvas's CSS layout box.
+   Object.assign(renderer.domElement.style,{display:'block',width:'100%',height:'100%'});
+   node.appendChild(renderer.domElement);
    const scene=new THREE.Scene();const camera=new THREE.OrthographicCamera(-300,300,400,-400,.1,2000);camera.position.z=900;
    const group=new THREE.Group();scene.add(group);
    scene.add(new THREE.AmbientLight(0xffffff,1.5));
