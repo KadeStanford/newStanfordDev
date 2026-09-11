@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import AccessibilityTray from './AccessibilityTray';
+import StaticOrbit from './StaticOrbit';
 import ProjectGallery from './ProjectGallery';
 import styles from '../../styles/ProjectStage.module.css';
 
@@ -17,15 +18,6 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   const [mobile,setMobile]=useState(false);
   const textPreset='russo-monoton';
   const [typeReady,setTypeReady]=useState(false);
-  const [enhancementReady,setEnhancementReady]=useState(false);
-  useEffect(()=>{
-    // Keep decorative WebGL downloads out of the critical image/font window.
-    let timer;
-    const schedule=()=>{timer=setTimeout(()=>setEnhancementReady(true),1200);};
-    if(document.readyState==='complete')schedule();
-    else window.addEventListener('load',schedule,{once:true});
-    return()=>{clearTimeout(timer);window.removeEventListener('load',schedule);};
-  },[]);
   useEffect(()=>{const media=matchMedia('(max-width:800px)');const update=()=>setMobile(media.matches);update();media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
   useEffect(()=>{setTypeReady(false);},[mobile,motionEnabled]);
   const animateSwaps=motionEnabled;
@@ -96,6 +88,8 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
 
   return <section className={styles.experience} data-type="artistic" data-animate-swaps={animateSwaps} aria-labelledby="opening">
     <Head>
+      <link rel="preload" as="font" type="font/ttf" href="/fonts/RussoOne-Regular.ttf" crossOrigin="anonymous" media="(max-width: 800px)" />
+      <link rel="preload" as="font" type="font/ttf" href="/fonts/Monoton-Regular.ttf" crossOrigin="anonymous" media="(max-width: 800px)" />
       <link rel="preload" as="image" href="/images/projects/bigbass-mobile-preview.webp" media="(max-width: 800px)" fetchPriority="high" />
       <link rel="preload" as="image" href="/images/projects/bigbass-home-preview.webp" media="(min-width: 801px)" fetchPriority="high" />
       <link rel="preload" as="image" href="/images/projects/liberty-mobile-preview.webp" media="(max-width: 800px)" fetchPriority="high" />
@@ -107,13 +101,9 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
         <a href="#contact">Get in touch <span>↗</span></a>
       </div>
       <div id="work" className={styles.gallery} onPointerMove={move} onPointerLeave={reset} onPointerUp={event=>{if(event.pointerType!=='mouse')reset();}} onPointerCancel={reset} ref={stage}>
-        {mobile&&motionEnabled&&enhancementReady&&<CurvedType3D onReady={setTypeReady} preset={textPreset}/>}
-        <svg className={styles.arcHeadline} style={mobile&&motionEnabled&&typeReady?{visibility:'hidden'}:undefined} viewBox="0 0 600 800" aria-hidden="true" focusable="false">
-          <defs><path id="headline-top-arc" d="M 40 190 A 260 175 0 0 1 560 190"/><path id="headline-bottom-arc" d="M 40 605 A 260 175 0 0 0 560 605"/></defs>
-          <text className={styles.arcTop}><textPath href="#headline-top-arc" startOffset="50%" textAnchor="middle">Websites built around</textPath></text>
-          <text className={styles.arcBottom}><textPath href="#headline-bottom-arc" startOffset="50%" textAnchor="middle">your business.</textPath></text>
-        </svg>
+        {mobile&&motionEnabled&&<CurvedType3D onReady={setTypeReady} preset={textPreset}/>}
         <div className={styles.planes}>
+          {mobile && <StaticOrbit hidden={motionEnabled&&typeReady}/>}
           {projects.map((item, i) => <button key={item.title} data-depth-role={selected===i?'front':'rear'} style={{zIndex:selected===i?3:1}} className={`${styles.projectPlane} ${selected === i ? styles.front : styles.back}`} onClick={() => { if(swapping.current)return; if (selected === i) setExpanded(v => !v); else selectProject(i); }} aria-label={selected === i ? `${expanded ? 'Close' : 'Explore'} ${item.title}` : `Select ${item.title}`} aria-expanded={selected === i ? expanded : undefined}>
             <span className={styles.browserChrome} aria-hidden="true">
               <span className={styles.tabRow}><span className={styles.windowDots}><i/><i/><i/></span><span className={styles.browserTab}><span className={styles.favicon}>{i===0?'B':'L'}</span>{item.title}<span>×</span></span><span className={styles.newTab}>+</span></span>

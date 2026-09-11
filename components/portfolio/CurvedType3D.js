@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { orbitFonts, orbitOptions } from './orbitFonts';
+import { orbitAngles, orbitPose, orbitTilt } from './orbitGeometry';
 
 const fontPromises=new Map();
 function loadFont(id){
@@ -46,7 +47,7 @@ function OrbitLettering({onReady,preset,fonts}) {
    const phoneLayer=node.parentElement.querySelector('button')?.parentElement;
    (phoneLayer||node).appendChild(renderer.domElement);
    const scene=new THREE.Scene();const camera=new THREE.OrthographicCamera(-300,300,400,-400,.1,2000);camera.position.z=900;
-   const group=new THREE.Group();group.rotation.set(.22,-.30,0);scene.add(group);
+   const group=new THREE.Group();group.rotation.set(orbitTilt.x,orbitTilt.y,0);scene.add(group);
    function line(text,font,size,bottom){
     // Native font rasterization preserves nested counters/stripes that the
     // previous TTF-to-triangle conversion filled incorrectly (notably B/D).
@@ -55,8 +56,8 @@ function OrbitLettering({onReady,preset,fonts}) {
     const fontStyle=`${size*resolution}px "Orbit-${font}"`;
     measure.font=fontStyle;
     const advances=[...text].map(c=>measure.measureText(c).width/resolution+1);
-    const total=advances.reduce((a,b)=>a+b,0);let cursor=-total/2;
-    [...text].forEach((c,i)=>{const angle=(cursor+advances[i]/2)/total*(bottom?1.85:2.25);cursor+=advances[i];if(c===' ')return;
+    const angles=orbitAngles(advances,bottom);
+    [...text].forEach((c,i)=>{if(c===' ')return;
      const metrics=measure.measureText(c),canvas=document.createElement('canvas');
      canvas.width=Math.ceil(metrics.actualBoundingBoxLeft+metrics.actualBoundingBoxRight)+padding*2;
      canvas.height=Math.ceil(metrics.actualBoundingBoxAscent+metrics.actualBoundingBoxDescent)+padding*2;
@@ -72,7 +73,7 @@ function OrbitLettering({onReady,preset,fonts}) {
      const front=new THREE.MeshBasicMaterial({map:texture,color:bottom?0xc8f06b:0xe9f0e3,side:THREE.DoubleSide,transparent:true,depthWrite:false});materials.push(front);
      const geometry=new THREE.PlaneGeometry(canvas.width/resolution,canvas.height/resolution);
      geometry.translate(0,(metrics.actualBoundingBoxAscent-metrics.actualBoundingBoxDescent)/resolution/2,0);geometries.push(geometry);
-     const mesh=new THREE.Mesh(geometry,front);group.add(mesh);letters.push({mesh,angle:bottom?Math.PI-angle:angle,bottom});
+     const mesh=new THREE.Mesh(geometry,front);group.add(mesh);letters.push({mesh,angle:angles[i],bottom});
     });
    }
    line('Websites built around',fonts[0],40,false);line('your business.',fonts[1],52,true);
@@ -81,7 +82,7 @@ function OrbitLettering({onReady,preset,fonts}) {
    let ready=false;
    let phase=0,lastTime=null;
    function render(time){frame=null;if(disposed||!node.isConnected||!visible||document.hidden)return;const delta=lastTime===null?0:Math.min((time-lastTime)/1000,.05);lastTime=time;if(visible&&!document.hidden){phase+=delta*Math.PI*2/38;
-    letters.forEach(({mesh,angle,bottom})=>{const theta=angle+phase;mesh.position.set(265*Math.sin(theta),330*Math.cos(theta),0);mesh.rotation.z=Math.atan2(-330*Math.sin(theta),265*Math.cos(theta))+(bottom?Math.PI:0);});group.updateMatrixWorld(true);
+    letters.forEach(({mesh,angle,bottom})=>{const pose=orbitPose(angle,bottom,phase);mesh.position.set(pose.x,pose.y,0);mesh.rotation.z=pose.rotation;});group.updateMatrixWorld(true);
     // The entire orbit lives between the dynamically assigned phone roles.
     // Its far arc must not be routed behind the rear phone.
     renderer.render(scene,camera);if(!ready){ready=true;onReady(true);}}frame=requestAnimationFrame(render);}
