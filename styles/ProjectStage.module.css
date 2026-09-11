@@ -1,5 +1,6 @@
 .experience{background:#080e12;color:#edf1ee;position:relative;overflow:hidden;--accent:#c8f06b}
 .arcHeadline{display:none}
+@media(max-width:800px){.experience[data-type=artistic] .title>a{display:none}}
 @media(max-width:800px){
  .experience[data-type=artistic] .composition{display:flex;flex-direction:column}
  .experience[data-type=artistic] .title{display:contents}

@@ -1,2 +1,7 @@
 .education{grid-column:1/-1;display:grid;grid-template-columns:1.15fr 1fr;align-items:center;gap:1.5rem;margin:2rem 0;border:1px solid #91a49244;border-radius:14px;overflow:hidden;background:#14211f}.photo{height:290px;overflow:hidden}.photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 85%}.education figcaption{padding:1.5rem 1.5rem 1.5rem 0}.education figcaption>span{font-size:.65rem;letter-spacing:.09em;text-transform:uppercase;color:#c8f06b}.education h3{font-size:clamp(1.25rem,1.7vw,1.8rem);font-weight:450;letter-spacing:-.035em;line-height:1.15;margin:1rem 0}.education p{font-size:.8rem;color:#aeb9b7;margin:0!important}@media(max-width:800px){.education{margin:0 0 1.5rem;gap:1.5rem}.photo{height:320px}}@media(max-width:500px){.education{grid-template-columns:1fr;gap:0}.photo{height:300px}.education figcaption{padding:1.3rem}.education h3{font-size:1.6rem}}
 @media(hover:hover){:global([data-motion=true]) .photo img{transition:transform .8s cubic-bezier(.2,.7,.2,1)}:global([data-motion=true]) .education:hover .photo img{transform:scale(1.035)}}
+.education{background:#dfe8c9;color:#1b3024;border:0;border-radius:5px 26px 5px 5px;gap:0}
+.education figcaption{padding:1.5rem}
+.education figcaption>span{color:#49623a;font-size:.6rem;line-height:1.6}
+.education h3{font-family:var(--display-font);font-weight:400;letter-spacing:-.025em;line-height:1.2}
+.education p{color:#405444!important;line-height:1.6}

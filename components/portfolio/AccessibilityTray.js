@@ -1,10 +1,10 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { Accessibility, X } from 'lucide-react';
+import { PersonStanding, X } from 'lucide-react';
 import styles from '../../styles/AccessibilityTray.module.css';
 
 export default function AccessibilityTray({ motionMode, onMotionChange, tiltEnabled, tiltMessage, onTiltToggle, motionEnabled }) {
   return <Dialog.Root>
-    <Dialog.Trigger asChild><button className={styles.trigger} aria-label="Accessibility settings"><Accessibility size={22} aria-hidden="true" /></button></Dialog.Trigger>
+    <Dialog.Trigger asChild><button className={styles.trigger} aria-label="Accessibility settings"><PersonStanding size={24} strokeWidth={1.8} aria-hidden="true" /></button></Dialog.Trigger>
     <Dialog.Portal>
       <Dialog.Overlay className={styles.overlay} />
       <Dialog.Content className={styles.tray}>

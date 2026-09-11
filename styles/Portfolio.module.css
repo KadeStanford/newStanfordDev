@@ -1,5 +1,8 @@
 @font-face{font-family:Instrument;src:url('/fonts/instrument/InstrumentSans.ttf') format('truetype');font-weight:400 700;font-display:swap}
 .page{--night:#061820;--paper:#e4eeeb;--ink:#09232c;--line:#a9c4cd44;background:var(--night);color:var(--paper);font-family:Instrument,Arial,sans-serif;overflow-x:clip}
+@font-face{font-family:EditorialDisplay;src:url('/fonts/Righteous-Regular.ttf') format('truetype');font-display:swap}
+@font-face{font-family:EditorialScript;src:url('/fonts/OleoScript-Regular.ttf') format('truetype');font-display:swap}
+.page{--display-font:EditorialDisplay,Arial,sans-serif;--script-font:EditorialScript,Georgia,serif}
 .page *{box-sizing:border-box}.page p{margin:0;line-height:1.65}.page a{color:inherit;text-decoration:none}.page button,.page summary{font:inherit}.page a:focus-visible,.page button:focus-visible,.page summary:focus-visible{outline:2px solid #e9aa91;outline-offset:5px}.skip{position:absolute;top:-10rem;left:1rem;z-index:99;padding:1rem;background:var(--paper);color:var(--ink)!important}.skip:focus{top:1rem}
 .nav{display:flex;justify-content:space-between;align-items:center;padding:1.8rem 4vw;position:relative;z-index:5;border-bottom:1px solid var(--line)}.brand{font-size:1.3rem;line-height:1;letter-spacing:-.045em}.brand span{display:block;font-size:.75rem;letter-spacing:.01em;margin-top:.5rem}.nav nav{display:flex;gap:2.4rem;font-size:.9rem}.nav nav a:last-child{color:#edb299}
 .hero{height:calc(100svh - 95px);min-height:740px;position:relative;isolation:isolate;border-bottom:1px solid var(--line)}.heroMeta{display:flex;justify-content:space-between;position:absolute;top:2rem;left:4vw;right:4vw;font-size:.75rem;color:#b2c9d1;letter-spacing:.1em;text-transform:uppercase}.art{position:absolute;inset:0 8% 0 23%;z-index:0;cursor:grab}.art:active{cursor:grabbing}.heroTitle{position:absolute;bottom:11rem;left:4vw;z-index:1;pointer-events:none}.heroTitle p{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;max-width:28rem;margin-bottom:1.7rem;color:#9fc8d2}.heroTitle h1{margin:0;max-width:15ch;font-weight:450;font-size:clamp(3rem,5.8vw,6.9rem);line-height:.98;letter-spacing:-.07em;text-shadow:0 2px 30px #06182088}.heroTitle em{font-family:Georgia,serif;font-weight:400;color:#bbdeea}.artTools{position:absolute;right:4vw;bottom:12rem;display:grid;gap:.8rem;font-size:.75rem;color:#b2ccd5;text-align:right}.artTools>div{display:flex;justify-content:flex-end;gap:.4rem}.artTools button{background:#102c36;border:1px solid #91bac955;color:#d8edf1;padding:.6rem .8rem;cursor:pointer}.shapeControls{position:absolute;bottom:3rem;left:4vw;display:flex;gap:2rem}.shapeControls button{padding:.75rem 0;border:0;border-bottom:1px solid transparent;background:transparent;color:#adc6ce;font-size:.95rem;cursor:pointer}.shapeControls button[aria-pressed=true]{border-color:#edb299;color:white}.shapeControls span{font-size:.7rem;margin-right:.7rem;color:#e9aa91}.workLink{position:absolute;right:4vw;bottom:3rem;display:flex;align-items:center;gap:3rem;border-bottom:1px solid #8ab6c4;padding:.7rem 0}.workLink span{font-size:2rem}.still{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;padding-right:5%;gap:1rem;font-size:clamp(2rem,4vw,5rem);font-weight:400;letter-spacing:-.05em;color:#88adba;opacity:.3}
@@ -185,3 +188,33 @@
 .nav .menuToggle:focus-visible{outline:2px solid #edf1ee;outline-offset:4px}
 @keyframes sdsReveal{0%,8%{clip-path:inset(-20% 100% -20% -10%)}30%,83%{clip-path:inset(-20% -10% -20% -10%)}98%,100%{clip-path:inset(-20% 100% -20% -10%)}}
 @keyframes sdsSlash{0%,8%,98%,100%{right:calc(100% - .1em);transform:skew(-18deg)}30%,83%{right:0;transform:skew(-18deg)}}
+
+/* Editorial system below the opening; hero and navigation stay unchanged. */
+.about{background:radial-gradient(ellipse at 0 30%,#21322555,transparent 55%),#080e12}
+.about h2{font-family:var(--display-font);font-weight:400;letter-spacing:-.04em;font-size:clamp(3rem,5.5vw,6rem);line-height:1.04}
+.about h2 em{font-family:var(--script-font);font-style:normal;color:#d6edaa;font-weight:400}
+.about>div>p{font-size:clamp(.95rem,1.25vw,1.1rem);line-height:1.8;max-width:65ch}
+.about .portrait{border-radius:50% 50% 4px 4px;background:radial-gradient(ellipse at bottom,#46613b66,transparent 72%)}
+.about .process{border-top:0;border-radius:5px 26px 5px 5px;padding:1.6rem;background:#17271f;box-shadow:inset 3px 0 #c8f06b}
+.about .process h3{font-family:var(--display-font);font-size:clamp(1.6rem,2.4vw,2.5rem);font-weight:400;max-width:20ch;line-height:1.13;margin-bottom:1.5rem}
+.process ol{gap:1.15rem}
+.process li{border-left:0;border-top:1px solid #bed3b52b;padding:1rem 0 0}
+.process h4{font-family:var(--display-font);font-weight:400;font-size:1rem;color:#d8ecb6;letter-spacing:0}
+.about .process p{font-size:.88rem;line-height:1.75}
+.contactWrap{background:linear-gradient(145deg,#192820,#0a1210 65%)}
+.contactWrap h2{font-family:var(--script-font)!important;letter-spacing:-.035em;line-height:1.1;font-weight:400;color:#d7edae;font-size:clamp(3.3rem,7vw,6.7rem)!important}
+.contactWrap [data-contact-intro]>p:first-child{font-size:.7rem;letter-spacing:.16em}
+.contactWrap [data-contact-intro]>p:nth-of-type(2){max-width:44ch;line-height:1.8}
+.contactWrap :global(.rounded-3xl){border-radius:5px 32px 5px 5px;background:#18251e;border-color:#8ca17e55;box-shadow:8px 8px 0 #bedba20a}
+.contactWrap label{font-weight:500!important;font-size:.85rem!important}
+.contactWrap input,.contactWrap select,.contactWrap textarea{border-radius:5px!important;padding:.9rem!important}
+.contactWrap button[type=submit]{font-family:var(--display-font);font-weight:400;border-radius:5px!important;letter-spacing:.01em}
+.footer{padding-block:3.5rem;background:#dbe8c3;color:#182a20;border-top:0;gap:2rem 5vw}
+.footer .brand .lockupName{font-family:var(--display-font);font-weight:400;color:#182a20;font-size:clamp(1.2rem,2vw,1.8rem);letter-spacing:-.03em;line-height:1.2}
+.footer .monogram i{background:#466b26}
+.footer p{color:#405644;line-height:1.8}
+.footer>div{border-top:1px solid #52674a44;padding-top:1.3rem;gap:1rem 2rem}
+.footer>div a{font-size:.8rem;border-bottom:1px solid transparent;padding-bottom:.3rem}
+.footer>div a:hover{color:#182a20;border-color:#466b26}
+.footer a:focus-visible{outline-color:#264622}
+@media(max-width:800px){.about h2{font-size:clamp(2.4rem,7vw,4rem);line-height:1.1}.about h2 em{display:block}.about .process{padding:1.3rem}.contactWrap [data-contact-layout]{padding-inline:5vw}.footer{padding:2.5rem 5vw}.footer .brand{gap:1rem}.footer .lockupName{max-width:21ch}}
