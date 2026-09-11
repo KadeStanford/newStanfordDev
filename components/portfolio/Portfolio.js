@@ -15,11 +15,24 @@ export default function Portfolio({copy}){
  const [menuOpen,setMenuOpen]=useState(false);
  const [motionMode,setMotionMode]=useState('system');
  const [systemReduced,setSystemReduced]=useState(true);
+ useEffect(()=>{
+  if(performance.getEntriesByType('navigation')[0]?.type!=='reload')return;
+  const previous=history.scrollRestoration;
+  history.scrollRestoration='manual';
+  if(location.hash)history.replaceState(history.state,'',`${location.pathname}${location.search}#top`);
+  let frame;
+  const showHeader=()=>{window.scrollTo({top:0,left:0,behavior:'instant'});cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'instant'}));};
+  showHeader();
+  window.addEventListener('load',showHeader);
+  const onPageShow=event=>{if(!event.persisted)showHeader();};
+  window.addEventListener('pageshow',onPageShow);
+  return()=>{cancelAnimationFrame(frame);history.scrollRestoration=previous;window.removeEventListener('load',showHeader);window.removeEventListener('pageshow',onPageShow);};
+ },[]);
  useEffect(()=>{const media=window.matchMedia('(prefers-reduced-motion: reduce)');const update=()=>setSystemReduced(media.matches);update();media.addEventListener('change',update);try{const saved=localStorage.getItem('sds-motion');if(['system','full','reduced'].includes(saved))setMotionMode(saved);}catch{}return()=>media.removeEventListener('change',update);},[]);
  const motionEnabled=motionMode==='full'||(motionMode==='system'&&!systemReduced);
  function changeMotion(mode){setMotionMode(mode);try{localStorage.setItem('sds-motion',mode);}catch{}}
 
- return <div className={styles.page} data-portfolio data-motion={motionEnabled}>
+ return <div id="top" className={styles.page} data-portfolio data-motion={motionEnabled}>
   <PageMotion/>
   <Head><title>{copy['Page metadata'].blocks[0].text}</title><meta name="description" content={copy['Page metadata'].blocks[1].text}/><link rel="canonical" href={siteUrl}/><meta property="og:url" content={siteUrl}/></Head>
   <a className={styles.skip} href="#work">Skip to work</a>

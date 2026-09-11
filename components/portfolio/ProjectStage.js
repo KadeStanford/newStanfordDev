@@ -118,7 +118,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
     stage.current.style.setProperty('--ry', '0deg');
   }
 
-  return <section id="top" className={styles.experience} data-type="artistic" data-animate-swaps={animateSwaps} aria-labelledby="opening">
+  return <section className={styles.experience} data-type="artistic" data-animate-swaps={animateSwaps} aria-labelledby="opening">
     <div className={styles.composition}>
       <div className={styles.title}>
         <h1 id="opening">Websites built around <em>your business.</em></h1>
