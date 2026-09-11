@@ -43,7 +43,7 @@
 .front{z-index:2;transform:translate3d(-5%,8%,70px) rotateY(-13deg) rotateZ(-5deg)}
 .back{z-index:1;transform:translate3d(14%,-43%,-170px) rotateY(-22deg) rotateZ(9deg);filter:brightness(.65)}
 .back:hover{filter:brightness(.95)}
-.experience .projectPlane{transition:transform 850ms cubic-bezier(.45,0,.2,1),filter 850ms ease,z-index 0s 425ms!important}
+.experience .projectPlane{transition:transform 850ms cubic-bezier(.45,0,.2,1),filter 850ms ease!important}
 .experience[data-animate-swaps=false] .projectPlane{transition:none!important}
 .selection>.motionControl{display:grid;gap:.2rem;font-size:.75rem;color:#9aa9a5}
 .selection>.motionControl button{font-size:.75rem;padding:.4rem 0;width:max-content}

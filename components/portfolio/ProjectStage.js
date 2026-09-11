@@ -14,7 +14,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [mobile,setMobile]=useState(false);
-  const [textPreset,setTextPreset]=useState('metal');
+  const [textPreset,setTextPreset]=useState('monoton');
   const [typeReady,setTypeReady]=useState(false);
   useEffect(()=>{const media=matchMedia('(max-width:800px)');const update=()=>setMobile(media.matches);update();media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
   useEffect(()=>{setTypeReady(false);},[mobile,motionEnabled]);
@@ -119,7 +119,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   }
 
   return <section id="top" className={styles.experience} data-type="artistic" data-animate-swaps={animateSwaps} aria-labelledby="opening">
-    {mobile&&process.env.NODE_ENV==='development'&&<label className={styles.typeStudy}>2D orbit lettering <select value={textPreset} onChange={e=>setTextPreset(e.target.value)}><option value="metal">Clean sans + flowing serif</option><option value="bold">Bold sans + sculptural serif</option><option value="sculptural">Sculptural serif + light sans</option><option value="editorial">Classic serif + bold sans</option></select></label>}
+    {mobile&&process.env.NODE_ENV==='development'&&<label className={styles.typeStudy}>2D orbit lettering <select value={textPreset} onChange={e=>setTextPreset(e.target.value)}><option value="monoton">All Monoton</option><option value="metal">Bungee + DM Serif Italic</option><option value="bold">Monoton + DM Serif Italic</option><option value="sculptural">Bungee + Italiana</option><option value="editorial">Italiana + Monoton</option></select></label>}
     <div className={styles.composition}>
       <div className={styles.title}>
         <h1 id="opening">Websites built around <em>your business.</em></h1>
@@ -133,7 +133,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
           <text className={styles.arcBottom}><textPath href="#headline-bottom-arc" startOffset="50%" textAnchor="middle">your business.</textPath></text>
         </svg>
         <div className={styles.planes}>
-          {projects.map((item, i) => <button key={item.title} className={`${styles.projectPlane} ${selected === i ? styles.front : styles.back}`} onClick={() => { if(swapping.current)return; if (selected === i) setExpanded(v => !v); else selectProject(i); }} aria-label={selected === i ? `${expanded ? 'Close' : 'Explore'} ${item.title}` : `Select ${item.title}`} aria-expanded={selected === i ? expanded : undefined}>
+          {projects.map((item, i) => <button key={item.title} data-depth-role={selected===i?'front':'rear'} style={{zIndex:selected===i?3:1}} className={`${styles.projectPlane} ${selected === i ? styles.front : styles.back}`} onClick={() => { if(swapping.current)return; if (selected === i) setExpanded(v => !v); else selectProject(i); }} aria-label={selected === i ? `${expanded ? 'Close' : 'Explore'} ${item.title}` : `Select ${item.title}`} aria-expanded={selected === i ? expanded : undefined}>
             <span className={styles.browserChrome} aria-hidden="true">
               <span className={styles.tabRow}><span className={styles.windowDots}><i/><i/><i/></span><span className={styles.browserTab}><span className={styles.favicon}>{i===0?'B':'L'}</span>{item.title}<span>×</span></span><span className={styles.newTab}>+</span></span>
               <span className={styles.addressRow}><span className={styles.browserArrows}>← &nbsp; → &nbsp; ↻</span><span className={styles.address}>⌁ &nbsp; {i===0?'bigbasstrees.com':'libertyhousespecialties.com'}</span><span>···</span></span>

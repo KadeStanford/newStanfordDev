@@ -1,17 +1,33 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import sansData from 'three/examples/fonts/helvetiker_regular.typeface.json';
-import serifData from 'three/examples/fonts/optimer_regular.typeface.json';
-import boldData from 'three/examples/fonts/helvetiker_bold.typeface.json';
-import sculptData from 'three/examples/fonts/gentilis_regular.typeface.json';
+import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js';
 
-export default function CurvedType3D({ onReady, preset='metal' }) {
+const fontFiles=['Bungee-Regular.ttf','DMSerifDisplay-Italic.ttf','Monoton-Regular.ttf','Italiana-Regular.ttf'];
+let fontPromise;
+
+export default function CurvedType3D({ onReady, preset='monoton' }) {
+ const [fonts,setFonts]=useState(null);
+ useEffect(()=>{
+  let active=true;
+  fontPromise??=Promise.all(fontFiles.map(async file=>{
+   const response=await fetch(`/fonts/${file}`);
+   if(!response.ok)throw new Error('Orbit font unavailable');
+   return new TTFLoader().parse(await response.arrayBuffer());
+  })).catch(error=>{fontPromise=null;throw error;});
+  fontPromise.then(data=>{if(active)setFonts(data);}).catch(()=>{if(active)onReady(false);});
+  return()=>{active=false;};
+ },[onReady]);
+ return fonts?<OrbitLettering onReady={onReady} preset={preset} fonts={fonts}/>:null;
+}
+
+function OrbitLettering({onReady,preset,fonts}) {
  const host=useRef(null);
  useEffect(()=>{
   const node=host.current;let renderer,frame,visible=true,disposed=false;
   const geometries=[];const materials=[];const letters=[];
-  const pairing={metal:[sansData,serifData],bold:[boldData,sculptData],sculptural:[sculptData,sansData],editorial:[serifData,boldData]}[preset]||[sansData,serifData];
+  const [bungee,dmSerif,monoton,italiana]=fonts;
+  const pairing={monoton:[monoton,monoton],metal:[bungee,dmSerif],bold:[monoton,dmSerif],sculptural:[bungee,italiana],editorial:[italiana,monoton]}[preset]||[monoton,monoton];
   onReady(false);
   const fail=()=>onReady(false);
   try{
@@ -19,10 +35,11 @@ export default function CurvedType3D({ onReady, preset='metal' }) {
    renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
    renderer.setClearColor(0x000000,0);
    // Drawing-buffer resolution must not enlarge the canvas's CSS layout box.
-   Object.assign(renderer.domElement.style,{display:'block',width:'100%',height:'100%',position:'absolute',inset:'0',zIndex:1,pointerEvents:'none'});
+   Object.assign(renderer.domElement.style,{display:'block',width:'100%',height:'100%',position:'absolute',inset:'0',zIndex:2,pointerEvents:'none'});
+   renderer.domElement.dataset.orbitLayer='middle';
    const rear=document.createElement('canvas');Object.assign(rear.style,{position:'absolute',inset:'0',width:'100%',height:'100%',zIndex:0});node.appendChild(rear);const rearContext=rear.getContext('2d');
-   // Share the phones' stacking context: rear phone (1), text (1, later
-   // DOM order), front phone (2). The front silhouette always occludes text.
+   // Explicit roles update with selection at the swap midpoint:
+   // rear phone (1), text (2), front phone (3), independent of DOM order.
    const phoneLayer=node.parentElement.querySelector('button')?.parentElement;
    (phoneLayer||node).appendChild(renderer.domElement);
    const scene=new THREE.Scene();const camera=new THREE.OrthographicCamera(-300,300,400,-400,.1,2000);camera.position.z=900;
@@ -63,6 +80,6 @@ export default function CurvedType3D({ onReady, preset='metal' }) {
    renderer.domElement.addEventListener('webglcontextlost',fail);frame=requestAnimationFrame(render);
    return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();intersection.disconnect();renderer.domElement.removeEventListener('webglcontextlost',fail);geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());renderer.dispose();renderer.domElement.remove();node.replaceChildren();};
   }catch{renderer?.dispose();renderer?.domElement.remove();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());fail();}
- },[onReady,preset]);
+ },[onReady,preset,fonts]);
  return <div ref={host} aria-hidden="true" style={{position:'absolute',inset:0,pointerEvents:'none'}}/>;
 }
