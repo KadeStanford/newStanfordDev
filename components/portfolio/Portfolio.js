@@ -14,7 +14,7 @@ import { siteUrl } from '../../next-seo.config';
 function Blocks({items}){return items.map((block,i)=>block.kind==='li'?<p className={styles.fact} key={i}>{block.text}</p>:<p key={i}>{block.text}</p>);}
 export default function Portfolio({copy}){
  const [menuOpen,setMenuOpen]=useState(false);
- const [motionMode,setMotionMode]=useState('system');
+ const [motionMode,setMotionMode]=useState('full');
  const [systemReduced,setSystemReduced]=useState(true);
  useEffect(()=>{
   if(performance.getEntriesByType('navigation')[0]?.type!=='reload')return;

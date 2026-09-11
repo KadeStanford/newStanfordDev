@@ -22,6 +22,7 @@ export default function Contact({portfolio = false}) {
   const [submitError, setSubmitError] = useState('');
   const [errors, setErrors] = useState({});
   const [recaptchaReady, setRecaptchaReady] = useState(false);
+  const [captchaLoadError, setCaptchaLoadError] = useState(false);
   const formRef = useRef(null);
   const recaptchaContainerRef = useRef(null);
   const recaptchaWidgetRef = useRef(null);
@@ -40,7 +41,7 @@ export default function Contact({portfolio = false}) {
   }, []);
 
   useEffect(() => {
-    if (!captchaRequired || !recaptchaContainerRef.current) return undefined;
+    if (!captchaRequired || submitted || !recaptchaContainerRef.current) return undefined;
 
     let cancelled = false;
 
@@ -64,7 +65,16 @@ export default function Contact({portfolio = false}) {
           "error-callback": () => setRecaptchaReady(false),
         }
       );
+      setCaptchaLoadError(false);
     };
+
+    // api.js's DOM load can precede the widget library. Google's callback
+    // runs only after its dependencies are ready; the event supports remounts.
+    window.sdsRecaptchaLoaded = () => window.dispatchEvent(new Event('sds-recaptcha-ready'));
+    window.addEventListener('sds-recaptcha-ready', renderCaptcha);
+    const loadTimeout = setTimeout(() => {
+      if (!cancelled && recaptchaWidgetRef.current === null) setCaptchaLoadError(true);
+    }, 15000);
 
     if (window.grecaptcha?.render) {
       renderCaptcha();
@@ -76,18 +86,22 @@ export default function Contact({portfolio = false}) {
         existing.addEventListener("load", renderCaptcha, { once: true });
       } else {
         const script = document.createElement("script");
-        script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
+        script.src = "https://www.google.com/recaptcha/api.js?onload=sdsRecaptchaLoaded&render=explicit";
         script.async = true;
         script.defer = true;
         script.addEventListener("load", renderCaptcha, { once: true });
         document.head.appendChild(script);
       }
+      window.grecaptcha?.ready?.(renderCaptcha);
     }
 
     return () => {
       cancelled = true;
+      clearTimeout(loadTimeout);
+      window.removeEventListener('sds-recaptcha-ready', renderCaptcha);
+      recaptchaWidgetRef.current = null;
     };
-  }, [captchaRequired, siteKey]);
+  }, [captchaRequired, siteKey, submitted]);
 
   const updateField = (event) => {
     const { name, value } = event.target;
@@ -405,7 +419,7 @@ export default function Contact({portfolio = false}) {
                   <div ref={recaptchaContainerRef} />
                   {!recaptchaReady && (
                     <p className="mt-2 text-sm text-slate-500">
-                      Complete the CAPTCHA before sending.
+                      {captchaLoadError ? 'CAPTCHA could not load. Please refresh or email me directly using the address above.' : 'Complete the CAPTCHA before sending.'}
                     </p>
                   )}
                 </div>
