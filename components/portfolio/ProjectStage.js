@@ -27,26 +27,31 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
     const cards=[...stage.current.querySelectorAll('button')];
     swapping.current=true;
     stage.current.dataset.swapping='true';
-    // Narrow phones shrink briefly so both silhouettes can clear each other.
+    // Phone centers follow opposite halves of a tilted ellipse.
     const width=stage.current.clientWidth;
     const cardWidth=cards[0].offsetWidth;
     const left=cards[0].offsetLeft;
-    const scale=Math.min(.88,(width*.43)/cardWidth);
-    const xLeft=width*.25-left-cardWidth/2;
-    const xRight=width*.75-left-cardWidth/2;
     const height=stage.current.clientHeight;
     const cardHeight=cards[0].offsetHeight;
     const desktopScale=Math.min(.78,height*.36/cardHeight);
-    const separated=cards.map((card,i)=>mobile
-      ? `translate(${i===selected?xLeft:xRight}px, ${i===selected?65:10}px) rotate(${i===selected?-12:12}deg) scale(${scale})`
-      : `translate(${width*.52-left-cardWidth/2}px, ${height*(i===selected?.76:.24)-card.offsetTop-cardHeight/2}px) rotate(${i===selected?-5:5}deg) scale(${desktopScale})`);
+    const separated=cards.map((card,i)=>`translate(${width*.52-left-cardWidth/2}px, ${height*(i===selected?.76:.24)-card.offsetTop-cardHeight/2}px) rotate(${i===selected?-5:5}deg) scale(${desktopScale})`);
+    const orbitFrames=(i,start,end)=>Array.from({length:33},(_,step)=>{
+      const t=start+(end-start)*step/32;
+      const angle=Math.PI*t;
+      const direction=i===selected?1:-1;
+      const x=direction*(-.24*cardWidth*Math.cos(angle)-.22*width*Math.sin(angle));
+      const y=.07*cardHeight+direction*(.08*cardHeight*Math.cos(angle)-.1*height*Math.sin(angle));
+      const rotation=.5-direction*8.5*Math.cos(angle);
+      const scale=1-.28*Math.sin(angle)**2;
+      return {transform:`translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`,offset:step/32};
+    });
     try{
-      animations.current=cards.map((card,i)=>card.animate([{transform:getComputedStyle(card).transform},{transform:separated[i]}],{duration:380,easing:'cubic-bezier(.2,.7,.2,1)',fill:'forwards'}));
+      animations.current=cards.map((card,i)=>card.animate(mobile?orbitFrames(i,0,.5):[{transform:getComputedStyle(card).transform},{transform:separated[i]}],{duration:mobile?600:380,easing:mobile?'cubic-bezier(.42,0,1,1)':'cubic-bezier(.2,.7,.2,1)',fill:'forwards'}));
       await Promise.all(animations.current.map(a=>a.finished));
       flushSync(()=>setSelected(index));
       animations.current.forEach(a=>a.cancel());
       const destinations=cards.map(card=>getComputedStyle(card).transform);
-      animations.current=cards.map((card,i)=>card.animate([{transform:separated[i]},{transform:destinations[i]}],{duration:560,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}));
+      animations.current=cards.map((card,i)=>card.animate(mobile?orbitFrames(i,.5,1):[{transform:separated[i]},{transform:destinations[i]}],{duration:mobile?600:560,easing:mobile?'cubic-bezier(0,0,.58,1)':'cubic-bezier(.16,1,.3,1)',fill:'forwards'}));
       await Promise.all(animations.current.map(a=>a.finished));
     }catch{}finally{
       animations.current.forEach(a=>a.cancel());animations.current=[];
