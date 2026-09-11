@@ -60,9 +60,22 @@
 .planes{transform-style:flat}
 /* A quiet display stage grounds the floating project previews. */
 .gallery::before,.gallery::after{content:'';position:absolute;pointer-events:none;border-radius:50%}
-.gallery::before{inset:14% 3% 9%;background:radial-gradient(ellipse,#74985120,transparent 68%);border:1px solid #b5d99818;transform:rotate(-22deg) scaleY(.7);box-shadow:0 0 0 28px #bdd5ac04,0 0 0 58px #bdd5ac03}
+.gallery::before{inset:14% 3% 9%;background:repeating-radial-gradient(ellipse at center,transparent 0%,#c8f06b04 8%,#c8f06b15 11%,#adc5b92b 11.4%,#10221a08 11.8%,transparent 13.5%),radial-gradient(ellipse at 40% 30%,#98b86b16,transparent 70%);border:1px solid #b5d99830;transform:rotate(-22deg) scaleY(.7);box-shadow:0 0 0 28px #bdd5ac04,0 0 0 58px #bdd5ac03}
 .gallery::after{left:17%;right:13%;bottom:8%;height:9%;background:radial-gradient(ellipse,#0008,transparent 70%);filter:blur(12px)}
 .planes{z-index:1}
+.selection{grid-template-columns:1fr auto;gap:1rem 2rem;padding:1.4rem 4vw 1.8rem;background:linear-gradient(120deg,#142019,#080e12 70%)}
+.selection>span{grid-column:1/-1;font-size:.65rem}
+.selection>div{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;min-width:0}
+.selection>div button{padding:.7rem;gap:.75rem;border:1px solid #b6cbb92b;border-radius:12px;background:#0c1615;min-width:0;box-shadow:0 5px 18px #0002}
+.selection>div button img{width:64px;height:44px;object-fit:cover;border-radius:5px;opacity:.65;flex-shrink:0}
+.selection>div button[aria-pressed=true]{border-color:#c8f06b;background:linear-gradient(120deg,#2c3d25,#16241c);box-shadow:inset 0 1px #e3ffb825,0 5px 18px #0002}
+.selection>div button[aria-pressed=true] img{opacity:1}
+.selection .projectLabel{font-size:.85rem;line-height:1.3;color:inherit}
+.selectedDot{width:6px;height:6px;border:1px solid #91a492;border-radius:50%;margin-left:auto;flex-shrink:0}
+.selection button[aria-pressed=true] .selectedDot{background:#c8f06b;border-color:#c8f06b;box-shadow:0 0 10px #c8f06b66}
+.selection .explore{padding:.9rem 1.2rem;border-radius:30px;border:1px solid #c8f06b66;white-space:nowrap}
+.selection button:focus-visible{outline:2px solid #edf1ee;outline-offset:4px}
+@media(max-width:800px){.selection{padding:1.2rem 5vw;grid-template-columns:1fr}.selection>div{grid-template-columns:1fr 1fr}.selection .explore{justify-self:end;font-size:.8rem}.selection>div button{flex-wrap:wrap;gap:.6rem}.selection>div button img{width:52px;height:34px}.selection .projectLabel{flex-basis:100%;order:2}.selection .selectedDot{margin-left:auto}}
 @media(max-width:800px){
  .gallery{--phone-width:min(38vw,220px);height:calc(min(38vw,220px) * 2.85 + 40px);margin-top:1.5rem}
  .projectPlane{width:var(--phone-width);max-width:none;left:calc(50% - min(19vw,110px));top:8%;padding:5px;border-radius:clamp(20px,4.8vw,32px)}
