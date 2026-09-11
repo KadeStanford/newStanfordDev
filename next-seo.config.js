@@ -17,10 +17,10 @@ const SEO = {
       "Custom websites and Google and Meta ad management for local businesses, built and managed personally by Kade Stanford.",
     images: [
       {
-        url: `${siteUrl}/images/kadeProfile.jpg`,
+        url: `${siteUrl}/images/sds-social-preview.png`,
         width: 1200,
         height: 630,
-        alt: "Kade Stanford, founder of Stanford Development Solutions",
+        alt: "Stanford Development Solutions — Websites built around your business, featuring Big Bass Tree Service and Liberty House Specialties",
       },
     ],
   },
@@ -31,8 +31,10 @@ const SEO = {
   additionalLinkTags: [
     {
       rel: "icon",
-      href: `${siteUrl}/favicon.ico`,
+      href: "/favicon.ico?v=sds-1",
     },
+    { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+    { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
   ],
 };
 
