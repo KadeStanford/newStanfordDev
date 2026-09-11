@@ -37,7 +37,6 @@ function OrbitLettering({onReady,preset,fonts}) {
    // Drawing-buffer resolution must not enlarge the canvas's CSS layout box.
    Object.assign(renderer.domElement.style,{display:'block',width:'100%',height:'100%',position:'absolute',inset:'0',zIndex:2,pointerEvents:'none'});
    renderer.domElement.dataset.orbitLayer='middle';
-   const rear=document.createElement('canvas');Object.assign(rear.style,{position:'absolute',inset:'0',width:'100%',height:'100%',zIndex:0});node.appendChild(rear);const rearContext=rear.getContext('2d');
    // Explicit roles update with selection at the swap midpoint:
    // rear phone (1), text (2), front phone (3), independent of DOM order.
    const phoneLayer=node.parentElement.querySelector('button')?.parentElement;
@@ -55,27 +54,15 @@ function OrbitLettering({onReady,preset,fonts}) {
     });
    }
    line('Websites built around',pairing[0],30,false);line('your business.',pairing[1],39,true);
-   const resize=()=>{const {width,height}=node.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height,false);rear.width=renderer.domElement.width;rear.height=renderer.domElement.height;const aspect=width/height;const w=Math.max(600,800*aspect),h=w/aspect;camera.left=-w/2;camera.right=w/2;camera.top=h/2;camera.bottom=-h/2;camera.updateProjectionMatrix();};
+   const resize=()=>{const {width,height}=node.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height,false);const aspect=width/height;const w=Math.max(600,800*aspect),h=w/aspect;camera.left=-w/2;camera.right=w/2;camera.top=h/2;camera.bottom=-h/2;camera.updateProjectionMatrix();};
    const observer=new ResizeObserver(resize);observer.observe(node);resize();
    let ready=false;
-   let phase=0,lastTime=null;const world=new THREE.Vector3();const corner=new THREE.Vector3();
-   const phones=[...node.parentElement.querySelectorAll('button')];
-   // Never change a letter's stacking layer while it overlaps a phone.
-   // Project all four glyph corners, including the tilted orbit, to screen space.
-   function overlapsPhone(mesh,stageBox,phoneBoxes){
-    const bounds=mesh.geometry.boundingBox;let left=Infinity,top=Infinity,right=-Infinity,bottom=-Infinity;
-    for(const x of [bounds.min.x,bounds.max.x])for(const y of [bounds.min.y,bounds.max.y]){
-     corner.set(x,y,0).applyMatrix4(mesh.matrixWorld).project(camera);
-     const px=stageBox.left+(corner.x+1)*stageBox.width/2,py=stageBox.top+(1-corner.y)*stageBox.height/2;
-     left=Math.min(left,px);right=Math.max(right,px);top=Math.min(top,py);bottom=Math.max(bottom,py);
-    }
-    return phoneBoxes.some(box=>left<box.right+14&&right>box.left-14&&top<box.bottom+14&&bottom>box.top-14);
-   }
+   let phase=0,lastTime=null;
    function render(time){if(disposed)return;const delta=lastTime===null?0:Math.min((time-lastTime)/1000,.05);lastTime=time;if(visible&&!document.hidden){phase+=delta*Math.PI*2/38;const style=getComputedStyle(node.parentElement);group.rotation.x=.22+(parseFloat(style.getPropertyValue('--rx'))||0)*Math.PI/180;group.rotation.y=-.30+(parseFloat(style.getPropertyValue('--ry'))||0)*Math.PI/180;
     letters.forEach(({mesh,angle,bottom})=>{const theta=angle+phase;mesh.position.set(265*Math.sin(theta),330*Math.cos(theta),0);mesh.rotation.z=Math.atan2(-330*Math.sin(theta),265*Math.cos(theta))+(bottom?Math.PI:0);});group.updateMatrixWorld(true);
-    const stageBox=node.getBoundingClientRect(),phoneBoxes=phones.map(phone=>phone.getBoundingClientRect());
-    letters.forEach(({mesh})=>{mesh.getWorldPosition(world);const overlapping=overlapsPhone(mesh,stageBox,phoneBoxes);if(mesh.userData.front===undefined)mesh.userData.front=!overlapping&&world.z>=0;else if(!overlapping)mesh.userData.front=world.z>=0;mesh.visible=!mesh.userData.front;});renderer.render(scene,camera);rearContext.clearRect(0,0,rear.width,rear.height);rearContext.drawImage(renderer.domElement,0,0);
-    letters.forEach(({mesh})=>{mesh.visible=mesh.userData.front;});renderer.render(scene,camera);if(!ready){ready=true;onReady(true);}}frame=requestAnimationFrame(render);}
+    // The entire orbit lives between the dynamically assigned phone roles.
+    // Its far arc must not be routed behind the rear phone.
+    renderer.render(scene,camera);if(!ready){ready=true;onReady(true);}}frame=requestAnimationFrame(render);}
    const intersection=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;});intersection.observe(node);
    renderer.domElement.addEventListener('webglcontextlost',fail);frame=requestAnimationFrame(render);
    return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();intersection.disconnect();renderer.domElement.removeEventListener('webglcontextlost',fail);geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());renderer.dispose();renderer.domElement.remove();node.replaceChildren();};
