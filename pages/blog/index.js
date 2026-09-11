@@ -24,7 +24,7 @@ export default function BlogIndex({ posts }) {
       {posts.length === 0 && (
         <p className="text-slate-400">
           New case studies are in progress. In the meantime, learn about our{" "}
-          <Link href="/#services" className="text-blue-400 hover:text-blue-300">
+          <Link href="/#pricing" className="text-blue-400 hover:text-blue-300">
             website and marketing services
           </Link>
           .

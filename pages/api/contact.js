@@ -70,7 +70,7 @@ async function verifyRecaptcha(token) {
       }
     );
     const json = await resp.json();
-    return json.success === true && (json.score ? json.score >= 0.3 : true);
+    return json.success === true && (typeof json.score === "number" ? json.score >= 0.3 : true);
   } catch (e) {
     console.error(
       "reCAPTCHA verification error:",

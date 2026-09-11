@@ -19,6 +19,14 @@ html {
   scroll-behavior: smooth;
 }
 
+:where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 3px solid #c8f06b;
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
 /* Custom hero cursor for TypeAnimation (thin, blinking, responsive) */
 @keyframes hero-cursor-blink {
   0% {

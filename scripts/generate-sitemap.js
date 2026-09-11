@@ -45,6 +45,7 @@ async function getPages() {
         "pages/_*.js",
         "pages/_*.tsx",
         "pages/api/**",
+        "pages/prototypes/**",
         "pages/**/[*].*",
         "pages/**/admin/**",
         "pages/admin.js",
@@ -60,7 +61,7 @@ async function getPages() {
     pages
       .map((p) => p.replace("pages", ""))
       .map((p) => p.replace(/\.js$|\.jsx$|\.tsx$|\.ts$/i, ""))
-      .filter((p) => !p.includes("[") && !p.includes("]"))
+      .filter((p) => !p.includes("[") && !p.includes("]") && p !== "/404")
       // normalize nested index files: /blog/index -> /blog, and top-level /index -> /
       .map((p) => p.replace(/\/index$/, ""))
       .map((p) => (p === "" ? "/" : p))

@@ -4,17 +4,17 @@ const siteUrl = (
 
 const SEO = {
   title:
-    "Stanford Development Solutions | Websites & Ads for Local Businesses",
+    "Web Design in Hammond, LA | Stanford Development Solutions",
   description:
-    "Custom websites and Google and Meta ad management for local businesses, built and managed personally by Kade Stanford.",
+    "Custom websites, business tools, and Google or Meta ad management for small businesses near Hammond, Louisiana and beyond. Work directly with Kade Stanford.",
   openGraph: {
     type: "website",
     locale: "en_US",
     site_name: "Stanford Development Solutions",
     title:
-      "Stanford Development Solutions | Websites & Ads for Local Businesses",
+      "Web Design in Hammond, LA | Stanford Development Solutions",
     description:
-      "Custom websites and Google and Meta ad management for local businesses, built and managed personally by Kade Stanford.",
+      "Custom websites, business tools, and Google or Meta ad management for small businesses near Hammond, Louisiana and beyond. Work directly with Kade Stanford.",
     images: [
       {
         url: `${siteUrl}/images/sds-social-preview.png`,
@@ -43,6 +43,16 @@ const founderId = `${siteUrl}/#kade-stanford`;
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
+    {
+      "@type": "Service",
+      "@id": `${siteUrl}/#web-design`,
+      name: "Custom website design and development",
+      serviceType: "Website design, development, and maintenance",
+      url: `${siteUrl}/#pricing`,
+      provider: { "@id": founderId },
+      areaServed: { "@type": "City", name: "Hammond", containedInPlace: { "@type": "State", name: "Louisiana" } },
+      description: "Custom websites and business tools for contractors, restaurants, and small businesses near Hammond, Louisiana and beyond.",
+    },
     {
       "@type": "Person",
       "@id": founderId,

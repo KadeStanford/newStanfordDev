@@ -1,4 +1,4 @@
-# AWS Amplify Hosting — Next.js 14 (Pages router + API routes)
+# AWS Amplify Hosting — Next.js (Pages router + API routes)
 # Amplify looks for `.next/required-server-files.json`; `baseDirectory` must be `.next`, not repo root.
 # https://docs.aws.amazon.com/amplify/latest/userguide/deploy-nextjs-app.html
 version: 1
@@ -9,6 +9,7 @@ frontend:
         - npm ci --prefer-offline --no-audit
     build:
       commands:
+        - node scripts/prepare-amplify-env.cjs
         - npm run build
   artifacts:
     baseDirectory: .next

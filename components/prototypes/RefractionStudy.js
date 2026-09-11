@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../../styles/prototypes/RefractionStudy.module.css';
@@ -7,7 +8,7 @@ export default function RefractionStudy({ variant }) {
  return <div className={`${styles.page} ${mineral ? styles.mineral : styles.optical}`}>
   <Head><title>{mineral ? 'Mineral Folio' : 'Optical Cover'} — Static study</title><meta name="robots" content="noindex,nofollow,noarchive" /></Head>
   <a className={styles.skip} href="#work">Skip to work</a>
-  <header className={styles.header}><a href="#top" className={styles.name}>Stanford<br/>Development Solutions</a><nav aria-label="Main navigation"><a href="#work">Work</a><a href="#about">About</a><a href="/contact">Contact</a></nav></header>
+  <header className={styles.header}><a href="#top" className={styles.name}>Stanford<br/>Development Solutions</a><nav aria-label="Main navigation"><a href="#work">Work</a><a href="#about">About</a><Link href="/contact">Contact</Link></nav></header>
   <main id="top">
    <section className={styles.cover} aria-labelledby="cover-title">
     <div className={styles.title}><h1 id="cover-title">Web design<br/><span>&amp; development.</span></h1></div>

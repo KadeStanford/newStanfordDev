@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
 import AccessibilityTray from './AccessibilityTray';
 import ProjectGallery from './ProjectGallery';
 import styles from '../../styles/ProjectStage.module.css';
 
-const images = ['/images/projects/bigbass-home.webp', '/images/projects/liberty-home.webp'];
+const images = ['/images/projects/bigbass-home-preview.webp', '/images/projects/liberty-home-preview.webp'];
 const CurvedType3D=dynamic(()=>import('./CurvedType3D'),{ssr:false});
-const brandImages = ['/images/projects/bigbass-logo.png', '/images/projects/liberty-brand.png'];
+const brandImages = ['/images/projects/bigbass-logo-preview.webp', '/images/projects/liberty-brand-preview.webp'];
 const urls = ['https://www.bigbasstrees.com/', 'https://libertyhousespecialties.com/'];
 
 export default function ProjectStage({ copy, motionEnabled=true, motionMode='system', onMotionChange }) {
@@ -16,10 +17,17 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   const [mobile,setMobile]=useState(false);
   const textPreset='russo-monoton';
   const [typeReady,setTypeReady]=useState(false);
+  const [enhancementReady,setEnhancementReady]=useState(false);
+  useEffect(()=>{
+    // Keep decorative WebGL downloads out of the critical image/font window.
+    let timer;
+    const schedule=()=>{timer=setTimeout(()=>setEnhancementReady(true),1200);};
+    if(document.readyState==='complete')schedule();
+    else window.addEventListener('load',schedule,{once:true});
+    return()=>{clearTimeout(timer);window.removeEventListener('load',schedule);};
+  },[]);
   useEffect(()=>{const media=matchMedia('(max-width:800px)');const update=()=>setMobile(media.matches);update();media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
   useEffect(()=>{setTypeReady(false);},[mobile,motionEnabled]);
-  const [tiltEnabled, setTiltEnabled] = useState(false);
-  const [tiltMessage, setTiltMessage] = useState('');
   const animateSwaps=motionEnabled;
   const stage = useRef(null);
   const projects = copy['Selected work'].entries;
@@ -29,39 +37,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   const animations = useRef([]);
   useEffect(()=>()=>animations.current.forEach(animation=>animation.cancel()),[]);
   useEffect(()=>{if(!animateSwaps)animations.current.forEach(animation=>animation.finish());},[animateSwaps]);
-  useEffect(()=>{
-    reset();
-    if(!tiltEnabled||!motionEnabled)return;
-    let baseline=null;
-    const timer=setTimeout(()=>{setTiltEnabled(false);setTiltMessage('No sensor data received. Touch movement is still available.');},5000);
-    const orient=event=>{
-      if(!Number.isFinite(event.beta)||!Number.isFinite(event.gamma))return;
-      clearTimeout(timer);
-      if(document.hidden||!window.matchMedia('(max-width:800px)').matches){baseline=null;return;}
-      const box=stage.current.getBoundingClientRect();
-      if(box.bottom<0||box.top>innerHeight){baseline=null;return;}
-      const angle=window.screen.orientation?.angle??window.orientation??0;
-      if(!baseline||baseline.angle!==angle){baseline={beta:event.beta,gamma:event.gamma,angle};return;}
-      if(swapping.current)return;
-      const radians=angle*Math.PI/180;
-      const dx=event.gamma-baseline.gamma,dy=event.beta-baseline.beta;
-      const clamp=value=>Math.max(-4,Math.min(4,value*.18));
-      stage.current.style.setProperty('--rx',`${clamp(-dy*Math.cos(radians)+dx*Math.sin(radians))}deg`);
-      stage.current.style.setProperty('--ry',`${clamp(dx*Math.cos(radians)+dy*Math.sin(radians))}deg`);
-    };
-    window.addEventListener('deviceorientation',orient,{passive:true});
-    return()=>{clearTimeout(timer);window.removeEventListener('deviceorientation',orient);reset();};
-  },[tiltEnabled,motionEnabled]);
-
-  async function toggleTilt(){
-    if(tiltEnabled){setTiltEnabled(false);setTiltMessage('');return;}
-    setTiltMessage('');
-    if(!window.isSecureContext||!window.DeviceOrientationEvent){setTiltMessage('Device tilt is unavailable here. Touch movement is still available.');return;}
-    try{
-      if(typeof window.DeviceOrientationEvent.requestPermission==='function'&&await window.DeviceOrientationEvent.requestPermission()!=='granted'){setTiltMessage('Motion permission was not granted. Touch movement is still available.');return;}
-      setTiltEnabled(true);
-    }catch{setTiltMessage('Device tilt could not be enabled. Touch movement is still available.');}
-  }
+  useEffect(()=>{reset();},[motionEnabled]);
 
   async function selectProject(index){
     if(index===selected||swapping.current)return;
@@ -107,7 +83,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   }, [expanded,animateSwaps]);
 
   function move(event) {
-    if (!animateSwaps || swapping.current || (tiltEnabled&&event.pointerType!=='mouse')) return;
+    if (!animateSwaps || swapping.current) return;
     const box = event.currentTarget.getBoundingClientRect();
     stage.current.style.setProperty('--rx', `${((event.clientY - box.top) / box.height - .5) * -7}deg`);
     stage.current.style.setProperty('--ry', `${((event.clientX - box.left) / box.width - .5) * 10}deg`);
@@ -119,13 +95,19 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   }
 
   return <section className={styles.experience} data-type="artistic" data-animate-swaps={animateSwaps} aria-labelledby="opening">
+    <Head>
+      <link rel="preload" as="image" href="/images/projects/bigbass-mobile-preview.webp" media="(max-width: 800px)" fetchPriority="high" />
+      <link rel="preload" as="image" href="/images/projects/bigbass-home-preview.webp" media="(min-width: 801px)" fetchPriority="high" />
+      <link rel="preload" as="image" href="/images/projects/liberty-mobile-preview.webp" media="(max-width: 800px)" fetchPriority="high" />
+      <link rel="preload" as="image" href="/images/projects/liberty-home-preview.webp" media="(min-width: 801px)" fetchPriority="high" />
+    </Head>
     <div className={styles.composition}>
       <div className={styles.title}>
         <h1 id="opening">Websites built around <em>your business.</em></h1>
         <a href="#contact">Get in touch <span>↗</span></a>
       </div>
       <div id="work" className={styles.gallery} onPointerMove={move} onPointerLeave={reset} onPointerUp={event=>{if(event.pointerType!=='mouse')reset();}} onPointerCancel={reset} ref={stage}>
-        {mobile&&motionEnabled&&<CurvedType3D onReady={setTypeReady} preset={textPreset}/>}
+        {mobile&&motionEnabled&&enhancementReady&&<CurvedType3D onReady={setTypeReady} preset={textPreset}/>}
         <svg className={styles.arcHeadline} style={mobile&&motionEnabled&&typeReady?{visibility:'hidden'}:undefined} viewBox="0 0 600 800" aria-hidden="true" focusable="false">
           <defs><path id="headline-top-arc" d="M 40 190 A 260 175 0 0 1 560 190"/><path id="headline-bottom-arc" d="M 40 605 A 260 175 0 0 0 560 605"/></defs>
           <text className={styles.arcTop}><textPath href="#headline-top-arc" startOffset="50%" textAnchor="middle">Websites built around</textPath></text>
@@ -138,8 +120,8 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
               <span className={styles.addressRow}><span className={styles.browserArrows}>← &nbsp; → &nbsp; ↻</span><span className={styles.address}>⌁ &nbsp; {i===0?'bigbasstrees.com':'libertyhousespecialties.com'}</span><span>···</span></span>
             </span>
             <picture>
-              <source media="(max-width: 800px)" srcSet={`/images/projects/${i === 0 ? 'bigbass' : 'liberty'}-mobile.webp`} />
-              <img src={images[i]} alt={`${item.title} website`} width={1920} height={1080} loading={i === 0 ? 'eager' : 'lazy'} />
+              <source media="(max-width: 800px)" srcSet={`/images/projects/${i === 0 ? 'bigbass' : 'liberty'}-mobile-preview.webp`} />
+              <img src={images[i]} alt={`${item.title} website`} width={1920} height={1080} fetchPriority="high" decoding="async" loading="eager" />
             </picture>
             <span className={styles.caption}>{item.blocks[0].text}<span>{selected === i ? 'Explore project ↗' : 'View project ↗'}</span></span>
           </button>)}
@@ -151,7 +133,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
       <div aria-label="Choose a project">{projects.map((item, i) => <button key={item.title} aria-pressed={selected === i} onClick={() => selectProject(i)}><span className={styles.brandAsset}><img src={brandImages[i]} alt="" width={96} height={96}/></span><span className={styles.projectLabel}>{item.title}</span><span className={styles.projectKind}>{i===0?'Tree care & business tools':'Restaurant & menu'}</span><span className={styles.projectChoice}>{selected===i?'On display':'Select project'}<span aria-hidden="true">{selected===i?'✓':'↗'}</span></span></button>)}</div>
       <button className={styles.explore} aria-expanded={expanded} aria-controls="project-focus" onClick={() => setExpanded(v => !v)}>{expanded ? 'Close project' : 'Explore project'} <span>{expanded ? '−' : '+'}</span></button>
     </div>
-    <AccessibilityTray motionMode={motionMode} onMotionChange={value => { onMotionChange?.(value); reset(); }} tiltEnabled={tiltEnabled} tiltMessage={tiltMessage} onTiltToggle={toggleTilt} motionEnabled={motionEnabled}/>
+    <AccessibilityTray motionMode={motionMode} onMotionChange={value => { onMotionChange?.(value); reset(); }}/>
     <div id="project-focus" ref={focus} hidden={!expanded} className={styles.focus} aria-labelledby="project-title">
       <header className={styles.caseHeader}>
         <div className={styles.caseMasthead}><span>Project spotlight</span><span>{selected===0?'Service business':'Hospitality'}</span></div>

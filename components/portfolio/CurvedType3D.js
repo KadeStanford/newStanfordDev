@@ -80,14 +80,16 @@ function OrbitLettering({onReady,preset,fonts}) {
    const observer=new ResizeObserver(resize);observer.observe(node);resize();
    let ready=false;
    let phase=0,lastTime=null;
-   function render(time){if(disposed||!node.isConnected)return;const delta=lastTime===null?0:Math.min((time-lastTime)/1000,.05);lastTime=time;if(visible&&!document.hidden){phase+=delta*Math.PI*2/38;
+   function render(time){frame=null;if(disposed||!node.isConnected||!visible||document.hidden)return;const delta=lastTime===null?0:Math.min((time-lastTime)/1000,.05);lastTime=time;if(visible&&!document.hidden){phase+=delta*Math.PI*2/38;
     letters.forEach(({mesh,angle,bottom})=>{const theta=angle+phase;mesh.position.set(265*Math.sin(theta),330*Math.cos(theta),0);mesh.rotation.z=Math.atan2(-330*Math.sin(theta),265*Math.cos(theta))+(bottom?Math.PI:0);});group.updateMatrixWorld(true);
     // The entire orbit lives between the dynamically assigned phone roles.
     // Its far arc must not be routed behind the rear phone.
     renderer.render(scene,camera);if(!ready){ready=true;onReady(true);}}frame=requestAnimationFrame(render);}
-   const intersection=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;});intersection.observe(node);
+   const schedule=()=>{if(visible&&!document.hidden&&!disposed){if(frame==null){lastTime=null;frame=requestAnimationFrame(render);}}else{cancelAnimationFrame(frame);frame=null;lastTime=null;}};
+   const intersection=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;schedule();});intersection.observe(node);
+   document.addEventListener('visibilitychange',schedule);
    renderer.domElement.addEventListener('webglcontextlost',fail);frame=requestAnimationFrame(render);
-   return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();intersection.disconnect();renderer.domElement.removeEventListener('webglcontextlost',fail);geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();renderer.domElement.remove();node.replaceChildren();};
+   return()=>{disposed=true;cancelAnimationFrame(frame);document.removeEventListener('visibilitychange',schedule);observer.disconnect();intersection.disconnect();renderer.domElement.removeEventListener('webglcontextlost',fail);geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();renderer.domElement.remove();node.replaceChildren();};
   }catch{renderer?.dispose();renderer?.domElement.remove();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());fail();}
  },[onReady,preset,fonts]);
  return <div ref={host} aria-hidden="true" style={{position:'absolute',inset:0,pointerEvents:'none'}}/>;

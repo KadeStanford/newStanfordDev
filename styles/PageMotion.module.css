@@ -1,5 +1,5 @@
 .reveal{opacity:1;transform:none}
 @media all{
- :global([data-portfolio][data-motion=true]) .reveal{opacity:.3;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+ :global([data-portfolio][data-motion=true]) .reveal{opacity:1;transform:translateY(22px);transition:transform .7s cubic-bezier(.2,.7,.2,1)}
  :global([data-portfolio][data-motion=true]) .visible,:global([data-portfolio][data-motion=true]) .reveal:focus-within{opacity:1;transform:none}
 }

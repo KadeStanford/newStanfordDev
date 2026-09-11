@@ -17,7 +17,7 @@ export default function Footer() {
               SDS<span className="text-blue-500">.</span>
             </span>
           </div>
-          <div className="text-slate-500 text-sm">
+          <div className="text-slate-400 text-sm">
             © {new Date().getFullYear()} Stanford Development Solutions.
           </div>
         </div>

@@ -15,9 +15,11 @@ const initialForm = {
 const isLocalDevelopment = () => process.env.NODE_ENV === "development";
 
 export default function Contact({portfolio = false}) {
+  const Heading = portfolio ? 'h2' : 'h1';
   const [form, setForm] = useState(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [errors, setErrors] = useState({});
   const [recaptchaReady, setRecaptchaReady] = useState(false);
   const formRef = useRef(null);
@@ -56,6 +58,7 @@ export default function Contact({portfolio = false}) {
         recaptchaContainerRef.current,
         {
           sitekey: siteKey,
+          size: window.innerWidth < 400 ? "compact" : "normal",
           callback: () => setRecaptchaReady(true),
           "expired-callback": () => setRecaptchaReady(false),
           "error-callback": () => setRecaptchaReady(false),
@@ -114,9 +117,11 @@ export default function Contact({portfolio = false}) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setSubmitError('');
     const nextErrors = validate();
     if (Object.keys(nextErrors).length) {
       setErrors(nextErrors);
+      requestAnimationFrame(() => formRef.current?.querySelector('[aria-invalid="true"]')?.focus());
       return;
     }
 
@@ -172,6 +177,9 @@ export default function Contact({portfolio = false}) {
       }
     } catch (error) {
       console.error(error);
+      setSubmitError(isLocalDevelopment()
+        ? 'The local preview could not send your message. Check the development server log for mail-service or network errors. You can email stanforddevcontact@gmail.com instead.'
+        : 'Your message was not sent. Please try again or email stanforddevcontact@gmail.com.');
       toast.error("I could not send that request. Please try again or email me.", {
         id: toastId,
       });
@@ -191,9 +199,9 @@ export default function Contact({portfolio = false}) {
           <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-300">
             Get in touch
           </p>
-          <h2 className="mt-4 text-4xl font-bold text-white md:text-5xl">
+          <Heading className="mt-4 text-4xl font-bold text-white md:text-5xl">
             How can I help?
-          </h2>
+          </Heading>
           <p className="mt-6 text-lg leading-relaxed text-slate-400">
             {portfolio ? 'What would you like to improve? I’ll reply within 24 hours on weekdays.' : 'You do not need a finished brief or a technical plan. Tell me what you want to improve, what is not working, or what you wish were easier. I will reply within 24 hours on weekdays with a useful next step.'}
           </p>
@@ -251,6 +259,7 @@ export default function Contact({portfolio = false}) {
             </div>
           ) : (
             <form ref={formRef} onSubmit={handleSubmit} noValidate>
+              {submitError && <p role="alert" className="mb-5 text-sm text-red-300">{submitError}</p>}
               <div className="grid gap-5 sm:grid-cols-2">
                 <label className="text-sm font-semibold text-slate-200 sm:col-span-2">
                   Your name
@@ -265,9 +274,10 @@ export default function Contact({portfolio = false}) {
                     autoComplete="name"
                     required
                     aria-invalid={Boolean(errors.fullName)}
+                    aria-describedby={errors.fullName ? 'fullName-error' : undefined}
                   />
                   {errors.fullName && (
-                    <span className="mt-2 block text-sm text-red-300">
+                    <span id="fullName-error" role="alert" className="mt-2 block text-sm text-red-300">
                       {errors.fullName}
                     </span>
                   )}
@@ -291,9 +301,10 @@ export default function Contact({portfolio = false}) {
                       autoComplete="email"
                       placeholder="you@example.com"
                       aria-invalid={Boolean(errors.email)}
+                    aria-describedby={errors.email ? 'email-error' : undefined}
                     />
                     {errors.email && (
-                      <span className="mt-2 block text-sm text-red-300">
+                      <span id="email-error" role="alert" className="mt-2 block text-sm text-red-300">
                         {errors.email}
                       </span>
                     )}
@@ -379,9 +390,10 @@ export default function Contact({portfolio = false}) {
                     placeholder="A sentence or two is enough. You can describe the problem even if you do not know the solution."
                     required
                     aria-invalid={Boolean(errors.message)}
+                    aria-describedby={errors.message ? 'message-error' : undefined}
                   />
                   {errors.message && (
-                    <span className="mt-2 block text-sm text-red-300">
+                    <span id="message-error" role="alert" className="mt-2 block text-sm text-red-300">
                       {errors.message}
                     </span>
                   )}

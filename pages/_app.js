@@ -8,6 +8,7 @@ import Script from "next/script"; // Import Script component
 import { useRouter } from "next/router";
 import Head from "next/head";
 
+
 function MyApp({ Component, pageProps }) {
   // Use environment variable for GA ID
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;

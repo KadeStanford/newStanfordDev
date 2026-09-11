@@ -4,6 +4,7 @@ import PageMotion from './PageMotion';
 import Education from './Education';
 import PricingSelector from './PricingSelector';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Head from 'next/head';
 import Image from 'next/image';
 import Contact from '../Contact';
@@ -43,6 +44,6 @@ export default function Portfolio({copy}){
    <section className={styles.about} id="about"><div className={styles.portrait}><Image src="/images/kadeCutout.png" alt="Kade Stanford" width={800} height={1000} sizes="(max-width:800px) 75vw, 35vw" style={{width:'100%',height:'100%',objectFit:'contain'}}/></div><div><h2>About <em>me...</em></h2><Blocks items={copy.About.blocks.slice(1)}/><section className={styles.process} aria-labelledby="process-title"><h3 id="process-title">{copy.Process.blocks[0].text}</h3><ol>{copy.Process.entries.map(entry=><li key={entry.title}><h4>{entry.title}</h4><Blocks items={entry.blocks}/></li>)}</ol></section><Education/></div></section>
    <div className={styles.contactWrap}><Contact portfolio/></div>
   </main>
-  <footer className={styles.footer}><Brand/><p>{copy.Footer.blocks[1].text}</p><div><a href="https://github.com/KadeStanford" target="_blank" rel="noreferrer">GitHub ↗</a><a href="https://www.linkedin.com/in/kadestanford" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="mailto:stanforddevcontact@gmail.com">Email ↗</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms</a></div></footer>
+  <footer className={styles.footer}><Brand/><p>{copy.Footer.blocks[1].text}</p><div><a href="https://github.com/KadeStanford" target="_blank" rel="noreferrer">GitHub ↗</a><a href="https://www.linkedin.com/in/kadestanford" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="mailto:stanforddevcontact@gmail.com">Email ↗</a><Link href="/privacy">Privacy Policy</Link><Link href="/terms">Terms</Link></div></footer>
  </div>;
 }

@@ -26,6 +26,11 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env.production
+
+# Local QA captures, tooling, and Windows null-device artifacts
+/tmp/
+/NUL
 
 # vercel
 .vercel

@@ -336,7 +336,7 @@ Links:
 
 Title:
 
-> Stanford Development Solutions | Websites for Louisiana Small Businesses
+> Web Design in Hammond, LA | Stanford Development Solutions
 
 Description:
 
