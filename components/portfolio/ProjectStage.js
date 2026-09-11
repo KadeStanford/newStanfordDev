@@ -1,16 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
+import dynamic from 'next/dynamic';
 import AccessibilityTray from './AccessibilityTray';
 import ProjectGallery from './ProjectGallery';
 import styles from '../../styles/ProjectStage.module.css';
 
 const images = ['/images/projects/bigbass-home.webp', '/images/projects/liberty-home.webp'];
+const CurvedType3D=dynamic(()=>import('./CurvedType3D'),{ssr:false});
 const brandImages = ['/images/projects/bigbass-logo.png', '/images/projects/liberty-brand.png'];
 const urls = ['https://www.bigbasstrees.com/', 'https://libertyhousespecialties.com/'];
 
 export default function ProjectStage({ copy, motionEnabled=true, motionMode='system', onMotionChange }) {
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
+  const [mobile,setMobile]=useState(false);
+  const [typeReady,setTypeReady]=useState(false);
+  useEffect(()=>{const media=matchMedia('(max-width:800px)');const update=()=>setMobile(media.matches);update();media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
+  useEffect(()=>{setTypeReady(false);},[mobile,motionEnabled]);
   const [tiltEnabled, setTiltEnabled] = useState(false);
   const [tiltMessage, setTiltMessage] = useState('');
   const animateSwaps=motionEnabled;
@@ -118,8 +124,9 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
         <a href="#contact">Get in touch <span>↗</span></a>
       </div>
       <div id="work" className={styles.gallery} onPointerMove={move} onPointerLeave={reset} onPointerUp={event=>{if(event.pointerType!=='mouse')reset();}} onPointerCancel={reset} ref={stage}>
-        <svg className={styles.arcHeadline} viewBox="0 0 600 800" aria-hidden="true" focusable="false">
-          <defs><path id="headline-top-arc" d="M 35 170 Q 300 -120 565 170"/><path id="headline-bottom-arc" d="M 35 610 Q 300 890 565 610"/></defs>
+        {mobile&&motionEnabled&&<CurvedType3D onReady={setTypeReady}/>}
+        <svg className={styles.arcHeadline} style={mobile&&motionEnabled&&typeReady?{visibility:'hidden'}:undefined} viewBox="0 0 600 800" aria-hidden="true" focusable="false">
+          <defs><path id="headline-top-arc" d="M 40 190 A 260 175 0 0 1 560 190"/><path id="headline-bottom-arc" d="M 40 605 A 260 175 0 0 0 560 605"/></defs>
           <text className={styles.arcTop}><textPath href="#headline-top-arc" startOffset="50%" textAnchor="middle">Websites built around</textPath></text>
           <text className={styles.arcBottom}><textPath href="#headline-bottom-arc" startOffset="50%" textAnchor="middle">your business.</textPath></text>
         </svg>

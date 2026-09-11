@@ -7,8 +7,8 @@
  .experience[data-type=artistic] .title>a{order:2;align-self:center;margin:0 5vw 2rem}
  .experience[data-type=artistic] .gallery{order:1;margin-top:1.5rem;margin-bottom:1rem}
  .arcHeadline{display:block;position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:3}
- .arcTop{font-family:SyneArt,Arial,sans-serif;font-size:32px;font-weight:700;fill:#edf1ee;letter-spacing:-1px}
- .arcBottom{font-family:BodoniArt,Georgia,serif;font-style:italic;font-size:61px;font-weight:500;fill:#c8f06b;letter-spacing:-2px}
+ .arcTop{font-family:Instrument,Arial,sans-serif;font-size:38px;font-weight:500;fill:#edf1ee;letter-spacing:1px}
+ .arcBottom{font-family:BodoniArt,Georgia,serif;font-style:italic;font-size:53px;font-weight:500;fill:#c8f06b;letter-spacing:0}
 }
 @font-face{font-family:SyneArt;src:url('/fonts/Syne-Bold.ttf') format('truetype');font-weight:700;font-display:swap}
 @font-face{font-family:BodoniArt;src:url('/fonts/BodoniModa-Italic.ttf') format('truetype');font-weight:500;font-style:italic;font-display:swap}
@@ -143,4 +143,14 @@
 }
 .selection>div button img{width:72px;height:72px;object-fit:contain;opacity:1}
 @media(max-width:800px){.selection>div button{align-items:center;padding:1rem}.selection>div button img{width:clamp(64px,14vw,90px);height:clamp(64px,14vw,90px)}.selection .projectLabel{font-size:.85rem}}
+.selection{gap:.8rem;grid-template-columns:1fr}
+.selection>div{gap:0;border:1px solid #91a49244;border-radius:16px 16px 0 0;overflow:hidden;background:#101b18}
+.selection>div button{position:relative;border:0;border-radius:0;background:none;box-shadow:none;padding:1.1rem;justify-content:center}
+.selection>div button+button{border-left:1px solid #91a49233}
+.selection>div button[aria-pressed=true]{border-color:#91a49233;box-shadow:inset 0 -3px #c8f06b;background:linear-gradient(0deg,#c8f06b12,transparent)}
+.selection .selectedDot{display:none}
+.experience[data-type=artistic] .selection>div button .projectLabel{font-family:Instrument,Arial,sans-serif;font-weight:500;font-style:normal;font-size:1rem;letter-spacing:-.025em;line-height:1.2}
+.selection .explore{margin-top:-.8rem;justify-self:stretch;justify-content:space-between;border:0;border-radius:0 0 16px 16px;background:#c8f06b;color:#142018;padding:1rem 1.3rem;font-size:1rem;font-weight:500}
+.selection .explore span{display:grid;place-items:center;border:1px solid #14201844;width:28px;height:28px;border-radius:50%;color:#142018!important;font-size:1.2rem!important}
+@media(max-width:800px){.gallery{--phone-width:min(36vw,205px)}.projectPlane{left:calc(50% - min(18vw,102.5px))}.selection>div button{gap:.7rem;padding:1rem .8rem;align-content:start}.selection>div button img{width:60px;height:60px}.experience[data-type=artistic] .selection>div button .projectLabel{font-size:.9rem;flex-basis:100%;text-align:center}}
 

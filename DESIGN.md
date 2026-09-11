@@ -297,6 +297,10 @@ Kade rejected the sculpture-led design and authorized the proposed opening-to-pr
 
 Checks for this slice: Next production build passed; desktop (1440 × 1000) and phone (390 × 844) screenshots inspected; project switching and expanded facts observed; no horizontal overflow at the checked phone width. Pointer-reactive movement, physical-device performance, and a complete keyboard audit remain unverified.
 
+## Curved 3D lettering prototype
+
+User authorized a true-3D prototype for the mobile curved headline. Uses individually extruded and beveled Three.js glyphs, separate face/edge materials, directional lighting, and bounded tilt rotation. Loaded only on mobile with motion enabled. SVG remains the fallback until rendering succeeds and returns when motion is reduced or WebGL context is lost. Bundled Three.js Helvetiker/Optimer typefaces are used for this prototype. No final visual approval implied. Production build passed; software-WebGL screenshot inspected at 558px; canvas-to-SVG reduced-motion fallback verified. Physical GPU devices and mobile sensor performance remain unverified.
+
 ## Shorter opening trial
 
 User requested trying “Websites built around your business.” with the entire headline above the phones on mobile. Removed the split/overlapping mobile composition and preview selector. Current trial uses locally hosted Syne and Bodoni Moda (licenses included), with normal document flow and unchanged project interactions. This is a wording/layout trial, not final visual approval. Build passed; 390px and 1070px screenshots inspected, without horizontal overflow.
