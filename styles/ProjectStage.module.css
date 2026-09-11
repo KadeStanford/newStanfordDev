@@ -58,3 +58,16 @@
 @media(min-width:801px){.projectPlane{border-radius:13px;border:1px solid #8ba59566;box-shadow:0 35px 65px #0009,inset 0 0 0 1px #8ba59511}.caption{font-size:.65rem;padding:.6rem .9rem}}
 @media(max-width:800px){.browserChrome{display:none}}
 .planes{transform-style:flat}
+/* A quiet display stage grounds the floating project previews. */
+.gallery::before,.gallery::after{content:'';position:absolute;pointer-events:none;border-radius:50%}
+.gallery::before{inset:14% 3% 9%;background:radial-gradient(ellipse,#74985120,transparent 68%);border:1px solid #b5d99818;transform:rotate(-22deg) scaleY(.7);box-shadow:0 0 0 28px #bdd5ac04,0 0 0 58px #bdd5ac03}
+.gallery::after{left:17%;right:13%;bottom:8%;height:9%;background:radial-gradient(ellipse,#0008,transparent 70%);filter:blur(12px)}
+.planes{z-index:1}
+@media(max-width:800px){
+ .gallery{--phone-width:min(38vw,220px);height:calc(min(38vw,220px) * 2.85 + 40px);margin-top:1.5rem}
+ .projectPlane{width:var(--phone-width);max-width:none;left:calc(50% - min(19vw,110px));top:8%;padding:5px;border-radius:clamp(20px,4.8vw,32px)}
+ .projectPlane picture{border-radius:clamp(13px,3.5vw,23px)}
+ .front{transform:translate(-24%,15%) rotate(-8deg)}
+ .back{transform:translate(24%,-1%) rotate(9deg)}
+ .gallery::before{inset:12% 8% 8%;transform:rotate(-22deg) scaleY(.8)}
+}
