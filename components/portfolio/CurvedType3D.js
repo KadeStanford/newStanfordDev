@@ -47,7 +47,7 @@ function OrbitLettering({onReady,preset,fonts}) {
    function line(text,font,size,bottom){
     // Native font rasterization preserves nested counters/stripes that the
     // previous TTF-to-triangle conversion filled incorrectly (notably B/D).
-    const resolution=4,padding=8;
+    const resolution=4,padding=8*resolution;
     const measure=document.createElement('canvas').getContext('2d');
     const fontStyle=`${size*resolution}px "Orbit-${font}"`;
     measure.font=fontStyle;
@@ -58,7 +58,13 @@ function OrbitLettering({onReady,preset,fonts}) {
      canvas.width=Math.ceil(metrics.actualBoundingBoxLeft+metrics.actualBoundingBoxRight)+padding*2;
      canvas.height=Math.ceil(metrics.actualBoundingBoxAscent+metrics.actualBoundingBoxDescent)+padding*2;
      const context=canvas.getContext('2d');context.font=fontStyle;context.fillStyle='#fff';
-     context.fillText(c,padding+metrics.actualBoundingBoxLeft,padding+metrics.actualBoundingBoxAscent);
+     const x=padding+metrics.actualBoundingBoxLeft,y=padding+metrics.actualBoundingBoxAscent;
+     // Bake contrast into each glyph so it remains inside the phone depth
+     // layers. Extra texture padding prevents the shadow being cropped.
+     context.strokeStyle='#080e12';context.lineWidth=2.6*resolution;context.lineJoin='round';
+     context.shadowColor='rgba(0,0,0,.8)';context.shadowBlur=3*resolution;context.shadowOffsetY=1.5*resolution;
+     context.strokeText(c,x,y);
+     context.shadowColor='transparent';context.fillText(c,x,y);
      const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;textures.push(texture);
      const front=new THREE.MeshBasicMaterial({map:texture,color:bottom?0xc8f06b:0xe9f0e3,side:THREE.DoubleSide,transparent:true,depthWrite:false});materials.push(front);
      const geometry=new THREE.PlaneGeometry(canvas.width/resolution,canvas.height/resolution);
