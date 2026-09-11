@@ -72,6 +72,14 @@
 .gallery::before{inset:14% 3% 9%;background:repeating-radial-gradient(ellipse at center,transparent 0%,#c8f06b04 8%,#c8f06b15 11%,#adc5b92b 11.4%,#10221a08 11.8%,transparent 13.5%),radial-gradient(ellipse at 40% 30%,#98b86b16,transparent 70%);border:1px solid #b5d99830;transform:rotate(-22deg) scaleY(.7);box-shadow:0 0 0 28px #bdd5ac04,0 0 0 58px #bdd5ac03}
 .gallery::after{left:17%;right:13%;bottom:8%;height:9%;background:radial-gradient(ellipse,#0008,transparent 70%);filter:blur(12px)}
 .planes{z-index:1}
+.tiltControl{display:none}
+@media(max-width:800px){
+ .experience .planes{transform:rotateX(var(--rx)) rotateY(var(--ry));transition:transform .35s ease-out}
+ .gallery{touch-action:pan-y}
+ .selection .tiltControl{display:block;grid-column:1/-1;grid-row:2}
+ .selection .tiltControl button{font-size:.7rem;padding:.35rem 0;color:#c8f06b;min-height:32px}
+ .tiltControl small{display:block;color:#aeb9b7;font-size:.7rem;max-width:45ch}
+}
 .selection{grid-template-columns:1fr auto;gap:1rem 2rem;padding:1.4rem 4vw 1.8rem;background:linear-gradient(120deg,#142019,#080e12 70%)}
 .selection>span{grid-column:1/-1;font-size:.65rem}
 .selection>div{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;min-width:0}

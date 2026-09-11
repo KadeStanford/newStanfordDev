@@ -10,6 +10,8 @@ const urls = ['https://www.bigbasstrees.com/', 'https://libertyhousespecialties.
 export default function ProjectStage({ copy, motionEnabled=true, motionMode='system', onMotionChange }) {
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
+  const [tiltEnabled, setTiltEnabled] = useState(false);
+  const [tiltMessage, setTiltMessage] = useState('');
   const animateSwaps=motionEnabled;
   const stage = useRef(null);
   const projects = copy['Selected work'].entries;
@@ -19,6 +21,39 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   const animations = useRef([]);
   useEffect(()=>()=>animations.current.forEach(animation=>animation.cancel()),[]);
   useEffect(()=>{if(!animateSwaps)animations.current.forEach(animation=>animation.finish());},[animateSwaps]);
+  useEffect(()=>{
+    reset();
+    if(!tiltEnabled||!motionEnabled)return;
+    let baseline=null;
+    const timer=setTimeout(()=>{setTiltEnabled(false);setTiltMessage('No sensor data received. Touch movement is still available.');},5000);
+    const orient=event=>{
+      if(!Number.isFinite(event.beta)||!Number.isFinite(event.gamma))return;
+      clearTimeout(timer);
+      if(document.hidden||!window.matchMedia('(max-width:800px)').matches){baseline=null;return;}
+      const box=stage.current.getBoundingClientRect();
+      if(box.bottom<0||box.top>innerHeight){baseline=null;return;}
+      const angle=window.screen.orientation?.angle??window.orientation??0;
+      if(!baseline||baseline.angle!==angle){baseline={beta:event.beta,gamma:event.gamma,angle};return;}
+      if(swapping.current)return;
+      const radians=angle*Math.PI/180;
+      const dx=event.gamma-baseline.gamma,dy=event.beta-baseline.beta;
+      const clamp=value=>Math.max(-4,Math.min(4,value*.18));
+      stage.current.style.setProperty('--rx',`${clamp(-dy*Math.cos(radians)+dx*Math.sin(radians))}deg`);
+      stage.current.style.setProperty('--ry',`${clamp(dx*Math.cos(radians)+dy*Math.sin(radians))}deg`);
+    };
+    window.addEventListener('deviceorientation',orient,{passive:true});
+    return()=>{clearTimeout(timer);window.removeEventListener('deviceorientation',orient);reset();};
+  },[tiltEnabled,motionEnabled]);
+
+  async function toggleTilt(){
+    if(tiltEnabled){setTiltEnabled(false);setTiltMessage('');return;}
+    setTiltMessage('');
+    if(!window.isSecureContext||!window.DeviceOrientationEvent){setTiltMessage('Device tilt is unavailable here. Touch movement is still available.');return;}
+    try{
+      if(typeof window.DeviceOrientationEvent.requestPermission==='function'&&await window.DeviceOrientationEvent.requestPermission()!=='granted'){setTiltMessage('Motion permission was not granted. Touch movement is still available.');return;}
+      setTiltEnabled(true);
+    }catch{setTiltMessage('Device tilt could not be enabled. Touch movement is still available.');}
+  }
 
   async function selectProject(index){
     if(index===selected||swapping.current)return;
@@ -64,7 +99,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   }, [expanded,animateSwaps]);
 
   function move(event) {
-    if (!animateSwaps || swapping.current || event.pointerType !== 'mouse') return;
+    if (!animateSwaps || swapping.current || (tiltEnabled&&event.pointerType!=='mouse')) return;
     const box = event.currentTarget.getBoundingClientRect();
     stage.current.style.setProperty('--rx', `${((event.clientY - box.top) / box.height - .5) * -7}deg`);
     stage.current.style.setProperty('--ry', `${((event.clientX - box.left) / box.width - .5) * 10}deg`);
@@ -81,7 +116,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
         <h1 id="opening">A better website<br/>should make running<br/>your business <em>easier.</em></h1>
         <a href="#contact">Get in touch <span>↗</span></a>
       </div>
-      <div id="work" className={styles.gallery} onPointerMove={move} onPointerLeave={reset} ref={stage}>
+      <div id="work" className={styles.gallery} onPointerMove={move} onPointerLeave={reset} onPointerUp={event=>{if(event.pointerType!=='mouse')reset();}} onPointerCancel={reset} ref={stage}>
         <div className={styles.planes}>
           {projects.map((item, i) => <button key={item.title} className={`${styles.projectPlane} ${selected === i ? styles.front : styles.back}`} onClick={() => { if(swapping.current)return; if (selected === i) setExpanded(v => !v); else selectProject(i); }} aria-label={selected === i ? `${expanded ? 'Close' : 'Explore'} ${item.title}` : `Select ${item.title}`} aria-expanded={selected === i ? expanded : undefined}>
             <span className={styles.browserChrome} aria-hidden="true">
@@ -99,6 +134,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
     </div>
     <div className={styles.selection}>
       <span>Selected work</span>
+      {motionEnabled&&<aside className={styles.tiltControl}><button type="button" onClick={toggleTilt} aria-pressed={tiltEnabled}>{tiltEnabled?'Disable device tilt':'Enable device tilt'}</button><small role="status">{tiltMessage}</small></aside>}
       <div aria-label="Choose a project">{projects.map((item, i) => <button key={item.title} aria-pressed={selected === i} onClick={() => selectProject(i)}><img src={images[i]} alt="" width={96} height={60}/><span className={styles.projectLabel}>{item.title}</span><span className={styles.selectedDot} aria-hidden="true"/></button>)}</div>
       <button className={styles.explore} aria-expanded={expanded} aria-controls="project-focus" onClick={() => setExpanded(v => !v)}>{expanded ? 'Close project' : 'Explore project'} <span>{expanded ? '−' : '+'}</span></button>
     </div>
