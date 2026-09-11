@@ -14,6 +14,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [mobile,setMobile]=useState(false);
+  const [textPreset,setTextPreset]=useState('metal');
   const [typeReady,setTypeReady]=useState(false);
   useEffect(()=>{const media=matchMedia('(max-width:800px)');const update=()=>setMobile(media.matches);update();media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
   useEffect(()=>{setTypeReady(false);},[mobile,motionEnabled]);
@@ -118,13 +119,14 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   }
 
   return <section id="top" className={styles.experience} data-type="artistic" data-animate-swaps={animateSwaps} aria-labelledby="opening">
+    {mobile&&process.env.NODE_ENV==='development'&&<label className={styles.typeStudy}>2D orbit lettering <select value={textPreset} onChange={e=>setTextPreset(e.target.value)}><option value="metal">Clean sans + flowing serif</option><option value="bold">Bold sans + sculptural serif</option><option value="sculptural">Sculptural serif + light sans</option><option value="editorial">Classic serif + bold sans</option></select></label>}
     <div className={styles.composition}>
       <div className={styles.title}>
         <h1 id="opening">Websites built around <em>your business.</em></h1>
         <a href="#contact">Get in touch <span>↗</span></a>
       </div>
       <div id="work" className={styles.gallery} onPointerMove={move} onPointerLeave={reset} onPointerUp={event=>{if(event.pointerType!=='mouse')reset();}} onPointerCancel={reset} ref={stage}>
-        {mobile&&motionEnabled&&<CurvedType3D onReady={setTypeReady}/>}
+        {mobile&&motionEnabled&&<CurvedType3D onReady={setTypeReady} preset={textPreset}/>}
         <svg className={styles.arcHeadline} style={mobile&&motionEnabled&&typeReady?{visibility:'hidden'}:undefined} viewBox="0 0 600 800" aria-hidden="true" focusable="false">
           <defs><path id="headline-top-arc" d="M 40 190 A 260 175 0 0 1 560 190"/><path id="headline-bottom-arc" d="M 40 605 A 260 175 0 0 0 560 605"/></defs>
           <text className={styles.arcTop}><textPath href="#headline-top-arc" startOffset="50%" textAnchor="middle">Websites built around</textPath></text>
