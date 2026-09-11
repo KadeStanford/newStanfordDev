@@ -1,4 +1,15 @@
 .experience{background:#080e12;color:#edf1ee;position:relative;overflow:hidden;--accent:#c8f06b}
+@font-face{font-family:Paytone;src:url('/PaytoneOne.ttf') format('truetype');font-display:swap}
+.typeStudy{display:flex;align-items:center;justify-content:flex-end;gap:.7rem;padding:.7rem 4vw;font-size:.7rem;color:#acbbb1;background:#132019;position:relative;z-index:4}
+.typeStudy select{background:#080e12;color:#d6e9c3;border:1px solid #718568;padding:.4rem;border-radius:5px}
+.experience[data-type=editorial] .title h1{font-family:Georgia,serif;font-weight:400;letter-spacing:-.055em;font-size:clamp(2.7rem,4.8vw,6rem);width:auto}
+.experience[data-type=editorial] .title em{font-family:Instrument,Arial,sans-serif;font-style:normal;font-weight:500;letter-spacing:-.06em}
+.experience[data-type=editorial] .selection .projectLabel{font-family:Georgia,serif;font-size:clamp(1rem,1.6vw,1.4rem);letter-spacing:-.025em}
+.experience[data-type=display] .title h1{font-family:Paytone,Arial,sans-serif;font-weight:400;font-size:clamp(2.5rem,4.3vw,5.7rem);letter-spacing:-.04em;width:auto}
+.experience[data-type=display] .selection .projectLabel{font-family:Paytone,Arial,sans-serif;font-weight:400;font-size:1rem}
+.experience[data-animate-swaps=true] .title em{background:linear-gradient(110deg,#c8f06b 25%,#f1ffd2 45%,#c8f06b 65%);background-size:250% 100%;background-clip:text;-webkit-background-clip:text;color:transparent;animation:headlineLight 8s ease-in-out infinite}
+@keyframes headlineLight{0%,20%{background-position:100% 50%}65%,100%{background-position:0% 50%}}
+@media(max-width:800px){.experience[data-type=editorial] .title h1{font-size:clamp(2rem,7.5vw,4.3rem)}.experience[data-type=display] .title h1{font-size:clamp(1.8rem,6.7vw,3.7rem)}}
 .overline{display:flex;justify-content:space-between;padding:2rem 4vw 0;color:#9faeae;text-transform:uppercase;letter-spacing:.1em;font-size:.75rem}
 .composition{min-height:670px;height:calc(100svh - 260px);max-height:950px;position:relative;display:grid;grid-template-columns:46% 54%;align-items:center}
 .title{padding-left:4vw;position:relative;z-index:3;pointer-events:none}

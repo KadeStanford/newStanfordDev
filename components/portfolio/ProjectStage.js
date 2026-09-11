@@ -11,6 +11,7 @@ const urls = ['https://www.bigbasstrees.com/', 'https://libertyhousespecialties.
 export default function ProjectStage({ copy, motionEnabled=true, motionMode='system', onMotionChange }) {
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
+  const [typeStudy,setTypeStudy]=useState('editorial');
   const [tiltEnabled, setTiltEnabled] = useState(false);
   const [tiltMessage, setTiltMessage] = useState('');
   const animateSwaps=motionEnabled;
@@ -111,7 +112,8 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
     stage.current.style.setProperty('--ry', '0deg');
   }
 
-  return <section id="top" className={styles.experience} data-animate-swaps={animateSwaps} aria-labelledby="opening">
+  return <section id="top" className={styles.experience} data-type={typeStudy} data-animate-swaps={animateSwaps} aria-labelledby="opening">
+    {process.env.NODE_ENV==='development'&&<label className={styles.typeStudy}>Typography preview <select value={typeStudy} onChange={event=>setTypeStudy(event.target.value)}><option value="editorial">Editorial serif</option><option value="display">Bold display</option><option value="original">Original contrast</option></select></label>}
     <div className={styles.composition}>
       <div className={styles.title}>
         <h1 id="opening">A better website<br/>should make running<br/>your business <em>easier.</em></h1>
@@ -135,11 +137,10 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
     </div>
     <div className={styles.selection}>
       <span>Selected work</span>
-      {motionEnabled&&<aside className={styles.tiltControl}><button type="button" onClick={toggleTilt} aria-pressed={tiltEnabled}>{tiltEnabled?'Disable device tilt':'Enable device tilt'}</button><small role="status">{tiltMessage}</small></aside>}
       <div aria-label="Choose a project">{projects.map((item, i) => <button key={item.title} aria-pressed={selected === i} onClick={() => selectProject(i)}><img src={brandImages[i]} alt="" width={96} height={96}/><span className={styles.projectLabel}>{item.title}</span><span className={styles.selectedDot} aria-hidden="true"/></button>)}</div>
       <button className={styles.explore} aria-expanded={expanded} aria-controls="project-focus" onClick={() => setExpanded(v => !v)}>{expanded ? 'Close project' : 'Explore project'} <span>{expanded ? '−' : '+'}</span></button>
     </div>
-    <AccessibilityTray motionMode={motionMode} onMotionChange={value => { onMotionChange?.(value); reset(); }} />
+    <AccessibilityTray motionMode={motionMode} onMotionChange={value => { onMotionChange?.(value); reset(); }} tiltEnabled={tiltEnabled} tiltMessage={tiltMessage} onTiltToggle={toggleTilt} motionEnabled={motionEnabled}/>
     <div id="project-focus" ref={focus} hidden={!expanded} className={styles.focus}>
       <div aria-live="polite"><span>0{selected + 1} / {project.blocks[0].text}</span><h2>{project.title}</h2><p>{project.blocks[1].text}</p><a href={urls[selected]} target="_blank" rel="noreferrer">{project.blocks.at(-1).text} ↗</a></div>
       <div><h3>What I built</h3><p>{project.blocks[2].text}</p><ul>{project.blocks.filter(item => item.kind === 'li').map(item => <li key={item.text}>{item.text}</li>)}</ul></div>
