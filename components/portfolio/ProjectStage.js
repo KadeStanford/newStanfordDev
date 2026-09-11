@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import AccessibilityTray from './AccessibilityTray';
 import ProjectGallery from './ProjectGallery';
 import styles from '../../styles/ProjectStage.module.css';
+import { orbitOptions } from './orbitFonts';
 
 const images = ['/images/projects/bigbass-home.webp', '/images/projects/liberty-home.webp'];
 const CurvedType3D=dynamic(()=>import('./CurvedType3D'),{ssr:false});
@@ -14,7 +15,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [mobile,setMobile]=useState(false);
-  const [textPreset,setTextPreset]=useState('monoton');
+  const [textPreset,setTextPreset]=useState('righteous');
   const [typeReady,setTypeReady]=useState(false);
   useEffect(()=>{const media=matchMedia('(max-width:800px)');const update=()=>setMobile(media.matches);update();media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
   useEffect(()=>{setTypeReady(false);},[mobile,motionEnabled]);
@@ -119,7 +120,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   }
 
   return <section id="top" className={styles.experience} data-type="artistic" data-animate-swaps={animateSwaps} aria-labelledby="opening">
-    {mobile&&process.env.NODE_ENV==='development'&&<label className={styles.typeStudy}>2D orbit lettering <select value={textPreset} onChange={e=>setTextPreset(e.target.value)}><option value="monoton">All Monoton</option><option value="metal">Bungee + DM Serif Italic</option><option value="bold">Monoton + DM Serif Italic</option><option value="sculptural">Bungee + Italiana</option><option value="editorial">Italiana + Monoton</option></select></label>}
+    {mobile&&process.env.NODE_ENV==='development'&&<label className={styles.typeStudy}>2D orbit lettering <select value={textPreset} onChange={e=>setTextPreset(e.target.value)}>{['Single font','Two fonts','Previous options'].map(group=><optgroup label={group} key={group}>{orbitOptions.filter(option=>option.group===group).map(option=><option value={option.id} key={option.id}>{option.label}</option>)}</optgroup>)}</select></label>}
     <div className={styles.composition}>
       <div className={styles.title}>
         <h1 id="opening">Websites built around <em>your business.</em></h1>

@@ -18,8 +18,8 @@
 .experience[data-type=artistic] .selection>div button:nth-child(2) .projectLabel{font-family:BodoniArt,Georgia,serif;font-style:italic;font-size:clamp(1.2rem,2vw,1.7rem);font-weight:500}
 @media(max-width:800px){.experience[data-type=artistic] .title h1{font-size:clamp(2.5rem,8.2vw,4.9rem);max-width:13ch}.experience[data-type=artistic] .title>a{margin-top:1.6rem}}
 @font-face{font-family:Paytone;src:url('/PaytoneOne.ttf') format('truetype');font-display:swap}
-.typeStudy{display:flex;align-items:center;justify-content:flex-end;gap:.7rem;padding:.7rem 4vw;font-size:.7rem;color:#acbbb1;background:#132019;position:relative;z-index:4}
-.typeStudy select{background:#080e12;color:#d6e9c3;border:1px solid #718568;padding:.4rem;border-radius:5px}
+.typeStudy{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:.7rem;padding:.7rem 4vw;font-size:.7rem;color:#acbbb1;background:#132019;position:relative;z-index:4}
+.typeStudy select{min-width:0;max-width:100%;background:#080e12;color:#d6e9c3;border:1px solid #718568;padding:.4rem;border-radius:5px}
 .experience[data-type=editorial] .title h1{font-family:Georgia,serif;font-weight:400;letter-spacing:-.055em;font-size:clamp(2.7rem,4.8vw,6rem);width:auto}
 .experience[data-type=editorial] .title em{font-family:Instrument,Arial,sans-serif;font-style:normal;font-weight:500;letter-spacing:-.06em}
 .experience[data-type=editorial] .selection .projectLabel{font-family:Georgia,serif;font-size:clamp(1rem,1.6vw,1.4rem);letter-spacing:-.025em}
