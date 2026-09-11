@@ -299,7 +299,7 @@ Checks for this slice: Next production build passed; desktop (1440 × 1000) and 
 
 ## Flat orbit lettering trial
 
-The mobile headline now uses flat lettering on the animated orbit, with separate rear and foreground canvas layers around the DOM phones. Letters retain their current layer until their projected bounds clear both phones (including a safety margin), avoiding mid-overlap depth changes during rotation and swaps. Four preview-only font pairings contrast sans and serif faces across the two lines. This is a trial, not a user-approved final direction.
+The mobile headline now uses flat lettering on the animated orbit, with separate rear and middle canvas layers around the DOM phones. The middle canvas shares the phones' stacking context: above the rear phone but below the front phone, whose silhouette always occludes the lettering. Letters retain their current layer until their projected bounds clear both phones (including a safety margin), avoiding mid-overlap depth changes during rotation and swaps. Four preview-only font pairings contrast sans and serif faces across the two lines. This is a trial, not a user-approved final direction.
 
 Verified the mobile canvas sizing, font switching, reduced-motion static fallback, and production build. Physical-device motion remains unverified.
 

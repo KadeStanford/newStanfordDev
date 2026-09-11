@@ -19,9 +19,12 @@ export default function CurvedType3D({ onReady, preset='metal' }) {
    renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
    renderer.setClearColor(0x000000,0);
    // Drawing-buffer resolution must not enlarge the canvas's CSS layout box.
-   Object.assign(renderer.domElement.style,{display:'block',width:'100%',height:'100%',position:'absolute',inset:'0',zIndex:3});
+   Object.assign(renderer.domElement.style,{display:'block',width:'100%',height:'100%',position:'absolute',inset:'0',zIndex:1,pointerEvents:'none'});
    const rear=document.createElement('canvas');Object.assign(rear.style,{position:'absolute',inset:'0',width:'100%',height:'100%',zIndex:0});node.appendChild(rear);const rearContext=rear.getContext('2d');
-   node.appendChild(renderer.domElement);
+   // Share the phones' stacking context: rear phone (1), text (1, later
+   // DOM order), front phone (2). The front silhouette always occludes text.
+   const phoneLayer=node.parentElement.querySelector('button')?.parentElement;
+   (phoneLayer||node).appendChild(renderer.domElement);
    const scene=new THREE.Scene();const camera=new THREE.OrthographicCamera(-300,300,400,-400,.1,2000);camera.position.z=900;
    const group=new THREE.Group();scene.add(group);
    const loader=new FontLoader();
@@ -58,8 +61,8 @@ export default function CurvedType3D({ onReady, preset='metal' }) {
     letters.forEach(({mesh})=>{mesh.visible=mesh.userData.front;});renderer.render(scene,camera);if(!ready){ready=true;onReady(true);}}frame=requestAnimationFrame(render);}
    const intersection=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;});intersection.observe(node);
    renderer.domElement.addEventListener('webglcontextlost',fail);frame=requestAnimationFrame(render);
-   return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();intersection.disconnect();renderer.domElement.removeEventListener('webglcontextlost',fail);geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());renderer.dispose();node.replaceChildren();};
-  }catch{renderer?.dispose();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());fail();}
+   return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();intersection.disconnect();renderer.domElement.removeEventListener('webglcontextlost',fail);geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());renderer.dispose();renderer.domElement.remove();node.replaceChildren();};
+  }catch{renderer?.dispose();renderer?.domElement.remove();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());fail();}
  },[onReady,preset]);
  return <div ref={host} aria-hidden="true" style={{position:'absolute',inset:0,pointerEvents:'none'}}/>;
 }
