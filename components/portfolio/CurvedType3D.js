@@ -36,6 +36,9 @@ function OrbitLettering({onReady,preset,fonts}) {
    renderer.setClearColor(0x000000,0);
    // Drawing-buffer resolution must not enlarge the canvas's CSS layout box.
    Object.assign(renderer.domElement.style,{display:'block',width:'100%',height:'100%',position:'absolute',inset:'0',zIndex:2,pointerEvents:'none'});
+   // Cancel most of the parent phone tilt, retaining only a gentle response.
+   renderer.domElement.style.transform='rotateY(calc(var(--ry, 0deg) * -.75)) rotateX(calc(var(--rx, 0deg) * -.75))';
+   renderer.domElement.style.transition='transform .35s ease-out';
    renderer.domElement.dataset.orbitLayer='middle';
    renderer.domElement.dataset.fontPreset=preset;
    // Explicit roles update with selection at the swap midpoint:
@@ -43,7 +46,7 @@ function OrbitLettering({onReady,preset,fonts}) {
    const phoneLayer=node.parentElement.querySelector('button')?.parentElement;
    (phoneLayer||node).appendChild(renderer.domElement);
    const scene=new THREE.Scene();const camera=new THREE.OrthographicCamera(-300,300,400,-400,.1,2000);camera.position.z=900;
-   const group=new THREE.Group();scene.add(group);
+   const group=new THREE.Group();group.rotation.set(.22,-.30,0);scene.add(group);
    function line(text,font,size,bottom){
     // Native font rasterization preserves nested counters/stripes that the
     // previous TTF-to-triangle conversion filled incorrectly (notably B/D).
@@ -77,7 +80,7 @@ function OrbitLettering({onReady,preset,fonts}) {
    const observer=new ResizeObserver(resize);observer.observe(node);resize();
    let ready=false;
    let phase=0,lastTime=null;
-   function render(time){if(disposed||!node.isConnected)return;const delta=lastTime===null?0:Math.min((time-lastTime)/1000,.05);lastTime=time;if(visible&&!document.hidden){phase+=delta*Math.PI*2/38;const style=getComputedStyle(node.parentElement);group.rotation.x=.22+(parseFloat(style.getPropertyValue('--rx'))||0)*Math.PI/180;group.rotation.y=-.30+(parseFloat(style.getPropertyValue('--ry'))||0)*Math.PI/180;
+   function render(time){if(disposed||!node.isConnected)return;const delta=lastTime===null?0:Math.min((time-lastTime)/1000,.05);lastTime=time;if(visible&&!document.hidden){phase+=delta*Math.PI*2/38;
     letters.forEach(({mesh,angle,bottom})=>{const theta=angle+phase;mesh.position.set(265*Math.sin(theta),330*Math.cos(theta),0);mesh.rotation.z=Math.atan2(-330*Math.sin(theta),265*Math.cos(theta))+(bottom?Math.PI:0);});group.updateMatrixWorld(true);
     // The entire orbit lives between the dynamically assigned phone roles.
     // Its far arc must not be routed behind the rear phone.

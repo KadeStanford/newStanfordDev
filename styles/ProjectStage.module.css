@@ -154,3 +154,20 @@
 .selection .explore span{display:grid;place-items:center;border:1px solid #14201844;width:28px;height:28px;border-radius:50%;color:#142018!important;font-size:1.2rem!important}
 @media(max-width:800px){.gallery{--phone-width:min(36vw,205px)}.projectPlane{left:calc(50% - min(18vw,102.5px))}.selection>div button{gap:.7rem;padding:1rem .8rem;align-content:start}.selection>div button img{width:60px;height:60px}.experience[data-type=artistic] .selection>div button .projectLabel{font-size:.9rem;flex-basis:100%;text-align:center}}
 
+/* Separate, branded project selectors with a clear selection affordance. */
+.selection>div{gap:12px;border:0;border-radius:0;overflow:visible;background:none}
+.selection>div button{--brand-tint:#86b8d9;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:.55rem;padding:1.1rem;border:1px solid #77908b44;border-radius:6px 22px 6px 6px;background:radial-gradient(ellipse at 5% 0%,#31526544,transparent 75%),#10191a;overflow:hidden;text-align:left;transition:border-color .25s,background .25s,box-shadow .25s}
+.selection>div button+button{--brand-tint:#e4ce97;border:1px solid #77908b44;background:radial-gradient(ellipse at 5% 0%,#6e573c44,transparent 75%),#161b17}
+.selection>div button[aria-pressed=true]{border-color:var(--brand-tint);background-color:#1b2824;box-shadow:inset 3px 0 var(--brand-tint),0 8px 24px #0003}
+.selection>div button:hover{border-color:var(--brand-tint)}
+.brandAsset{display:flex;align-items:center;width:100%;height:82px;margin-bottom:.3rem}
+.selection>div button img{width:80px;height:80px;object-fit:contain;border-radius:8px}
+.experience[data-type=artistic] .selection>div button .projectLabel{flex-basis:auto;text-align:left;font-family:SyneArt,Arial,sans-serif;font-weight:700;font-size:clamp(.9rem,2vw,1.2rem);letter-spacing:-.025em;order:0}
+.experience[data-type=artistic] .selection>div button+button .projectLabel{font-family:BodoniArt,Georgia,serif;font-style:italic;font-weight:500;font-size:clamp(1.05rem,2.3vw,1.4rem)}
+.projectKind{font-size:.65rem;line-height:1.5;color:#aab8b1}
+.projectChoice{display:flex;justify-content:space-between;align-items:center;gap:.6rem;width:100%;margin-top:auto;padding-top:.8rem;border-top:1px solid #bacabc24;font-size:.65rem;color:var(--brand-tint)}
+.projectChoice>span{font-size:1rem}
+.selection .explore{margin-top:.2rem;padding:.75rem 0 .75rem 1rem;border:1px solid #8da08055;border-radius:6px;background:#101a17;color:#d8efaf;font-size:.9rem}
+.selection .explore span{width:40px;height:40px;margin-right:.7rem;border:0;border-radius:5px;background:#c8f06b;color:#142018}
+@media(max-width:400px){.selection>div{gap:8px}.selection>div button{padding:.8rem}.brandAsset{height:64px}.selection>div button img{width:64px;height:64px}.projectKind{font-size:.6rem}}
+

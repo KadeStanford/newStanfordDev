@@ -150,7 +150,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
     </div>
     <div className={styles.selection}>
       <span>Selected work</span>
-      <div aria-label="Choose a project">{projects.map((item, i) => <button key={item.title} aria-pressed={selected === i} onClick={() => selectProject(i)}><img src={brandImages[i]} alt="" width={96} height={96}/><span className={styles.projectLabel}>{item.title}</span><span className={styles.selectedDot} aria-hidden="true"/></button>)}</div>
+      <div aria-label="Choose a project">{projects.map((item, i) => <button key={item.title} aria-pressed={selected === i} onClick={() => selectProject(i)}><span className={styles.brandAsset}><img src={brandImages[i]} alt="" width={96} height={96}/></span><span className={styles.projectLabel}>{item.title}</span><span className={styles.projectKind}>{i===0?'Tree care & business tools':'Restaurant & menu'}</span><span className={styles.projectChoice}>{selected===i?'On display':'Select project'}<span aria-hidden="true">{selected===i?'✓':'↗'}</span></span></button>)}</div>
       <button className={styles.explore} aria-expanded={expanded} aria-controls="project-focus" onClick={() => setExpanded(v => !v)}>{expanded ? 'Close project' : 'Explore project'} <span>{expanded ? '−' : '+'}</span></button>
     </div>
     <AccessibilityTray motionMode={motionMode} onMotionChange={value => { onMotionChange?.(value); reset(); }} tiltEnabled={tiltEnabled} tiltMessage={tiltMessage} onTiltToggle={toggleTilt} motionEnabled={motionEnabled}/>
