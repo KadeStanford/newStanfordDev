@@ -15,7 +15,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
   const [mobile,setMobile]=useState(false);
-  const [textPreset,setTextPreset]=useState('righteous');
+  const [textPreset,setTextPreset]=useState('bungee-monoton');
   const [typeReady,setTypeReady]=useState(false);
   useEffect(()=>{const media=matchMedia('(max-width:800px)');const update=()=>setMobile(media.matches);update();media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
   useEffect(()=>{setTypeReady(false);},[mobile,motionEnabled]);

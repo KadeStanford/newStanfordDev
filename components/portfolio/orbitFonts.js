@@ -10,6 +10,7 @@ export const orbitFonts = {
 };
 
 export const orbitOptions = [
+ {id:'bungee-monoton',label:'Bungee + Monoton',fonts:['bungee','monoton'],group:'Two fonts'},
  {id:'righteous',label:'Righteous — rounded retro',fonts:['righteous','righteous'],group:'Single font'},
  {id:'audiowide',label:'Audiowide — futuristic',fonts:['audiowide','audiowide'],group:'Single font'},
  {id:'blackops',label:'Black Ops One — stencil',fonts:['blackops','blackops'],group:'Single font'},
