@@ -172,7 +172,10 @@
 .brand .monogram .logoLetters{font:inherit;letter-spacing:inherit;line-height:inherit;margin:0;display:block;padding-right:.08em}
 .page[data-motion=true] .logoLetters{animation:sdsReveal 7s cubic-bezier(.65,0,.25,1) infinite}
 .page[data-motion=true] .monogram i{animation:sdsSlash 7s cubic-bezier(.65,0,.25,1) infinite;transition:none}
-.nav .menuToggle{border-radius:0;padding:6px 0 6px 10px;gap:12px;min-height:44px;background:none;border:0;color:#edf1ee;box-shadow:none;font-size:.9rem;letter-spacing:-.025em}
+.nav .menuToggle{border-radius:7px;padding:6px 10px;gap:12px;min-height:44px;background:#18231e;border:1px solid #9cb38a66;color:#edf1ee;box-shadow:inset 0 1px #e0ffac0c;font-size:.9rem;letter-spacing:-.025em}
+.nav .menuToggle:hover{background:#243228;border-color:#c8f06b99}
+.nav .menuToggle:active{background:#30402e}
+@media(max-width:370px){.nav .menuToggle{gap:6px;padding:6px}}
 .nav .menuToggle span{position:relative;display:block;width:25px;height:30px;flex-shrink:0;background:none;font-size:0;color:transparent}
 .menuToggle span::before,.menuToggle span::after{content:'';position:absolute;left:6px;top:4px;width:2px;height:23px;background:#c8f06b;transform:skew(-18deg);transform-origin:center}
 .menuToggle span::after{left:16px;height:16px;top:7px}
