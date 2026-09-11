@@ -58,7 +58,6 @@ const structuredData = {
       "@id": founderId,
       name: "Kade Stanford",
       url: siteUrl,
-      image: `${siteUrl}/images/kadeProfile.jpg`,
       email: "mailto:stanforddevcontact@gmail.com",
       jobTitle: "Web Developer and Digital Marketer",
       alumniOf: {
