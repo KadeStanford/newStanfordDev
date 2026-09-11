@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -13,15 +14,16 @@ const contentSecurityPolicy = [
   "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://*.google-analytics.com https://*.posthog.com https://app.posthog.com https://*.firebaseio.com wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://www.google.com",
   "frame-src https://www.google.com https://recaptcha.google.com https://stanforddev.firebaseapp.com",
   "worker-src 'self' blob:",
-  "upgrade-insecure-requests",
+  // LAN previews use HTTP; upgrading assets to HTTPS breaks phone previews.
+  ...(!isDevelopment ? ["upgrade-insecure-requests"] : []),
 ].join("; ");
 
 const securityHeaders = [
   { key: "Content-Security-Policy", value: contentSecurityPolicy },
-  {
+  ...(!isDevelopment ? [{
     key: "Strict-Transport-Security",
     value: "max-age=31536000; includeSubDomains",
-  },
+  }] : []),
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
