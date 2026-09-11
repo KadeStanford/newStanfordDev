@@ -118,6 +118,11 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
         <a href="#contact">Get in touch <span>↗</span></a>
       </div>
       <div id="work" className={styles.gallery} onPointerMove={move} onPointerLeave={reset} onPointerUp={event=>{if(event.pointerType!=='mouse')reset();}} onPointerCancel={reset} ref={stage}>
+        <svg className={styles.arcHeadline} viewBox="0 0 600 800" aria-hidden="true" focusable="false">
+          <defs><path id="headline-top-arc" d="M 35 170 Q 300 -120 565 170"/><path id="headline-bottom-arc" d="M 35 610 Q 300 890 565 610"/></defs>
+          <text className={styles.arcTop}><textPath href="#headline-top-arc" startOffset="50%" textAnchor="middle">Websites built around</textPath></text>
+          <text className={styles.arcBottom}><textPath href="#headline-bottom-arc" startOffset="50%" textAnchor="middle">your business.</textPath></text>
+        </svg>
         <div className={styles.planes}>
           {projects.map((item, i) => <button key={item.title} className={`${styles.projectPlane} ${selected === i ? styles.front : styles.back}`} onClick={() => { if(swapping.current)return; if (selected === i) setExpanded(v => !v); else selectProject(i); }} aria-label={selected === i ? `${expanded ? 'Close' : 'Explore'} ${item.title}` : `Select ${item.title}`} aria-expanded={selected === i ? expanded : undefined}>
             <span className={styles.browserChrome} aria-hidden="true">
