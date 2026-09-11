@@ -11,7 +11,6 @@ const urls = ['https://www.bigbasstrees.com/', 'https://libertyhousespecialties.
 export default function ProjectStage({ copy, motionEnabled=true, motionMode='system', onMotionChange }) {
   const [selected, setSelected] = useState(0);
   const [expanded, setExpanded] = useState(false);
-  const [typeStudy,setTypeStudy]=useState('editorial');
   const [tiltEnabled, setTiltEnabled] = useState(false);
   const [tiltMessage, setTiltMessage] = useState('');
   const animateSwaps=motionEnabled;
@@ -112,11 +111,10 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
     stage.current.style.setProperty('--ry', '0deg');
   }
 
-  return <section id="top" className={styles.experience} data-type={typeStudy} data-animate-swaps={animateSwaps} aria-labelledby="opening">
-    {process.env.NODE_ENV==='development'&&<label className={styles.typeStudy}>Typography preview <select value={typeStudy} onChange={event=>setTypeStudy(event.target.value)}><option value="editorial">Editorial serif</option><option value="display">Bold display</option><option value="original">Original contrast</option></select></label>}
+  return <section id="top" className={styles.experience} data-type="artistic" data-animate-swaps={animateSwaps} aria-labelledby="opening">
     <div className={styles.composition}>
       <div className={styles.title}>
-        <h1 id="opening">A better website<br/>should make running<br/>your business <em>easier.</em></h1>
+        <h1 id="opening">Websites built around <em>your business.</em></h1>
         <a href="#contact">Get in touch <span>↗</span></a>
       </div>
       <div id="work" className={styles.gallery} onPointerMove={move} onPointerLeave={reset} onPointerUp={event=>{if(event.pointerType!=='mouse')reset();}} onPointerCancel={reset} ref={stage}>

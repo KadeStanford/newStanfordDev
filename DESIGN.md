@@ -297,6 +297,10 @@ Kade rejected the sculpture-led design and authorized the proposed opening-to-pr
 
 Checks for this slice: Next production build passed; desktop (1440 × 1000) and phone (390 × 844) screenshots inspected; project switching and expanded facts observed; no horizontal overflow at the checked phone width. Pointer-reactive movement, physical-device performance, and a complete keyboard audit remain unverified.
 
+## Shorter opening trial
+
+User requested trying “Websites built around your business.” with the entire headline above the phones on mobile. Removed the split/overlapping mobile composition and preview selector. Current trial uses locally hosted Syne and Bodoni Moda (licenses included), with normal document flow and unchanged project interactions. This is a wording/layout trial, not final visual approval. Build passed; 390px and 1070px screenshots inspected, without horizontal overflow.
+
 ## Typography comparison (pending selection)
 
 Local development preview offers Editorial serif (Georgia + Instrument), Bold display (bundled Paytone + Georgia), and Original contrast. Applies to the opening headline and project picker labels without rewriting approved copy. Editorial is the initial preview, not an approved final type direction. A slow light sweep accents the headline when motion is enabled. Device tilt controls moved into the accessibility dialog and are disabled during reduced motion. Build passed; 320px and 558px options checked for overflow, selected screenshots inspected, and dialog placement/reduced-motion disabling verified. Physical device testing remains pending.

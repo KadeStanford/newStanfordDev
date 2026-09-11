@@ -29,7 +29,7 @@ Eyebrow:
 
 Headline:
 
-> A better website should make running your business easier.
+> Websites built around your business.
 
 Body:
 

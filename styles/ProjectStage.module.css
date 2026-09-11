@@ -1,4 +1,11 @@
 .experience{background:#080e12;color:#edf1ee;position:relative;overflow:hidden;--accent:#c8f06b}
+@font-face{font-family:SyneArt;src:url('/fonts/Syne-Bold.ttf') format('truetype');font-weight:700;font-display:swap}
+@font-face{font-family:BodoniArt;src:url('/fonts/BodoniModa-Italic.ttf') format('truetype');font-weight:500;font-style:italic;font-display:swap}
+.experience[data-type=artistic] .title h1{font-family:SyneArt,Arial,sans-serif;font-weight:700;font-size:clamp(2.4rem,4.3vw,5.8rem);line-height:.98;letter-spacing:-.055em;width:auto;max-width:none;text-shadow:none}
+.experience[data-type=artistic] .title em{display:block;font-family:BodoniArt,Georgia,serif;font-weight:500;font-size:1.12em;line-height:1.15;letter-spacing:-.045em;margin:.08em 0 0;padding-right:.1em}
+.experience[data-type=artistic] .selection .projectLabel{font-family:SyneArt,Arial,sans-serif;font-size:clamp(1rem,1.6vw,1.3rem);line-height:1.05;letter-spacing:-.045em}
+.experience[data-type=artistic] .selection>div button:nth-child(2) .projectLabel{font-family:BodoniArt,Georgia,serif;font-style:italic;font-size:clamp(1.2rem,2vw,1.7rem);font-weight:500}
+@media(max-width:800px){.experience[data-type=artistic] .title h1{font-size:clamp(2.5rem,8.2vw,4.9rem);max-width:13ch}.experience[data-type=artistic] .title>a{margin-top:1.6rem}}
 @font-face{font-family:Paytone;src:url('/PaytoneOne.ttf') format('truetype');font-display:swap}
 .typeStudy{display:flex;align-items:center;justify-content:flex-end;gap:.7rem;padding:.7rem 4vw;font-size:.7rem;color:#acbbb1;background:#132019;position:relative;z-index:4}
 .typeStudy select{background:#080e12;color:#d6e9c3;border:1px solid #718568;padding:.4rem;border-radius:5px}
@@ -125,3 +132,4 @@
 }
 .selection>div button img{width:72px;height:72px;object-fit:contain;opacity:1}
 @media(max-width:800px){.selection>div button{align-items:center;padding:1rem}.selection>div button img{width:clamp(64px,14vw,90px);height:clamp(64px,14vw,90px)}.selection .projectLabel{font-size:.85rem}}
+
