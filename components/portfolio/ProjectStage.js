@@ -5,6 +5,7 @@ import ProjectGallery from './ProjectGallery';
 import styles from '../../styles/ProjectStage.module.css';
 
 const images = ['/images/projects/bigbass-home.webp', '/images/projects/liberty-home.webp'];
+const brandImages = ['/images/projects/bigbass-logo.png', '/images/projects/liberty-brand.png'];
 const urls = ['https://www.bigbasstrees.com/', 'https://libertyhousespecialties.com/'];
 
 export default function ProjectStage({ copy, motionEnabled=true, motionMode='system', onMotionChange }) {
@@ -135,7 +136,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
     <div className={styles.selection}>
       <span>Selected work</span>
       {motionEnabled&&<aside className={styles.tiltControl}><button type="button" onClick={toggleTilt} aria-pressed={tiltEnabled}>{tiltEnabled?'Disable device tilt':'Enable device tilt'}</button><small role="status">{tiltMessage}</small></aside>}
-      <div aria-label="Choose a project">{projects.map((item, i) => <button key={item.title} aria-pressed={selected === i} onClick={() => selectProject(i)}><img src={images[i]} alt="" width={96} height={60}/><span className={styles.projectLabel}>{item.title}</span><span className={styles.selectedDot} aria-hidden="true"/></button>)}</div>
+      <div aria-label="Choose a project">{projects.map((item, i) => <button key={item.title} aria-pressed={selected === i} onClick={() => selectProject(i)}><img src={brandImages[i]} alt="" width={96} height={96}/><span className={styles.projectLabel}>{item.title}</span><span className={styles.selectedDot} aria-hidden="true"/></button>)}</div>
       <button className={styles.explore} aria-expanded={expanded} aria-controls="project-focus" onClick={() => setExpanded(v => !v)}>{expanded ? 'Close project' : 'Explore project'} <span>{expanded ? '−' : '+'}</span></button>
     </div>
     <AccessibilityTray motionMode={motionMode} onMotionChange={value => { onMotionChange?.(value); reset(); }} />

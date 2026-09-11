@@ -72,6 +72,17 @@
 .gallery::before{inset:14% 3% 9%;background:repeating-radial-gradient(ellipse at center,transparent 0%,#c8f06b04 8%,#c8f06b15 11%,#adc5b92b 11.4%,#10221a08 11.8%,transparent 13.5%),radial-gradient(ellipse at 40% 30%,#98b86b16,transparent 70%);border:1px solid #b5d99830;transform:rotate(-22deg) scaleY(.7);box-shadow:0 0 0 28px #bdd5ac04,0 0 0 58px #bdd5ac03}
 .gallery::after{left:17%;right:13%;bottom:8%;height:9%;background:radial-gradient(ellipse,#0008,transparent 70%);filter:blur(12px)}
 .planes{z-index:1}
+.selection>div button img{width:72px;height:72px;object-fit:contain;opacity:1}
+@media(max-width:800px){
+ .experience[data-animate-swaps=true] .planes{animation:none}
+ .experience[data-animate-swaps=true] .projectPlane:nth-child(1){animation:phoneDriftA 7s ease-in-out infinite}
+ .experience[data-animate-swaps=true] .projectPlane:nth-child(2){animation:phoneDriftB 8.5s ease-in-out infinite}
+ .experience .gallery[data-swapping=true] .projectPlane{animation-play-state:paused}
+ .experience .projectPlane{box-shadow:2px 1px #5d6e63,4px 2px #293a30,6px 3px #101b14,8px 4px #07110b,15px 25px 35px #0008,inset 0 0 0 2px #080c0b}
+ .projectPlane::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,#fff1,transparent 26%,transparent 75%,#ffffff08);border-top:1px solid #e5f1e066}
+}
+@keyframes phoneDriftA{0%,100%{translate:0 0;rotate:y -3deg}50%{translate:0 -9px;rotate:y 3deg}}
+@keyframes phoneDriftB{0%,100%{translate:0 -6px;rotate:y 4deg}50%{translate:0 3px;rotate:y -3deg}}
 .tiltControl{display:none}
 @media(max-width:800px){
  .experience .planes{transform:rotateX(var(--rx)) rotateY(var(--ry));transition:transform .35s ease-out}
@@ -101,3 +112,5 @@
  .back{transform:translate(24%,-1%) rotate(9deg)}
  .gallery::before{inset:12% 8% 8%;transform:rotate(-22deg) scaleY(.8)}
 }
+.selection>div button img{width:72px;height:72px;object-fit:contain;opacity:1}
+@media(max-width:800px){.selection>div button{align-items:center;padding:1rem}.selection>div button img{width:clamp(64px,14vw,90px);height:clamp(64px,14vw,90px)}.selection .projectLabel{font-size:.85rem}}
