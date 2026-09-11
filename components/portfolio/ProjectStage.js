@@ -160,7 +160,7 @@ export default function ProjectStage({ copy, motionEnabled=true, motionMode='sys
         <div className={styles.caseIdentity}><h2 id="project-title">{selected===0?'Big Bass':'Liberty House'}<em>{selected===0?'Tree Service':'Specialties'}</em></h2><div className={styles.caseBrand}><img src={brandImages[selected]} alt="" width={120} height={120}/></div></div>
         <p className={styles.caseSubtitle}>{project.blocks[0].text}</p>
       </header>
-      <div className={styles.caseStory}><h3>The brief <em>&amp; the build.</em></h3><p>{project.blocks[1].text}</p><a href={urls[selected]} target="_blank" rel="noreferrer">{project.blocks.at(-1).text}<span aria-hidden="true">↗</span></a></div>
+      <div className={styles.caseStory}><h3>About <em>the project.</em></h3><p>{project.blocks[1].text}</p><a href={urls[selected]} target="_blank" rel="noreferrer">{project.blocks.at(-1).text}<span aria-hidden="true">↗</span></a></div>
       <div className={styles.caseScope}><span className={styles.caseEyebrow}>Behind the website</span><h3>What went <em>into it.</em></h3><p>{project.blocks[2].text}</p><ul>{project.blocks.filter(item => item.kind === 'li').map(item => <li key={item.text}><span aria-hidden="true">↗</span>{item.text}</li>)}</ul></div>
       {expanded && <ProjectGallery key={selected} projectIndex={selected} title={project.title} />}
     </div>
