@@ -36,3 +36,5 @@
 @media(max-width:400px){.offer{grid-template-columns:1fr;gap:.6rem}.offer .price{text-align:left}.rail button{padding:.7rem .5rem;font-size:.7rem}}
 @media(max-width:600px){.offer{grid-template-columns:minmax(0,1fr);gap:.75rem}.offer h3{grid-column:1/-1;grid-row:1;min-width:0}.offer .price{grid-column:1/-1;grid-row:2;text-align:left;min-width:0;max-width:100%;overflow-wrap:anywhere}}
 @media all{:global([data-motion=true]) .package{animation:packageArrival .35s ease-out}:global([data-motion=true]) .categories button,:global([data-motion=true]) .rail button{transition:color .2s,background .2s,border-color .2s}:global([data-motion=true]) .offer a span{transition:transform .25s}:global([data-motion=true]) .offer a:hover span{transform:translate(3px,-3px)}}
+
+.careHeading{margin-top:1.4rem!important}

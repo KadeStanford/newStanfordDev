@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from '../../styles/PricingSelector.module.css';
-const groups=[{name:'Websites',items:[0,1,2]},{name:'Advertising',items:[4,5,6]},{name:'Creative',items:[7]}];
+const groups=[{name:'Websites',items:[0,1,2,3]},{name:'Advertising',items:[6,7,8]},{name:'Creative',items:[9]}];
 export default function PricingSelector({copy}){
  const [group,setGroup]=useState(0),[selected,setSelected]=useState(0);
  const entry=copy.Pricing.entries[selected];
@@ -15,7 +15,7 @@ export default function PricingSelector({copy}){
    <article key={selected} className={styles.package} aria-label="Selected package" aria-live="polite">
     <div className={styles.offer}><h3>{name}</h3><p className={styles.price}>{price}</p>{summary&&<p className={styles.offerSummary}>{summary}</p>}<a href="#contact">Get in touch <span>↗</span></a></div>
     <div className={styles.scope}>{scope.map((block,i)=>block.kind==='li'?<p className={styles.item} key={i}><span aria-hidden="true">↳</span>{block.text}</p>:<p key={i}>{block.text}</p>)}</div>
-    {group===0&&<aside className={styles.care}><h4>Optional care &amp; hosting <span>$175 per month</span></h4><p>Available for websites I build, not as a standalone service for existing sites.</p>{copy.Pricing.entries[3].blocks.map((block,i)=><p key={i}>{block.text}</p>)}</aside>}
+    {group===0&&<aside className={styles.care}><h4>Optional hosting <span>$75 per month</span></h4>{copy.Pricing.entries[4].blocks.map((block,i)=><p key={`hosting-${i}`}>{block.text}</p>)}<h4 className={styles.careHeading}>Optional care &amp; hosting <span>$175 per month</span></h4><p>Available for websites I build, not as a standalone service for existing sites.</p>{copy.Pricing.entries[5].blocks.map((block,i)=><p key={i}>{block.text}</p>)}</aside>}
    </article>
   </div>
   <p className={styles.note}>{copy.Pricing.note}</p>

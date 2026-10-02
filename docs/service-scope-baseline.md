@@ -4,6 +4,19 @@ This is the working commercial baseline for new proposals. It is not a signed cl
 
 ## Website projects
 
+### Local Starter - $600 fixed project price
+
+> A straightforward one-page website using a reusable layout customized to your business branding.
+
+- One page with up to five sections
+- Client-approved business information, photos, and text, with light organization
+- Mobile-friendly presentation, click-to-call, and a simple inquiry form
+- Basic page title, description, search setup, and launch
+- One consolidated revision round
+- $300 deposit applied to the total; $300 after preview approval and before launch
+
+> Additional pages, stores, booking systems, portals, integrations, and ongoing SEO are quoted separately. Hosting is optional and separate.
+
 ### Launch Page - from $1,000
 
 - One conversion-focused page.
@@ -25,13 +38,19 @@ This is the working commercial baseline for new proposals. It is not a signed cl
 - Conversion tracking and local-search foundations.
 - Final scope depends on page count, content readiness, integrations, and campaign needs.
 
+### Website Hosting - $75 per month
+
+> Optional hosting for a straightforward website I build, with deployment and basic availability monitoring. Site requirements and usage are agreed in the written scope; expanded features or unusual third-party costs need a separate quote.
+
+> Your domain stays client-owned and is paid separately. Content edits, email hosting, ongoing SEO, and emergency support are not included. Choose the separate care plan if you want small content updates and routine maintenance.
+
 ## Website Care & Hosting - $175/month
 
 Included:
 
 - Managed hosting and deployment.
 - Availability monitoring and routine dependency/maintenance work.
-- Up to two small content requests or 60 minutes of changes per billing month, whichever comes first.
+- Up to two small content update requests per billing month. Hosting is included; the $75 hosting fee is not charged on top.
 - Normal requests acknowledged within two business days and generally completed within three business days.
 
 A small content request means a contained edit to existing text, images, contact details, hours, navigation labels, or a comparable existing-site item. Several changes sent together may count as more than one request based on total effort.
@@ -43,7 +62,7 @@ Not included:
 - Work caused by client-controlled accounts, expired payment methods, policy violations, or third-party outages.
 - Emergency or same-day turnaround unless agreed separately.
 
-Unused requests or time do not roll over. Out-of-scope work requires approval of a written fixed quote or hourly estimate before it begins. The plan can be repriced if the site's complexity or request volume materially changes.
+Unused requests do not roll over. Out-of-scope work requires approval of a separate written scope and quote before it begins. The plan can be repriced if the site's complexity or request volume materially changes.
 
 ## Advertising
 

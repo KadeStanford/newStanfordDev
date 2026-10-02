@@ -4,9 +4,11 @@ Status: Approved by Kade Stanford on September 10, 2026. Do not rewrite during d
 
 Source of truth: `BRIEF.md`
 
+October 2, 2026 pricing update authorized by Kade: fixed $600 Local Starter, optional $75/month hosting, and separate $175/month care including hosting. Small-update boundaries are stated without hourly marketing allowances. Existing custom project prices remain unchanged.
+
 ## Voice decisions
 
-Pending review after September 10 feedback: homepage About heading now proposes “I’m Kade.”; homepage contact introduction proposes “What would you like to improve? I’ll reply within 24 hours on weekdays.” These revisions are not marked approved. Care is now shown as an optional $175/month add-on to website packages only, reflecting the user's clarified eligibility; scope and monthly limits remain unchanged.
+Pending review after September 10 feedback: homepage About heading now proposes “I’m Kade.”; homepage contact introduction proposes “What would you like to improve? I’ll reply within 24 hours on weekdays.” These revisions are not marked approved. Hosting and care are optional add-ons for websites I build. The October 2 pricing update below supersedes the earlier care wording.
 
 - Use first person because clients work directly with Kade.
 - Use “Stanford Development Solutions” as the business name in navigation, metadata, formal references, and the footer—not as a third-person narrator.
@@ -158,9 +160,22 @@ Introduction:
 
 > These are starting points for common projects. After we talk, I will send a written proposal that explains what is included, what is separate, and what the project will cost.
 
+### Local Starter — $600 fixed project price
+
+> A straightforward one-page website using a reusable layout customized to your business branding.
+
+- One page with up to five sections
+- Client-approved business information, photos, and text, with light organization
+- Mobile-friendly presentation, click-to-call, and a simple inquiry form
+- Basic page title, description, search setup, and launch
+- One consolidated revision round
+- $300 deposit applied to the total; $300 after preview approval and before launch
+
+> Additional pages, stores, booking systems, portals, integrations, and ongoing SEO are quoted separately. Hosting is optional and separate.
+
 ### Launch Page — from $1,000
 
-> One focused page for a new or very small business that needs a professional place to send customers.
+> A custom-designed one-page website for a business that needs a more tailored layout and presentation than the Local Starter.
 
 Includes:
 
@@ -194,13 +209,19 @@ Possible scope:
 - Local-search structure
 - Agreed integrations
 
+### Website Hosting — $75 per month
+
+> Optional hosting for a straightforward website I build, with deployment and basic availability monitoring. Site requirements and usage are agreed in the written scope; expanded features or unusual third-party costs need a separate quote.
+
+> Your domain stays client-owned and is paid separately. Content edits, email hosting, ongoing SEO, and emergency support are not included. Choose the separate care plan if you want small content updates and routine maintenance.
+
 ### Website Care & Hosting — $175 per month
 
-> Managed hosting, monitoring, routine maintenance, and up to two small content requests or 60 minutes of changes each month, whichever comes first.
+> Optional managed hosting, monitoring, routine maintenance, and up to two small content update requests each month. Small updates mean contained changes to existing text, photos, business hours, or contact details. Hosting is included in this plan; the $75 hosting fee is not added on top.
 
 Boundary:
 
-> New pages, redesigns, integrations, campaigns, and feature development are quoted separately. Unused requests or time do not roll over.
+> New whole pages, added content sections, major redesigns, integrations, campaigns, and expanded features need a separate scope and quote. Unused requests do not roll over. Emergency or same-day support is not included.
 
 ### Google Ads — $1,250 setup + $600 per month
 
