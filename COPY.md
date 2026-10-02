@@ -4,11 +4,11 @@ Status: Approved by Kade Stanford on September 10, 2026. Do not rewrite during d
 
 Source of truth: `BRIEF.md`
 
-October 2, 2026 pricing update authorized by Kade: fixed $600 Local Starter, optional $75/month hosting, and separate $175/month care including hosting. Small-update boundaries are stated without hourly marketing allowances. Existing custom project prices remain unchanged.
+October 2, 2026 updated pricing authorized by Kade: fixed $600 Local Starter and one standard $75/month hosting and maintenance plan for new websites I build and manage. Existing custom build prices remain unchanged. This replaces the optional hosting and separate $175 care offers; existing client agreements and billing are unchanged.
 
 ## Voice decisions
 
-Pending review after September 10 feedback: homepage About heading now proposes “I’m Kade.”; homepage contact introduction proposes “What would you like to improve? I’ll reply within 24 hours on weekdays.” These revisions are not marked approved. Hosting and care are optional add-ons for websites I build. The October 2 pricing update below supersedes the earlier care wording.
+Pending review after September 10 feedback: homepage About heading now proposes “I’m Kade.”; homepage contact introduction proposes “What would you like to improve? I’ll reply within 24 hours on weekdays.” These revisions are not marked approved. The October 2 pricing update below defines the standard ongoing hosting and maintenance service for new websites I build and manage.
 
 - Use first person because clients work directly with Kade.
 - Use “Stanford Development Solutions” as the business name in navigation, metadata, formal references, and the footer—not as a third-person narrator.
@@ -148,7 +148,7 @@ Examples:
 
 ### Website care
 
-> I can continue hosting and maintaining the site after launch, handle routine upkeep, and make a defined number of small content changes each month.
+> After launch, my standard hosting and maintenance plan keeps the website hosted, handles routine upkeep, and includes small updates to existing content. New pages, added sections, major redesigns, and expanded features are quoted separately.
 
 ## Pricing
 
@@ -158,7 +158,7 @@ Section heading:
 
 Introduction:
 
-> These are starting points for common projects. After we talk, I will send a written proposal that explains what is included, what is separate, and what the project will cost.
+> Website builds are paired with $75 per month hosting and maintenance after launch. After we talk, I will send a written proposal that explains the build price, ongoing service, what is included, and what is separate.
 
 ### Local Starter — $600 fixed project price
 
@@ -168,10 +168,14 @@ Introduction:
 - Client-approved business information, photos, and text, with light organization
 - Mobile-friendly presentation, click-to-call, and a simple inquiry form
 - Basic page title, description, search setup, and launch
+- One-time Google Business Profile setup assistance for eligible businesses; owner verification required
+- One-time domain-based business email setup assistance
 - One consolidated revision round
 - $300 deposit applied to the total; $300 after preview approval and before launch
 
-> Additional pages, stores, booking systems, portals, integrations, and ongoing SEO are quoted separately. Hosting is optional and separate.
+> You keep ownership and admin control of your Business Profile, domain, and email accounts. Google controls profile verification; search rankings are not guaranteed. Email-provider subscription or license fees and domain registration and renewal are paid separately.
+
+> Additional pages, stores, booking systems, portals, integrations, and ongoing SEO are quoted separately. The build is paired with $75 per month hosting and maintenance after launch.
 
 ### Launch Page — from $1,000
 
@@ -209,19 +213,13 @@ Possible scope:
 - Local-search structure
 - Agreed integrations
 
-### Website Hosting — $75 per month
+### Website Hosting & Maintenance — $75 per month
 
-> Optional hosting for a straightforward website I build, with deployment and basic availability monitoring. Site requirements and usage are agreed in the written scope; expanded features or unusual third-party costs need a separate quote.
+> The standard ongoing service for websites I build and manage, starting after launch. Includes managed hosting, deployment, basic availability monitoring, routine maintenance, and small updates to existing text, photos, business hours, or contact details.
 
-> Your domain stays client-owned and is paid separately. Content edits, email hosting, ongoing SEO, and emergency support are not included. Choose the separate care plan if you want small content updates and routine maintenance.
+> New whole pages, added content sections, major redesigns, integrations, and expanded features need a separate scope and quote. Site requirements and unusual third-party costs are agreed in the written proposal.
 
-### Website Care & Hosting — $175 per month
-
-> Optional managed hosting, monitoring, routine maintenance, and up to two small content update requests each month. Small updates mean contained changes to existing text, photos, business hours, or contact details. Hosting is included in this plan; the $75 hosting fee is not added on top.
-
-Boundary:
-
-> New whole pages, added content sections, major redesigns, integrations, campaigns, and expanded features need a separate scope and quote. Unused requests do not roll over. Emergency or same-day support is not included.
+> Your domain and connected accounts stay client-owned. Domain registration and renewal and email-provider subscription or license fees are paid separately. Ongoing SEO campaigns and emergency or same-day support are not included.
 
 ### Google Ads — $1,250 setup + $600 per month
 
