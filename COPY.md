@@ -154,28 +154,31 @@ Examples:
 
 Section heading:
 
-> Starting prices, with the scope written down before work begins.
+> Websites & pricing
 
 Introduction:
 
-> Website builds are paired with $75 per month hosting and maintenance after launch. After we talk, I will send a written proposal that explains the build price, ongoing service, what is included, and what is separate.
+> One-time build price, plus $75/month hosting and maintenance after launch.
 
-### Local Starter — $600 fixed project price
+### Local Starter — $600
 
-> A straightforward one-page website using a reusable layout customized to your business branding.
+> A simple website to help customers find and contact you.
 
-- One page with up to five sections
-- Client-approved business information, photos, and text, with light organization
-- Mobile-friendly presentation, click-to-call, and a simple inquiry form
-- Basic page title, description, search setup, and launch
-- One-time Google Business Profile setup assistance for eligible businesses; owner verification required
-- One-time domain-based business email setup assistance
-- One consolidated revision round
-- $300 deposit applied to the total; $300 after preview approval and before launch
+- One page, up to five sections
+- Your text and photos in a branded reusable layout
+- Mobile-friendly, click-to-call and inquiry form
+- Basic search setup and launch
+- Google Business Profile setup help
+- Domain-based business email setup help
+- One revision round
 
-> You keep ownership and admin control of your Business Profile, domain, and email accounts. Google controls profile verification; search rankings are not guaranteed. Email-provider subscription or license fees and domain registration and renewal are paid separately.
+> $300 deposit; $300 after preview approval, before launch.
 
-> Additional pages, stores, booking systems, portals, integrations, and ongoing SEO are quoted separately. The build is paired with $75 per month hosting and maintenance after launch.
+> Google eligibility and owner verification required. Domain and email-provider fees extra.
+
+> Details: Setup help is one-time. You supply and approve the content; light organization is included. You keep domain and account ownership and admin control. Google controls verification; rankings are not guaranteed.
+
+> Details: Extra pages, stores, booking, portals, integrations and ongoing SEO need a separate quote. Domain registration/renewal and email subscriptions/licenses are paid separately.
 
 ### Launch Page — from $1,000
 
@@ -215,11 +218,13 @@ Possible scope:
 
 ### Website Hosting & Maintenance — $75 per month
 
-> The standard ongoing service for websites I build and manage, starting after launch. Includes managed hosting, deployment, basic availability monitoring, routine maintenance, and small updates to existing text, photos, business hours, or contact details.
+> Managed hosting, routine upkeep and small text or photo updates.
 
-> New whole pages, added content sections, major redesigns, integrations, and expanded features need a separate scope and quote. Site requirements and unusual third-party costs are agreed in the written proposal.
+> New pages, sections and major changes are quoted separately.
 
-> Your domain and connected accounts stay client-owned. Domain registration and renewal and email-provider subscription or license fees are paid separately. Ongoing SEO campaigns and emergency or same-day support are not included.
+> Domain and email-provider fees are extra.
+
+> Details: The standard plan starts after launch and includes deployment, basic availability monitoring and small updates to existing content. Expanded features and integrations need a separate quote. Domains and accounts remain client-owned. Ongoing SEO, email subscriptions/licenses and emergency or same-day support are not included.
 
 ### Google Ads — $1,250 setup + $600 per month
 
@@ -239,7 +244,7 @@ Possible scope:
 
 Pricing note:
 
-> Advertising spend is paid directly to Google or Meta and is not included in my management fee. Domains, premium software, and unusual third-party costs are separate unless the written proposal says otherwise. Advertising results, search rankings, lead volume, and sales cannot be guaranteed.
+> Ad spend, domain/email fees and third-party software are extra. Results are not guaranteed. Your written proposal confirms the scope.
 
 ## Process
 

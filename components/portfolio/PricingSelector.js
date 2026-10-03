@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import styles from '../../styles/PricingSelector.module.css';
 const groups=[{name:'Websites',items:[0,1,2,3]},{name:'Advertising',items:[5,6,7]},{name:'Creative',items:[8]}];
+function PackageDetails({blocks,label}){
+ const details=blocks.filter(block=>block.text.startsWith('Details: '));
+ return details.length>0&&<details className={styles.details}><summary>{label}</summary>{details.map((block,i)=><p key={i}>{block.text.slice(9)}</p>)}</details>;
+}
 export default function PricingSelector({copy}){
  const [group,setGroup]=useState(0),[selected,setSelected]=useState(0);
  const entry=copy.Pricing.entries[selected];
@@ -13,12 +17,11 @@ export default function PricingSelector({copy}){
   <div className={styles.display}>
    <div className={styles.rail} role="group" aria-label="Choose a package">{groups[group].items.map(i=><button key={i} aria-pressed={selected===i} onClick={()=>setSelected(i)}><span>{copy.Pricing.entries[i].title.split(' — ')[0]}</span><b aria-hidden="true">{selected===i?'✓':'+'}</b></button>)}<p>Select a package to see its scope.</p></div>
    <article key={selected} className={styles.package} aria-label="Selected package" aria-live="polite">
-    <div className={styles.offer}><h3>{name}</h3><p className={styles.price}>{price}</p>{group===0&&<p className={styles.offerSummary}>Plus $75 per month hosting &amp; maintenance after launch</p>}{summary&&<p className={styles.offerSummary}>{summary}</p>}<a href="#contact">Get in touch <span>↗</span></a></div>
-    <div className={styles.scope}>{scope.map((block,i)=>block.kind==='li'?<p className={styles.item} key={i}><span aria-hidden="true">↳</span>{block.text}</p>:<p key={i}>{block.text}</p>)}</div>
-    {group===0&&<aside className={styles.care}><h4>Hosting &amp; maintenance <span>$75 per month</span></h4>{copy.Pricing.entries[4].blocks.map((block,i)=><p key={i}>{block.text}</p>)}</aside>}
+    <div className={styles.offer}><h3>{name}</h3><p className={styles.price}>{price}</p>{group===0&&<p className={styles.offerSummary}>+ $75/month hosting &amp; maintenance after launch</p>}{summary&&<p className={styles.offerSummary}>{summary}</p>}<a href="#contact">Get in touch <span>↗</span></a></div>
+    <div className={styles.scope}>{scope.filter(block=>!block.text.startsWith('Details: ')).map((block,i)=>block.kind==='li'?<p className={styles.item} key={i}><span aria-hidden="true">↳</span>{block.text}</p>:<p key={i}>{block.text}</p>)}<PackageDetails blocks={scope} label="Setup & scope details" /></div>
+    {group===0&&<aside className={styles.care}><h4>Hosting &amp; maintenance <span>$75/month</span></h4>{copy.Pricing.entries[4].blocks.filter(block=>!block.text.startsWith('Details: ')).map((block,i)=><p key={i}>{block.text}</p>)}<PackageDetails blocks={copy.Pricing.entries[4].blocks} label="Plan details" /></aside>}
    </article>
   </div>
   <p className={styles.note}>{copy.Pricing.note}</p>
-  <div className={styles.serviceContext}><h3>{copy.Services.blocks[0].text}</h3><p>{copy.Opening.blocks[2].text}</p></div>
  </section>;
 }
